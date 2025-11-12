@@ -102,7 +102,6 @@
         .message-box.show {
             opacity: 1;
         }
-        
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -172,13 +171,12 @@
                 </div>
             </div>
 
-            <!-- Resource List Section (Mock data) -->
+            <!-- Resource List Section (Mock data stays static) -->
             <div id="resource-section" class="resource-list panel p-4 hidden space-y-3">
                 <h2 class="text-xl font-semibold accent-green">ASSET MANIFEST (MOCK DATA)</h2>
                 <p class="text-sm text-gray-400">STATUS: 4 critical assets identified.</p>
                 
                 <ul id="resource-list" class="space-y-4">
-                    <!-- Mock Data Items (unchanged, as resources are static for this MVP) -->
                     <li class="border-b border-gray-600 pb-3"><div class="flex items-center space-x-3"><span class="text-2xl accent-orange">🏠</span><div class="flex-grow"><p class="font-bold text-lg">EMERGENCY SHELTER</p><p class="text-sm text-gray-400">Op. Safe Haven Annex</p></div><a href="#" class="accent-green font-semibold text-sm hover:text-green-300">ROUTE</a></div><p class="text-xs text-gray-500 mt-1">Focuses on crisis shelter and long-term placement.</p></li>
                     <li class="border-b border-gray-600 pb-3"><div class="flex items-center space-x-3"><span class="text-2xl accent-green">🍎</span><div class="flex-grow"><p class="font-bold text-lg">FOOD & NUTRITION</p><p class="text-sm text-gray-400">Logistics Depot Gamma</p></div><a href="#" class="accent-green font-semibold text-sm hover:text-green-300">ROUTE</a></div><p class="text-xs text-gray-500 mt-1">Access to immediate food packages and meal programs.</p></li>
                     <li class="border-b border-gray-600 pb-3"><div class="flex items-center space-x-3"><span class="text-2xl text-purple-400">🧠</span><div class="flex-grow"><p class="font-bold text-lg">MENTAL HEALTH HOT ZONE</p><p class="text-sm text-gray-400">Counseling Post Bravo</p></div><a href="#" class="accent-green font-semibold text-sm hover:text-green-300">ROUTE</a></div><p class="text-xs text-gray-500 mt-1">Immediate, confidential counseling services.</p></li>
@@ -245,10 +243,10 @@
             <p class="text-xs text-gray-500 pt-2">:: DISCLOSURE: THIS IS A GUIDANCE TOOL, NOT OFFICIAL VA DIRECTIVE. CONSULT VSO. ::</p>
         </div>
 
-        <!-- --- TAB 3: MISSION GOAL TRACKER CONTENT (Now using Firestore) --- -->
+        <!-- --- TAB 3: MISSION GOAL TRACKER CONTENT --- -->
         <div id="content-goals" class="hidden space-y-4">
             <h2 class="text-2xl font-bold accent-green border-b border-gray-600 pb-2 font-mono">MISSION PLANNER</h2>
-            <p class="text-gray-400 text-sm">Define your objective and track your steps. Progress is logged **in your secure private cloud**.</p>
+            <p class="text-gray-400 text-sm">Define your objective and track your steps. Progress is logged in your secure private cloud.</p>
             
             <!-- Add New Goal Form -->
             <div class="panel p-4 space-y-3">
@@ -274,7 +272,7 @@
 
         </div>
 
-        <!-- --- TAB 4: COMMUNITY MUSTER (Now using Firestore) --- -->
+        <!-- --- TAB 4: COMMUNITY MUSTER --- -->
         <div id="content-muster" class="hidden space-y-4">
             <h2 class="text-2xl font-bold accent-green border-b border-gray-600 pb-2 font-mono">THE MUSTER (SECURE CHANNEL)</h2>
             <p class="text-gray-400 text-sm">Post tactical status updates and community announcements.</p>
@@ -296,9 +294,9 @@
         <!-- --- TAB 5: EMPLOYMENT HUB (Unchanged) --- -->
         <div id="content-employment" class="space-y-6">
             <h2 class="text-2xl font-bold accent-green border-b border-gray-600 pb-2 font-mono">EMPLOYMENT HUB: SKILLS TRANSLATOR</h2>
-            <p class="text-gray-400 text-sm">Translate MOS/Rate/Duty into **Civilian Credentials** for maximum resume impact.</p>
+            <p class="text-gray-400 text-sm">Translate MOS/Rate/Duty into Civilian Credentials for maximum resume impact.</p>
 
-            <!-- Translator Tool (Unchanged) -->
+            <!-- Translator Tool -->
             <div class="panel p-4 space-y-4">
                 <h3 class="text-xl font-semibold accent-green">MILITARY TO CIVILIAN TRANSLATION</h3>
                 
@@ -315,7 +313,7 @@
                 </div>
             </div>
 
-            <!-- Employment Resources Section (Unchanged) -->
+            <!-- Employment Resources Section -->
             <div class="space-y-3">
                 <h3 class="text-xl font-semibold accent-green border-b border-gray-600 pb-2">TOP EMPLOYMENT ASSETS</h3>
                 <ul class="space-y-3 text-sm text-gray-300">
@@ -329,140 +327,78 @@
             </div>
         </div>
 
-
-        
-        <!-- Message/Alert Container (Used instead of alert()) -->
+        <!-- Message/Alert Container -->
         <div id="message-box" class="message-box p-4 hidden">
             <div id="message-content" class="bg-red-500 text-white p-3 rounded-md shadow-xl text-sm font-medium"></div>
         </div>
 
-    <!-- History Modal -->
-    <div id="history-modal" class="modal-overlay hidden">
-        <div class="panel rounded-xl p-6 w-11/12 max-w-md max-h-[80vh] flex flex-col">
-            <h3 class="text-2xl font-bold accent-green mb-4 border-b border-gray-600 pb-2">ACCESS LOG: HISTORY (SECURE)</h3>
-            <div id="history-list" class="flex-grow overflow-y-auto space-y-3 pr-2">
-                <p class="text-center text-gray-500 mt-4">:: LOADING LOGS ::</p>
+        <!-- History Modal -->
+        <div id="history-modal" class="modal-overlay hidden">
+            <div class="panel rounded-xl p-6 w-11/12 max-w-md max-h-[80vh] flex flex-col">
+                <h3 class="text-2xl font-bold accent-green mb-4 border-b border-gray-600 pb-2">ACCESS LOG: HISTORY (SECURE)</h3>
+                <div id="history-list" class="flex-grow overflow-y-auto space-y-3 pr-2">
+                    <p class="text-center text-gray-500 mt-4">:: LOADING LOGS ::</p>
+                </div>
+                <button id="close-history-btn" class="mt-4 btn-secondary">
+                    CLOSE LOG
+                </button>
             </div>
-            <button id="close-history-btn" class="mt-4 btn-secondary">
-                CLOSE LOG
-            </button>
         </div>
-    </div>
 
     <!-- Firebase SDKs and Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, orderBy, serverTimestamp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        
-        setLogLevel('Debug');
-        
-        // --- FIREBASE INITIALIZATION AND AUTH ---
+        import { 
+            getAuth, 
+            signInAnonymously, 
+            signInWithCustomToken, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import {
+            getDatabase,
+            ref,
+            push,
+            set,
+            update,
+            onValue,
+            remove
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+
+        // --- FIREBASE INITIALIZATION AND AUTH (REALTIME DB ONLY) ---
         let db, auth;
         let userId = null;
         let isAuthReady = false;
-        
-        // =========================================================================
-        // === CRITICAL STEP: HARD-CODED FIREBASE CONFIGURATION ====================
-        // THIS CONFIGURATION HAS BEEN CONFIRMED BY THE USER.
-        // =========================================================================
+
         const appId = 'veteran-resource-app'; 
-        
+
         const firebaseConfig = {
-            // Unique API Key provided by you
-            apiKey: "AIzaSyDxWnKmEvg-JFxXopujpYiDQ98bee5n46E", 
-            
-            // Confirmed Project ID from the console URL
+            apiKey: "AIzaSyDxWnKmEvg-JFxXopujpYiDQ98bee5n46E",
             authDomain: "vetchat-prod.firebaseapp.com",
-            
-            // Confirmed Project ID from the console URL
             projectId: "vetchat-prod",
-            
-            // Uses the confirmed Project ID
-            storageBucket: "vetchat-prod.appspot.com", 
-            
-            // Unique numbers from the console
-            messagingSenderId: "511042065899", 
-            
-            // Unique numbers from the console
-            appId: "1:511042065899:web:da21e4652341903e5ef5ae", 
-
-            // Unique numbers from the console
-            measurementId: "G-18R9J9CF33S"
+            storageBucket: "vetchat-prod.appspot.com",
+            messagingSenderId: "511042065899",
+            appId: "1:511042065899:web:da21e4652341903e5ef5ae",
+            measurementId: "G-18R9J9CF33S",
+            databaseURL: "https://vetchat-prod-default-rtdb.firebaseio.com"
         };
-        // =========================================================================
 
-        // The initialAuthToken is only provided by the Canvas environment.
-        // Since we are now running outside, we default to anonymous sign-in.
-        const initialAuthToken = null; 
+        const initialAuthToken = null; // we’ll just use anonymous auth here
 
-        const authStatusEl = document.getElementById('auth-status');
-        const findLocationBtn = document.getElementById('find-location-btn');
-        const addGoalBtn = document.getElementById('add-goal-btn');
-        const postMessageBtn = document.getElementById('post-message-btn');
+        const authStatusEl     = document.getElementById('auth-status');
+        const findLocationBtn  = document.getElementById('find-location-btn');
+        const addGoalBtn       = document.getElementById('add-goal-btn');
+        const postMessageBtn   = document.getElementById('post-message-btn');
+        const viewHistoryBtn   = document.getElementById('view-history-btn');
+        const historyListEl    = document.getElementById('history-list');
+        const goalListContainerEl = document.getElementById('goal-list-container');
+        const goalTitleInput   = document.getElementById('goal-title');
+        const milestoneInputs  = document.getElementById('milestone-inputs').querySelectorAll('input');
+        const goalsLoadingEl   = document.getElementById('goals-loading');
+        const huddlePostInput  = document.getElementById('huddle-post-input');
+        const communityFeedEl  = document.getElementById('community-feed');
+        const musterLoadingEl  = document.getElementById('muster-loading');
 
-        
-        try {
-            const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-            
-            // 1. Sign In
-            async function authenticate() {
-                try {
-                    if (initialAuthToken) {
-                        // This path is now effectively disabled outside Canvas
-                        await signInWithCustomToken(auth, initialAuthToken);
-                    } else {
-                        // Sign in anonymously for all public deployments
-                        await signInAnonymously(auth);
-                    }
-                } catch (error) {
-                    console.error("Firebase Authentication Error:", error);
-                    showMessage("AUTH ERROR: Could not establish secure link.", true);
-                }
-            }
-            
-            // 2. Auth State Listener
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    userId = user.uid;
-                    isAuthReady = true;
-                    authStatusEl.innerHTML = `:: SECURE LINK ESTABLISHED - UNIT ID: <span class="accent-orange">${userId.substring(0, 8)}...</span> ::`;
-                    
-                    // Enable UI elements that depend on auth/firestore
-                    findLocationBtn.disabled = false;
-                    addGoalBtn.disabled = false;
-                    postMessageBtn.disabled = false;
-                    document.getElementById('view-history-btn').disabled = false;
-                    
-                    // Start real-time listeners for the user's data
-                    startHistoryListener();
-                    startGoalListener();
-                    startMusterListener();
-
-                } else {
-                    // This typically shouldn't happen after the initial sign-in attempt
-                    userId = null;
-                    isAuthReady = false;
-                    authStatusEl.innerHTML = `:: LINK FAILURE. Attempting reconnection. ::`;
-                    
-                    // Disable UI elements
-                    findLocationBtn.disabled = true;
-                    addGoalBtn.disabled = true;
-                    postMessageBtn.disabled = true;
-                    document.getElementById('view-history-btn').disabled = true;
-                }
-            });
-            
-            authenticate();
-        } catch (error) {
-            console.error("Firebase Init Error:", error);
-            authStatusEl.innerHTML = `:: ERROR: CONFIG FAILURE. Firebase services unavailable. ::`;
-        }
-        
-
-        // Utility to show custom message boxes
+        // --- Utility to show custom message boxes ---
         function showMessage(text, isError = false) {
             const msgBox = document.getElementById('message-box');
             const msgContent = document.getElementById('message-content');
@@ -482,59 +418,99 @@
                 setTimeout(() => msgBox.classList.add('hidden'), 300);
             }, 3000);
         }
-        
-        // --- FIRESTORE UTILITY FUNCTIONS ---
 
-        // Gets the collection path for a user's private data
-        const getUserCollectionRef = (collectionName) => {
-            return collection(db, `artifacts/${appId}/users/${userId}/${collectionName}`);
+        // --- PATH HELPERS (Realtime DB) ---
+        const getPrivateRef = (path) => {
+            if (!db || !userId) return null;
+            return ref(db, `artifacts/${appId}/users/${userId}/${path}`);
         };
 
-        // Gets the collection path for public, shared data
-        const getPublicCollectionRef = (collectionName) => {
-            return collection(db, `artifacts/${appId}/public/data/${collectionName}`);
+        const getPublicRef = (path) => {
+            if (!db) return null;
+            return ref(db, `artifacts/${appId}/public/data/${path}`);
         };
 
+        // --- INIT FIREBASE APP ---
+        try {
+            const app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db   = getDatabase(app);
 
-        // --- HISTORY TRACKER FUNCTIONS (using Firestore) ---
-        const viewHistoryBtn = document.getElementById('view-history-btn');
-        const historyListEl = document.getElementById('history-list');
+            async function authenticate() {
+                try {
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                    console.error("Firebase Authentication Error:", error);
+                    showMessage("AUTH ERROR: Could not establish secure link.", true);
+                }
+            }
 
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    userId = user.uid;
+                    isAuthReady = true;
+                    authStatusEl.innerHTML = `:: SECURE LINK ESTABLISHED - UNIT ID: <span class="accent-orange">${userId.substring(0, 8)}...</span> ::`;
+
+                    findLocationBtn.disabled = false;
+                    addGoalBtn.disabled      = false;
+                    postMessageBtn.disabled  = false;
+                    viewHistoryBtn.disabled  = false;
+
+                    startHistoryListener();
+                    startGoalListener();
+                    startMusterListener();
+                } else {
+                    userId = null;
+                    isAuthReady = false;
+                    authStatusEl.innerHTML = ":: LINK FAILURE. Attempting reconnection. ::";
+
+                    findLocationBtn.disabled = true;
+                    addGoalBtn.disabled      = true;
+                    postMessageBtn.disabled  = true;
+                    viewHistoryBtn.disabled  = true;
+                }
+            });
+
+            authenticate();
+        } catch (error) {
+            console.error("Firebase Init Error:", error);
+            authStatusEl.innerHTML = ":: ERROR: CONFIG FAILURE. Firebase services unavailable. ::";
+        }
+
+        // --- HISTORY (Realtime) ---
         async function logSearch(lat, lon) {
             if (!isAuthReady || !userId) return;
-            
-            const historyRef = getUserCollectionRef('historyLogs');
-            
+            const historyRef = getPrivateRef('search_history');
+            if (!historyRef) return;
+
+            const entryRef = push(historyRef);
             try {
-                await addDoc(historyRef, {
-                    timestamp: serverTimestamp(),
+                await set(entryRef, {
+                    timestamp: Date.now(),
                     latitude: lat,
                     longitude: lon,
                     mock_resources_found: 4,
                     location_description: "Local Area Scan"
                 });
             } catch (e) {
-                console.error("Error adding document: ", e);
+                console.error("Error logging search:", e);
                 showMessage("Database error: Could not log search history.", true);
             }
         }
 
         function startHistoryListener() {
-            if (!isAuthReady || !userId) return;
+            const historyRef = getPrivateRef('search_history');
+            if (!historyRef) return;
 
-            const historyRef = getUserCollectionRef('historyLogs');
-            
-            // Note: We avoid orderBy here to prevent index requirement errors, sorting in memory
-            onSnapshot(query(historyRef), (snapshot) => {
-                const historyItems = [];
-                snapshot.forEach(doc => {
-                    historyItems.push({ id: doc.id, ...doc.data() });
-                });
-                
-                // Sort in memory by timestamp descending
-                historyItems.sort((a, b) => (b.timestamp?.toMillis() || 0) - (a.timestamp?.toMillis() || 0));
-                
-                updateHistoryUI(historyItems);
+            onValue(historyRef, (snapshot) => {
+                const data = snapshot.val() || {};
+                const items = Object.keys(data).map(id => ({ id, ...data[id] }));
+                items.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                updateHistoryUI(items);
             }, (error) => {
                 console.error("History Listener Error:", error);
                 historyListEl.innerHTML = '<p class="text-center text-red-400 mt-4">:: HISTORY LOG ERROR ::</p>';
@@ -543,65 +519,60 @@
 
         function updateHistoryUI(historyItems) {
             viewHistoryBtn.textContent = `ACCESS LOG HISTORY (${historyItems.length} RECORDS)`;
-            
             historyListEl.innerHTML = '';
-            
+
             if (historyItems.length === 0) {
                 historyListEl.innerHTML = '<p class="text-center text-gray-500 mt-4">:: NO LOGS FOUND IN DATABASE ::</p>';
                 return;
             }
 
             historyItems.forEach((item, index) => {
-                // Handle serverTimestamp which might be null before first sync
-                const date = item.timestamp ? new Date(item.timestamp.toMillis()).toLocaleString() : 'Pending Sync';
-                
+                const date = item.timestamp ? new Date(item.timestamp).toLocaleString() : 'Pending Sync';
+                const lat  = typeof item.latitude  === 'number' ? item.latitude.toFixed(4)  : 'N/A';
+                const lon  = typeof item.longitude === 'number' ? item.longitude.toFixed(4) : 'N/A';
+
                 const itemHtml = `
                     <div class="bg-gray-700/50 p-3 rounded-md border border-gray-600">
                         <p class="accent-green font-semibold">LOG ENTRY #${historyItems.length - index}</p>
                         <p class="text-sm text-gray-400">TIMESTAMP: ${date}</p>
                         <p class="text-sm text-gray-400 mt-1">
-                            <span class="font-medium">COORDS:</span> ${item.latitude?.toFixed(4) || 'N/A'}, ${item.longitude?.toFixed(4) || 'N/A'}
+                            <span class="font-medium">COORDS:</span> ${lat}, ${lon}
                         </p>
-                        <p class="text-xs accent-orange mt-1">Found ${item.mock_resources_found} assets in the ${item.location_description} area.</p>
+                        <p class="text-xs accent-orange mt-1">Found ${item.mock_resources_found || 0} assets in the ${item.location_description || 'Area'} area.</p>
                     </div>
                 `;
                 historyListEl.insertAdjacentHTML('beforeend', itemHtml);
             });
         }
 
-        // --- GOAL TRACKER FUNCTIONS (using Firestore) ---
-        const goalListContainerEl = document.getElementById('goal-list-container');
-        const goalTitleInput = document.getElementById('goal-title');
-        const milestoneInputs = document.getElementById('milestone-inputs').querySelectorAll('input');
-        const goalsLoadingEl = document.getElementById('goals-loading');
-
+        // --- GOALS (Realtime) ---
         addGoalBtn.addEventListener('click', async () => {
             if (!isAuthReady || !userId) return showMessage("Authentication required to save mission.", true);
-            
+
             const title = goalTitleInput.value.trim();
             const steps = Array.from(milestoneInputs)
-                                .map(input => input.value.trim())
-                                .filter(text => text.length > 0)
-                                .map(text => ({ text: text, completed: false }));
+                .map(input => input.value.trim())
+                .filter(text => text.length > 0)
+                .map(text => ({ text, completed: false }));
 
             if (title.length < 5) return showMessage("Input requires more detail for objective title.", true);
             if (steps.length === 0) return showMessage("Input requires at least one defined step.", true);
-            
-            addGoalBtn.disabled = true;
 
-            const goalsRef = getUserCollectionRef('missionGoals');
+            addGoalBtn.disabled = true;
+            const goalsRef = getPrivateRef('goals');
+            const newGoalRef = push(goalsRef);
 
             try {
-                await addDoc(goalsRef, {
-                    title: title,
-                    steps: JSON.stringify(steps), // Serialize steps array to string
-                    created_at: serverTimestamp(),
+                await set(newGoalRef, {
+                    title,
+                    steps,
+                    created_at: Date.now()
                 });
                 showMessage(`New mission "${title}" saved!`, false);
                 goalTitleInput.value = '';
                 milestoneInputs.forEach(input => input.value = '');
             } catch (e) {
-                console.error("Error adding goal: ", e);
+                console.error("Error adding goal:", e);
                 showMessage("Database error: Could not save mission.", true);
             } finally {
                 addGoalBtn.disabled = false;
@@ -609,30 +580,19 @@
         });
 
         function startGoalListener() {
-            if (!isAuthReady || !userId) return;
+            const goalsRef = getPrivateRef('goals');
+            if (!goalsRef) return;
 
-            const goalsRef = getUserCollectionRef('missionGoals');
-            
-            onSnapshot(query(goalsRef), (snapshot) => {
-                const goals = [];
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    let stepsParsed = [];
-                    try {
-                        // Deserialize steps string back to array
-                        stepsParsed = JSON.parse(data.steps);
-                    } catch (e) {
-                        console.error("Error parsing steps JSON:", e);
-                    }
-                    goals.push({ id: doc.id, ...data, steps: stepsParsed });
-                });
-                
-                // Sort goals by completion status (incomplete first)
+            onValue(goalsRef, (snapshot) => {
+                const data = snapshot.val() || {};
+                const goals = Object.keys(data).map(id => ({ id, ...data[id] }));
+
+                // incomplete missions first
                 goals.sort((a, b) => {
-                    const aComplete = a.steps.filter(s => s.completed).length === a.steps.length;
-                    const bComplete = b.steps.filter(s => s.completed).length === b.steps.length;
+                    const aComplete = (a.steps || []).every(s => s.completed);
+                    const bComplete = (b.steps || []).every(s => s.completed);
                     if (aComplete === bComplete) return 0;
-                    return aComplete ? 1 : -1; // Incomplete (false) comes before complete (true)
+                    return aComplete ? 1 : -1;
                 });
 
                 renderGoals(goals);
@@ -644,27 +604,30 @@
 
         function renderGoals(goals) {
             goalListContainerEl.innerHTML = '';
-            
+
             if (goals.length === 0) {
                 goalsLoadingEl.textContent = ':: NO ACTIVE MISSIONS. SET OBJECTIVES ABOVE ::';
-                if (goalsLoadingEl.parentElement) goalListContainerEl.appendChild(goalsLoadingEl);
+                goalListContainerEl.appendChild(goalsLoadingEl);
                 return;
             } else if (goalsLoadingEl.parentElement) {
-                 goalsLoadingEl.remove();
+                goalsLoadingEl.remove();
             }
 
             goals.forEach(goal => {
-                const totalSteps = goal.steps.length;
-                const completedSteps = goal.steps.filter(s => s.completed).length;
+                const steps = goal.steps || [];
+                const totalSteps = steps.length;
+                const completedSteps = steps.filter(s => s.completed).length;
                 const progress = totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
-                
+
                 let stepsHtml = '';
-                goal.steps.forEach((step, index) => {
+                steps.forEach((step, index) => {
                     const checked = step.completed ? 'checked' : '';
                     const lineThrough = step.completed ? 'line-through text-gray-500' : 'text-gray-300';
                     stepsHtml += `
                         <label class="flex items-center space-x-2 py-1 cursor-pointer">
-                            <input type="checkbox" data-goal-id="${goal.id}" data-step-index="${index}" ${checked} class="form-checkbox h-4 w-4 text-green-400 rounded bg-gray-700/50" onchange="window.toggleStep(this)">
+                            <input type="checkbox" data-goal-id="${goal.id}" data-step-index="${index}" ${checked}
+                                   class="form-checkbox h-4 w-4 text-green-400 rounded bg-gray-700/50"
+                                   onchange="window.toggleStep(this)">
                             <span class="text-sm ${lineThrough}">${step.text}</span>
                         </label>
                     `;
@@ -693,40 +656,26 @@
             if (!isAuthReady || !userId) return;
 
             const goalId = checkbox.dataset.goalId;
-            const stepIndex = parseInt(checkbox.dataset.stepIndex);
+            const stepIndex = checkbox.dataset.stepIndex;
             const isCompleted = checkbox.checked;
 
-            const goalDocRef = doc(getUserCollectionRef('missionGoals'), goalId);
-
+            const stepRef = getPrivateRef(`goals/${goalId}/steps/${stepIndex}`);
             try {
-                // Fetch the current document to safely update the steps array
-                const docSnap = await getDoc(goalDocRef);
-                if (docSnap.exists()) {
-                    let steps = JSON.parse(docSnap.data().steps);
-                    
-                    if (steps[stepIndex]) {
-                        steps[stepIndex].completed = isCompleted;
-                        
-                        await updateDoc(goalDocRef, {
-                            steps: JSON.stringify(steps)
-                        });
-                        showMessage(isCompleted ? "Step marked COMPLETE!" : "Step reverted.", false);
-                    }
-                }
+                await update(stepRef, { completed: isCompleted });
+                showMessage(isCompleted ? "Step marked COMPLETE!" : "Step reverted.", false);
             } catch (e) {
                 console.error("Error toggling step:", e);
                 showMessage("Database error: Could not update mission step.", true);
-                checkbox.checked = !isCompleted; // Revert checkbox on UI failure
+                checkbox.checked = !isCompleted;
             }
         };
 
         window.deleteGoal = async function(goalId) {
             if (!isAuthReady || !userId) return;
 
-            const goalDocRef = doc(getUserCollectionRef('missionGoals'), goalId);
-
+            const goalRef = getPrivateRef(`goals/${goalId}`);
             try {
-                await deleteDoc(goalDocRef);
+                await remove(goalRef);
                 showMessage("Mission aborted successfully.", false);
             } catch (e) {
                 console.error("Error deleting goal:", e);
@@ -734,31 +683,27 @@
             }
         };
 
-        // --- COMMUNITY MUSTER (using Firestore Public Data) ---
-        const huddlePostInput = document.getElementById('huddle-post-input');
-        const communityFeedEl = document.getElementById('community-feed');
-        const musterLoadingEl = document.getElementById('muster-loading');
-        
+        // --- COMMUNITY MUSTER (Realtime public data) ---
         postMessageBtn.addEventListener('click', async () => {
             if (!isAuthReady || !userId) return showMessage("Authentication required to transmit message.", true);
-            
+
             const message = huddlePostInput.value.trim();
             if (message.length === 0) return showMessage("Message cannot be empty.", true);
 
             postMessageBtn.disabled = true;
-
-            const musterRef = getPublicCollectionRef('musterPosts');
+            const musterRef = getPublicRef('community_messages');
+            const newPostRef = push(musterRef);
 
             try {
-                await addDoc(musterRef, {
-                    message: message,
-                    userId: userId,
-                    timestamp: serverTimestamp(),
+                await set(newPostRef, {
+                    message,
+                    user_id: userId,
+                    timestamp: Date.now()
                 });
                 huddlePostInput.value = '';
                 showMessage("Message transmitted to The Muster.", false);
             } catch (e) {
-                console.error("Error posting message: ", e);
+                console.error("Error posting message:", e);
                 showMessage("Database error: Could not transmit message.", true);
             } finally {
                 postMessageBtn.disabled = false;
@@ -766,20 +711,13 @@
         });
 
         function startMusterListener() {
-            if (!isAuthReady) return;
+            const musterRef = getPublicRef('community_messages');
+            if (!musterRef) return;
 
-            const musterRef = getPublicCollectionRef('musterPosts');
-            
-            // Note: We avoid orderBy here to prevent index requirement errors, sorting in memory
-            onSnapshot(query(musterRef), (snapshot) => {
-                const posts = [];
-                snapshot.forEach(doc => {
-                    posts.push({ id: doc.id, ...doc.data() });
-                });
-
-                // Sort in memory by timestamp descending
-                posts.sort((a, b) => (b.timestamp?.toMillis() || 0) - (a.timestamp?.toMillis() || 0));
-
+            onValue(musterRef, (snapshot) => {
+                const data = snapshot.val() || {};
+                const posts = Object.keys(data).map(id => ({ id, ...data[id] }));
+                posts.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                 renderMusterFeed(posts);
             }, (error) => {
                 console.error("Muster Listener Error:", error);
@@ -789,21 +727,21 @@
 
         function renderMusterFeed(posts) {
             communityFeedEl.innerHTML = '';
-            
+
             if (posts.length === 0) {
                 communityFeedEl.innerHTML = '<p class="text-center text-gray-500 py-4">:: FIRST TRANSMISSION AWAITED ::</p>';
                 return;
             }
 
             posts.forEach(post => {
-                const isMine = post.userId === userId;
-                // Handle serverTimestamp
-                const time = post.timestamp ? new Date(post.timestamp.toMillis()).toLocaleTimeString() : 'N/A';
-                
+                const isMine = post.user_id === userId;
+                const time = post.timestamp ? new Date(post.timestamp).toLocaleTimeString() : 'N/A';
+
                 const postHtml = `
                     <div class="panel p-3 rounded-lg ${isMine ? 'bg-green-900/40 border-green-600' : 'bg-gray-700/50 border-gray-600'}">
                         <p class="text-xs font-bold ${isMine ? 'accent-green' : 'accent-orange'}">
-                            ${isMine ? 'YOU' : post.userId.substring(0, 8) + '...'} <span class="text-gray-500 font-normal">@ ${time}</span>
+                            ${isMine ? 'YOU' : (post.user_id || '').substring(0, 8) + '...'} 
+                            <span class="text-gray-500 font-normal">@ ${time}</span>
                         </p>
                         <p class="text-sm text-gray-300 mt-1 whitespace-pre-wrap">${post.message}</p>
                     </div>
@@ -812,9 +750,7 @@
             });
         }
 
-
-        // --- EMPLOYMENT HUB FUNCTIONS (Unchanged, no dependencies on Firebase) ---
-
+        // --- EMPLOYMENT HUB (no Firebase deps) ---
         const mockTranslations = {
             "68W": { title: "EMERGENCY MEDICAL TECHNICIAN / CLINICAL ASSISTANT", skills: ["Advanced Trauma Care", "Patient Triage", "Field Operations Management", "Basic Life Support (BLS)"] },
             "EO": { title: "HEAVY EQUIPMENT OPERATOR / SITE MANAGER", skills: ["Earth Moving Equipment Operation", "Site Preparation & Grading", "Safety Compliance (OSHA)", "Maintenance & Repair Scheduling"] },
@@ -825,11 +761,11 @@
         };
         
         document.getElementById('translate-btn').addEventListener('click', () => {
-            const translateBtn = document.getElementById('translate-btn');
+            const translateBtn      = document.getElementById('translate-btn');
             const militaryTermInput = document.getElementById('military-term-input');
             const translationResult = document.getElementById('translation-result');
-            const jobTitleOutput = document.getElementById('job-title-output');
-            const skillsOutput = document.getElementById('skills-output');
+            const jobTitleOutput    = document.getElementById('job-title-output');
+            const skillsOutput      = document.getElementById('skills-output');
 
             const term = militaryTermInput.value.trim().toUpperCase();
             
@@ -863,12 +799,10 @@
                     showMessage("TRANSLATION FAIL. RE-ENTER TERM.", true);
                 }
                 translateBtn.disabled = false;
-            }, 500); // Simulate API loading time
+            }, 500);
         });
 
         // --- UI LOGIC ---
-        
-        // Modal Open/Close Logic
         document.getElementById('view-history-btn').addEventListener('click', () => {
             document.getElementById('history-modal').classList.remove('hidden');
         });
@@ -877,12 +811,11 @@
             document.getElementById('history-modal').classList.add('hidden');
         });
 
-        // Tab Switching Logic
         window.switchTab = function(tabName) {
             const tabs = ['map', 'benefits', 'goals', 'muster', 'employment'];
             tabs.forEach(tab => {
                 const content = document.getElementById(`content-${tab}`);
-                const button = document.getElementById(`tab-${tab}`);
+                const button  = document.getElementById(`tab-${tab}`);
                 
                 if (tab === tabName) {
                     content.classList.remove('hidden');
@@ -896,28 +829,24 @@
             });
         };
         
-        // Set initial tab to employment
         document.addEventListener('DOMContentLoaded', () => {
-            switchTab('employment'); 
+            switchTab('employment');
         });
-        
-        // --- GEOLOCATION AND EVENT LISTENERS (For Map Tab) ---
 
+        // --- GEOLOCATION / MAP ---
         document.getElementById('find-location-btn').addEventListener('click', () => {
             if (!isAuthReady) return showMessage("Authentication required to log location scan.", true);
 
-            const button = document.getElementById('find-location-btn');
-            const loading = document.getElementById('loading-indicator');
-            const locationInfo = document.getElementById('current-location');
+            const button          = document.getElementById('find-location-btn');
+            const loading         = document.getElementById('loading-indicator');
+            const locationInfo    = document.getElementById('current-location');
             const resourceSection = document.getElementById('resource-section');
-            const latLongDisplay = document.getElementById('lat-long');
+            const latLongDisplay  = document.getElementById('lat-long');
 
-            // 1. Disable button and show loading indicator
             button.disabled = true;
             button.textContent = 'EXECUTING SCAN...';
             loading.classList.remove('hidden');
 
-            // 2. Check for geolocation support
             if (!navigator.geolocation) {
                 showMessage("GEOLOCATION HARDWARE FAILURE.", true);
                 button.disabled = false;
@@ -926,33 +855,26 @@
                 return;
             }
 
-            // 3. Request location
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
                     
-                    // Success handling
                     button.textContent = 'SCAN COMPLETE';
                     loading.classList.add('hidden');
                     
                     latLongDisplay.textContent = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
                     locationInfo.classList.remove('hidden');
-                    
-                    // Show resource section (The MVP delivery)
                     resourceSection.classList.remove('hidden');
 
-                    // LOG THE SEARCH DATA TO FIRESTORE
                     logSearch(lat, lon);
 
-                    // Re-enable button after a delay and change text back
                     setTimeout(() => {
                         button.disabled = false;
                         button.textContent = 'RE-EXECUTE SCAN';
                     }, 1000);
                 },
                 (error) => {
-                    // Error handling
                     let errorMessage = "ERROR: UNABLE TO RETRIEVE COORDS.";
                     if (error.code === error.PERMISSION_DENIED) {
                         errorMessage = "ERROR: GEOLOCATION DENIED. ENABLE DEVICE SERVICES.";
@@ -964,7 +886,6 @@
                     
                     showMessage(errorMessage, true);
                     
-                    // Reset UI
                     button.disabled = false;
                     button.textContent = 'EXECUTE LOCATION SCAN';
                     loading.classList.add('hidden');
