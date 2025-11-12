@@ -78,8 +78,8 @@
         <!-- TACTICAL ICON -->
         <img src="uploaded:image_ad281c.png-d1e5c40e-743d-429f-845c-dfa8d0e43910" 
              alt="Tactical Icon" 
-             class="w-12 h-12 mb-2 filter drop-shadow-lg"
-             style="filter: invert(100%) sepia(50%) saturate(2000%) hue-rotate(150deg) brightness(1.2) contrast(1.2);">
+             class="w-12 h-12 mb-2"
+             style="filter: invert(100%) hue-rotate(150deg) drop-shadow(0 0 5px rgba(16, 185, 129, 0.8));">
         
         <h1 class="text-2xl font-bold uppercase tracking-wider text-white">
             MISSION READY RESOURCES
@@ -164,9 +164,6 @@
             doc, 
             setDoc, 
             onSnapshot, 
-            query, 
-            collection,
-            limit,
             setLogLevel 
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
@@ -209,6 +206,12 @@
                 statusDiv.classList.add('bg-green-800', 'text-green-200');
             }
             logFeatureUse('Status_Message', { message: text });
+        }
+
+        function resetUI() {
+            button.disabled = false;
+            button.textContent = 'EXECUTE LOCATION SCAN';
+            loading.classList.add('hidden');
         }
 
         function logFeatureUse(event, details = {}) {
@@ -469,21 +472,21 @@
 
                 logFeatureUse('EXECUTE_SCAN_CLICKED');
                 
-                // Reset UI elements
+                // UI state change on click
                 button.disabled = true;
                 button.textContent = 'SCANNING...';
                 loading.classList.remove('hidden');
                 document.getElementById('status-message').classList.add('hidden');
+                
+                // Clear old data temporarily
                 suggestionsOutput.innerHTML = '';
                 sourcesList.innerHTML = '';
-                resourceSection.classList.add('hidden'); // Hide results until location is found
+                resourceSection.classList.add('hidden'); 
 
                 if (!navigator.geolocation) {
                     showMessage("ERROR: GEOLOCATION IS NOT SUPPORTED BY THIS BROWSER.", true);
-                    button.disabled = false;
-                    button.textContent = 'EXECUTE LOCATION SCAN';
-                    loading.classList.add('hidden');
                     logFeatureUse('Resource_Search_Failed', { reason: 'No_Geolocation' });
+                    resetUI();
                     return;
                 }
 
@@ -493,11 +496,6 @@
                         const { latitude, longitude } = position.coords;
                         
                         logFeatureUse('COORDS_RETRIEVED', { coords: { latitude, longitude } });
-
-                        // Update location display (will be overwritten by Firestore listener if successful)
-                        latOutput.textContent = latitude.toFixed(6);
-                        lonOutput.textContent = longitude.toFixed(6);
-                        locationInfo.classList.remove('hidden');
                         
                         button.textContent = 'ANALYZING LOCATION DATA...';
 
@@ -518,14 +516,14 @@
                             logFeatureUse('RESOURCE_ANALYSIS_FAILED', { reason: error.message });
                         } finally {
                             // Final UI reset
-                            button.disabled = false;
-                            button.textContent = 'EXECUTE LOCATION SCAN';
-                            loading.classList.add('hidden');
+                            resetUI();
                         }
                     },
                     (error) => {
+                        // Geolocation Error Handling
                         let errorMessage = "ERROR: UNABLE TO RETRIEVE COORDS.";
                         let failReason = 'Unknown';
+                        
                         if (error.code === error.PERMISSION_DENIED) {
                             errorMessage = "ERROR: GEOLOCATION DENIED. ENABLE DEVICE SERVICES.";
                             failReason = 'Permission_Denied';
@@ -539,10 +537,8 @@
                         
                         showMessage(errorMessage, true);
                         
-                        // Reset UI
-                        button.disabled = false;
-                        button.textContent = 'EXECUTE LOCATION SCAN';
-                        loading.classList.add('hidden');
+                        // Reset UI state
+                        resetUI();
                         logFeatureUse('Resource_Search_Failed', { reason: failReason }); // ANALYTICS LOGGING
                     },
                     {
