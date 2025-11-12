@@ -364,6 +364,55 @@
             remove
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
+        // --- REALTIME RESOURCE LISTENER (MAP TAB) ---
+
+function startResourceListener() {
+    const resourcesRef = getPublicRef("resource_locations");
+
+    onValue(resourcesRef, (snapshot) => {
+        const data = snapshot.val() || {};
+
+        const items = Object.keys(data).map(id => ({
+            id,
+            ...data[id]
+        }));
+
+        renderResourceList(items);
+    });
+}
+
+function renderResourceList(items) {
+    const section = document.getElementById("resource-section");
+    const listEl = document.getElementById("resource-list");
+
+    // Clear previous
+    listEl.innerHTML = "";
+
+    if (items.length === 0) {
+        section.classList.add("hidden");
+        return;
+    }
+
+    section.classList.remove("hidden");
+
+    items.forEach(item => {
+        const html = `
+            <li class="border-b border-gray-600 pb-3">
+                <div class="flex items-center space-x-3">
+                    <span class="text-2xl accent-orange">🏠</span>
+                    <div class="flex-grow">
+                        <p class="font-bold text-lg">${item.name}</p>
+                        <p class="text-sm text-gray-400">${item.facility}</p>
+                    </div>
+                    <a href="${item.link || '#'}" class="accent-green font-semibold text-sm hover:text-green-300">ROUTE</a>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">${item.description}</p>
+            </li>
+        `;
+        listEl.insertAdjacentHTML("beforeend", html);
+    });
+}
+
         // --- FIREBASE INITIALIZATION AND AUTH (REALTIME DB ONLY) ---
         let db, auth;
         let userId = null;
@@ -463,6 +512,7 @@
                     startHistoryListener();
                     startGoalListener();
                     startMusterListener();
+                    startResourceListener();
                 } else {
                     userId = null;
                     isAuthReady = false;
