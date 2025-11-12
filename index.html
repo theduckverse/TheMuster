@@ -4,987 +4,658 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mission Ready Resources - Tactical Display</title>
-    <!-- Load Tailwind CSS -->
+    <!-- Load Tailwind CSS for utility styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* BASE TACTICAL AESTHETIC */
+        /* ========================================================================= */
+        /* BASE TACTICAL AESTHETIC STYLING                                           */
+        /* ========================================================================= */
         body {
+            /* Use monospace font for a technical/tactical look */
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-            background-color: #1a202c; /* Deep Charcoal/Navy fallback */
-            color: #e2e8f0; /* Off-White/Light Gray text */
+            background-color: #1a202c; /* Deep Charcoal/Navy background */
+            color: #e2e8f0; /* Off-White/Light Gray text for contrast */
             
-            /* === TACTICAL FLAG BACKGROUND FIX === */
-            /* The image must be saved in the same folder as this HTML file and named: tattered_flag.png */
-            background-image: url('tattered_flag.png'); 
-            background-size: cover;
-            background-attachment: fixed; 
-            background-position: center;
+            /* === TACTICAL FLAG BACKGROUND STYLING (Fixed Image Reference) === */
+            background-image: url('tattered_flag.jpg-d2b2cd9e-033d-4afd-a872-9e3d7baa7682'); 
+            background-size: cover; /* Cover the entire viewport */
+            background-attachment: fixed; /* Keep background static on scroll */
+            background-position: center center; /* Center the background image */
+            background-repeat: no-repeat;
+            min-height: 100vh; /* Ensure the body takes up the full viewport height */
         }
 
         .crisis-card {
-            background-color: #b91c1c; /* Rescue Red for Crisis Line */
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-            border-bottom: 3px solid #f97316; /* Orange accent */
+            background-color: #b91c1c; /* Rescue Red for Crisis Line header */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Subtle shadow effect */
+            border-bottom: 3px solid #f97316; /* Bright Orange accent line */
         }
         
-        /* GENERAL UI ELEMENTS - Increased opacity for better legibility */
-        .panel {
-            background-color: rgba(45, 55, 72, 0.95); /* Dark Panel Background with high opacity for contrast */
-            border: 1px solid #4a5568; 
-            border-radius: 6px;
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.1); 
-        }
-        .accent-green {
-            color: #10b981; /* Tactical Green */
-        }
-        .accent-orange {
-            color: #f97316; /* Rescue Orange */
-        }
-        
-        /* TABS */
-        .tab-button {
-            @apply p-2 flex-1 text-center text-[0.6rem] sm:text-sm font-bold border-b-2 transition-colors duration-200;
-        }
-        .tab-active {
-            @apply border-green-400 text-green-400 bg-gray-700/80; /* High opacity tab background */
-        }
-        .tab-inactive {
-            @apply border-gray-600 text-gray-400 hover:bg-gray-700/80;
-        }
-        
-        /* BUTTONS */
-        .btn-primary {
-            @apply bg-[#10b981] text-gray-900 py-3 rounded-md font-bold shadow-lg transition-colors duration-200 hover:bg-green-500 disabled:bg-gray-600 disabled:text-gray-400;
-        }
-        .btn-secondary {
-             @apply bg-gray-600 text-white py-2 rounded-md font-bold transition-colors duration-200 hover:bg-gray-700 disabled:bg-gray-700;
+        .data-display {
+            background-color: rgba(30, 41, 59, 0.9); /* Slate Blue with transparency for tactical UI */
+            border: 1px solid #475569; /* Slate border for structure */
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px); /* Gentle blur effect on the background (if supported) */
+            border-radius: 0.75rem; /* Consistent rounding */
         }
 
-        /* INPUTS - UPDATED TEXT COLOR TO ARMY GREEN (text-green-400) */
-        input[type="text"], textarea {
-            @apply bg-[#1a202c] border-2 border-green-400 text-green-400 p-3 rounded-md focus:border-orange-500 focus:ring-orange-500;
+        .action-button {
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px #0f766e; /* Shadow for 3D press effect (Teal) */
         }
 
-        /* MISC */
-        .loading-ring {
-            border: 4px solid #4a5568; 
-            border-top: 4px solid #10b981; /* Tactical Green */
+        .action-button:active {
+            box-shadow: 0 1px #0f766e; /* Reduce shadow depth when pressed */
+            transform: translateY(3px); /* Move button down slightly */
+        }
+
+        /* Standard CSS animation for a loading spinner */
+        .loading-animation {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #10b981; /* Emerald Green spinner color */
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 24px;
+            height: 24px;
             animation: spin 1s linear infinite;
         }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 50;
+
+        /* Styling for system log entries */
+        .log-entry {
+            border-left: 3px solid #475569; /* Vertical gray line for visual separation */
+            padding-left: 0.5rem;
         }
-        
+
+        /* Ensure generated paragraph text looks readable within the content area */
+        #resource-suggestions p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
-
-    <!-- Header and Crisis Line Card -->
-    <header class="p-4 crisis-card text-white text-center rounded-b-xl shadow-lg">
-        <h1 class="text-2xl font-bold font-mono tracking-widest">MISSION READY</h1>
-        <p class="text-sm opacity-90 mb-3 font-sans">OPERATIONAL STATUS: HIGH</p>
+<body class="min-h-screen p-4 sm:p-8 flex flex-col items-center">
+    
+    <!-- ========================================================================= -->
+    <!-- HEADER / CRISIS LINE                                                      -->
+    <!-- ========================================================================= -->
+    <header class="w-full max-w-4xl mb-6 crisis-card p-3 rounded-lg text-center flex flex-col items-center">
+        <!-- TACTICAL ICON (Assumes image reference is correct from file system) -->
+        <img src="uploaded:image_ad281c.png-d1e5c40e-743d-429f-845c-dfa8d0e43910" 
+             alt="Tactical Icon" 
+             class="w-12 h-12 mb-2"
+             style="filter: invert(100%) hue-rotate(150deg) drop-shadow(0 0 5px rgba(16, 185, 129, 0.8));">
         
-        <!-- Crisis Hotline Button -->
-        <a href="tel:988" class="bg-[#f97316] text-white font-extrabold py-3 px-6 rounded-md shadow-2xl transition-all duration-300 hover:bg-orange-700 flex items-center justify-center space-x-2">
-            <!-- Siren Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-siren"><path d="M7 16l-3-7h14l-3 7"/><path d="M12 21v-5"/><path d="M12 11V3"/><path d="M12 3L8 9h8z"/></svg>
-            <span class="text-lg font-mono">CRISIS ALERT (988)</span>
-        </a>
+        <h1 class="text-2xl font-bold uppercase tracking-wider text-white">
+            MISSION READY RESOURCES
+        </h1>
+        <p class="text-sm font-light text-gray-200">TACTICAL DISPLAY // GEOSPATIAL RESOURCE SCANNER</p>
     </header>
 
-    <!-- Authentication Status -->
-    <div id="auth-status" class="bg-green-900/40 text-green-400 p-2 text-xs font-mono text-center border-y border-green-600/50">
-        <!-- Status will be updated by JS -->
-        :: INITIALIZING SECURE LINK ::
-    </div>
-
-    <!-- Tab Navigation -->
-    <nav class="flex w-full bg-[#1a202c] shadow-md z-10 sticky top-0">
-        <button id="tab-map" class="tab-button tab-inactive" onclick="switchTab('map')">
-            :: RESOURCE LOCATOR ::
-        </button>
-        <button id="tab-benefits" class="tab-button tab-inactive" onclick="switchTab('benefits')">
-            :: BENEFITS PROTOCOL ::
-        </button>
-        <button id="tab-goals" class="tab-button tab-inactive" onclick="switchTab('goals')">
-            :: MISSION PLANNER ::
-        </button>
-        <button id="tab-muster" class="tab-button tab-inactive" onclick="switchTab('muster')">
-            :: THE MUSTER ::
-        </button>
-        <button id="tab-employment" class="tab-button tab-active" onclick="switchTab('employment')">
-            :: EMPLOYMENT HUB ::
-        </button>
-    </nav>
-
-    <!-- Main Content Area -->
-    <main class="flex-grow p-4 space-y-4">
+    <!-- ========================================================================= -->
+    <!-- MAIN INTERFACE CARD (DATA DISPLAY)                                        -->
+    <!-- ========================================================================= -->
+    <main class="w-full max-w-4xl data-display p-6 sm:p-8 rounded-xl">
         
-        <!-- --- TAB 1: RESOURCE MAP CONTENT (Hidden by default) --- -->
-        <div id="content-map" class="hidden space-y-4">
-            <!-- History Button -->
-            <button id="view-history-btn" class="btn-secondary w-full" disabled>
-                ACCESS LOG HISTORY (0 RECORDS)
+        <!-- COLLABORATION & AUTH INFO -->
+        <div id="collab-info" class="text-center text-xs text-gray-500 mb-4 border-b border-gray-700 pb-3">
+            <p>Auth Status: <span id="auth-status" class="font-mono text-yellow-400">CONNECTING...</span></p>
+            <!-- User ID is mandatory for collaborative apps -->
+            <p class="mt-1">User ID: <span id="user-id-display" class="font-mono text-teal-400 break-all">Awaiting Authentication</span></p>
+            <p class="mt-1">Last Analysis Update: <span id="last-update-display" class="font-mono text-yellow-400">N/A</span></p>
+        </div>
+
+        <!-- DYNAMIC STATUS MESSAGE AREA -->
+        <div id="status-message" class="hidden mb-4 p-3 rounded-lg text-sm transition duration-300" role="alert">
+            <!-- Dynamic message content will go here -->
+        </div>
+
+        <!-- CONTROL PANEL -->
+        <div class="mb-6">
+            <button id="location-scan-button" 
+                    class="action-button w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-lg uppercase tracking-widest flex justify-center items-center"
+                    aria-live="polite"
+                    disabled>
+                AWAITING SYSTEM INITIALIZATION...
             </button>
-
-            <!-- Geo-Location Card -->
-            <div id="location-card" class="panel p-4 space-y-3">
-                <h2 class="text-xl font-semibold accent-green flex items-center space-x-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-target"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-                    <span>TARGET: Local Resources</span>
-                </h2>
-                <div id="location-info" class="text-gray-300">
-                    <p>Execute location scan to identify nearby services.</p>
-                    <p id="current-location" class="font-medium mt-2 hidden">COORDS: <span id="lat-long" class="accent-orange"></span></p>
-                </div>
-                <button id="find-location-btn" class="btn-primary w-full" disabled>
-                    EXECUTE LOCATION SCAN
-                </button>
-                <div id="loading-indicator" class="hidden flex justify-center py-2">
-                    <div class="loading-ring"></div>
-                </div>
-            </div>
-
-            <!-- Resource List Section (Mock data) -->
-            <div id="resource-section" class="resource-list panel p-4 hidden space-y-3">
-                <h2 class="text-xl font-semibold accent-green">ASSET MANIFEST (MOCK DATA)</h2>
-                <p class="text-sm text-gray-400">STATUS: 4 critical assets identified.</p>
-                
-                <ul id="resource-list" class="space-y-4">
-                    <!-- Mock Data Items -->
-                    <li class="border-b border-gray-600 pb-3"><div class="flex items-center space-x-3"><span class="text-2xl accent-orange">🏠</span><div class="flex-grow"><p class="font-bold text-lg">EMERGENCY SHELTER</p><p class="text-sm text-gray-400">Op. Safe Haven Annex</p></div><a href="#" class="accent-green font-semibold text-sm hover:text-green-300">ROUTE</a></div><p class="text-xs text-gray-500 mt-1">Focuses on crisis shelter and long-term placement.</p></li>
-                    <li class="border-b border-gray-600 pb-3"><div class="flex items-center space-x-3"><span class="text-2xl accent-green">🍎</span><div class="flex-grow"><p class="font-bold text-lg">FOOD & NUTRITION</p><p class="text-sm text-gray-400">Logistics Depot Gamma</p></div><a href="#" class="accent-green font-semibold text-sm hover:text-green-300">ROUTE</a></div><p class="text-xs text-gray-500 mt-1">Access to immediate food packages and meal programs.</p></li>
-                    <li class="border-b border-gray-600 pb-3"><div class="flex items-center space-x-3"><span class="text-2xl text-purple-400">🧠</span><div class="flex-grow"><p class="font-bold text-lg">MENTAL HEALTH HOT ZONE</p><p class="text-sm text-gray-400">Counseling Post Bravo</p></div><a href="#" class="accent-green font-semibold text-sm hover:text-green-300">ROUTE</a></div><p class="text-xs text-gray-500 mt-1">Immediate, confidential counseling services.</p></li>
-                    <li class="pb-2"><div class="flex items-center space-x-3"><span class="text-2xl text-red-500">💰</span><div class="flex-grow"><p class="font-bold text-lg">EMERGENCY FUNDING</p><p class="text-sm text-gray-400">Operation Comfort Fund</p></div><a href="#" class="accent-green font-semibold text-sm hover:text-green-300">LINK</a></div><p class="text-xs text-gray-500 mt-1">Application for one-time critical financial support.</p></li>
-                </ul>
+            <div id="loading-indicator" class="hidden mt-4 flex items-center justify-center space-x-2">
+                <div class="loading-animation"></div>
+                <span class="text-sm text-gray-400">ACCESSING GEOLOCATION SENSORS... STAND BY.</span>
             </div>
         </div>
+
+        <!-- CURRENT LOCATION DISPLAY SECTION -->
+        <section id="location-info" class="hidden mb-6 p-4 border border-teal-500 rounded-lg bg-slate-800">
+            <h2 class="text-xl font-semibold mb-2 text-teal-300">CURRENT POSITION DATA</h2>
+            <div class="grid grid-cols-2 gap-2 text-sm">
+                <div class="text-gray-400">Latitude:</div>
+                <div id="lat-output" class="text-teal-400 font-mono">--</div>
+                <div class="text-gray-400">Longitude:</div>
+                <div id="lon-output" class="text-teal-400 font-mono">--</div>
+            </div>
+        </section>
+
+        <!-- RESOURCE SUGGESTIONS (LLM OUTPUT) -->
+        <section id="resource-section" class="hidden mb-6">
+            <h2 class="text-2xl font-semibold mb-4 text-emerald-400 border-b border-gray-600 pb-2 uppercase tracking-wide">
+                ANALYSIS & RESOURCE SUGGESTIONS
+            </h2>
+            <div id="resource-suggestions" class="space-y-4">
+                <p>Scan location to generate collaborative analysis...</p>
+            </div>
+            
+            <!-- Citation Sources Display -->
+            <div id="citation-sources" class="mt-6 pt-4 border-t border-gray-700">
+                <h3 class="text-lg font-medium text-gray-400 mb-2">Grounding Sources:</h3>
+                <ul id="sources-list" class="text-xs text-gray-500 space-y-1">
+                    <!-- Sources will be injected here -->
+                </ul>
+            </div>
+        </section>
         
-        <!-- --- TAB 2: BENEFITS NAVIGATOR CONTENT (Hidden by default) --- -->
-        <div id="content-benefits" class="hidden space-y-6">
-            <h2 class="text-2xl font-bold accent-green border-b border-gray-600 pb-2 font-mono">BENEFITS PROTOCOL: CLAIMS</h2>
-            <p class="text-gray-400 text-sm">Filing a disability claim is mission-critical. Use this 4-step sequence.</p>
-            
-            <!-- Step 1 -->
-            <div class="panel p-4 space-y-2 border-l-4 border-green-500">
-                <div class="flex items-center space-x-2">
-                    <span class="text-xl font-extrabold accent-orange">01</span>
-                    <h3 class="font-bold text-lg accent-green">DATA ACQUISITION</h3>
-                </div>
-                <ul class="list-disc ml-5 text-sm text-gray-400 space-y-1">
-                    <li>**Service Connection:** Acquire DD-214 and Service Treatment Records (STRs).</li>
-                    <li>**Medical Evidence:** Secure current diagnostic records.</li>
-                    <li>**Nexus:** Link current status to service actions (e.g., doctor's statement).</li>
-                </ul>
+        <!-- SYSTEM LOG WINDOW -->
+        <section>
+            <h2 class="text-xl font-semibold mt-6 mb-3 text-gray-400 border-b border-gray-700 pb-1">
+                SYSTEM LOG
+            </h2>
+            <div id="system-log" class="h-48 overflow-y-auto p-3 bg-gray-900 border border-gray-700 rounded-lg text-xs space-y-1">
+                <div class="log-entry text-gray-500">SYSTEM READY. AWAITING AUTHENTICATION.</div>
             </div>
-            
-            <!-- Step 2 -->
-            <div class="panel p-4 space-y-2 border-l-4 border-green-500">
-                <div class="flex items-center space-x-2">
-                    <span class="text-xl font-extrabold accent-orange">02</span>
-                    <h3 class="font-bold text-lg accent-green">SUBMISSION ROUTE</h3>
-                </div>
-                <ul class="list-disc ml-5 text-sm text-gray-400 space-y-1">
-                    <li>**Fast Track:** Utilize the VA digital portal (<a href="https://www.va.gov" target="_blank" class="accent-orange hover:text-red-500">VA.gov</a>).</li>
-                    <li>**Priority Channel:** Contact a Veterans Service Officer (VSO) for free, expert support.</li>
-                    <li>**Effective Date Lock:** File an Intent to File immediately.</li>
-                </ul>
-            </div>
-            
-            <!-- Step 3 -->
-            <div class="panel p-4 space-y-2 border-l-4 border-green-500">
-                <div class="flex items-center space-x-2">
-                    <span class="text-xl font-extrabold accent-orange">03</span>
-                    <h3 class="font-bold text-lg accent-green">C&P EVALUATION</h3>
-                </div>
-                <ul class="list-disc ml-5 text-sm text-gray-400 space-y-1">
-                    <li>**Compliance:** Attend all mandated Compensation & Pension (C&P) exams.</li>
-                    <li>**Reporting:** Describe your condition's CURRENT impact on daily function.</li>
-                </ul>
-            </div>
-            
-            <!-- Step 4 -->
-            <div class="panel p-4 space-y-2 border-l-4 border-green-500">
-                <div class="flex items-center space-x-2">
-                    <span class="text-xl font-extrabold accent-orange">04</span>
-                    <h3 class="font-bold text-lg accent-green">RESOLUTION & APPEAL</h3>
-                </div>
-                <ul class="list-disc ml-5 text-sm text-gray-400 space-y-1">
-                    <li>**Review:** Confirm the rating accuracy upon decision.</li>
-                    <li>**Recourse:** If denied, consult VSO immediately to initiate Supplemental, HLR, or Board Appeal.</li>
-                </ul>
-            </div>
+        </section>
 
-            <p class="text-xs text-gray-500 pt-2">:: DISCLOSURE: THIS IS A GUIDANCE TOOL, NOT OFFICIAL VA DIRECTIVE. CONSULT VSO. ::</p>
-        </div>
-
-        <!-- --- TAB 3: MISSION GOAL TRACKER CONTENT (Hidden by default) --- -->
-        <div id="content-goals" class="hidden space-y-4">
-            <h2 class="text-2xl font-bold accent-green border-b border-gray-600 pb-2 font-mono">MISSION PLANNER</h2>
-            <p class="text-gray-400 text-sm">Define your objective and track your steps. Progress is logged securely.</p>
-            
-            <!-- Add New Goal Form -->
-            <div class="panel p-4 space-y-3">
-                <h3 class="text-xl font-semibold accent-green border-b border-gray-600 pb-2">INPUT NEW OBJECTIVE</h3>
-                <input type="text" id="goal-title" placeholder="E.g., Complete my degree, Find a career in tech, Improve fitness" maxlength="80">
-                <div id="milestone-inputs" class="space-y-2">
-                    <input type="text" data-milestone="1" placeholder="Step 1: Define specific task" class="text-sm">
-                    <input type="text" data-milestone="2" placeholder="Step 2: Define specific task" class="text-sm">
-                    <input type="text" data-milestone="3" placeholder="Step 3: Define specific task" class="text-sm">
-                </div>
-                <button id="add-goal-btn" class="btn-primary w-full" disabled>
-                    SAVE NEW MISSION
-                </button>
-            </div>
-            
-            <!-- Goal List Display -->
-            <div class="space-y-3">
-                <h3 class="text-xl font-semibold accent-green border-b border-gray-600 pb-2">ACTIVE MISSIONS</h3>
-                <div id="goal-list-container" class="space-y-4">
-                    <p id="goals-loading" class="text-center text-gray-500 py-4">Awaiting missions... Please sign in.</p>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- --- TAB 4: COMMUNITY MUSTER (Hidden by default) --- -->
-        <div id="content-muster" class="hidden space-y-4">
-            <h2 class="text-2xl font-bold accent-green border-b border-gray-600 pb-2 font-mono">THE MUSTER (SECURE CHANNEL)</h2>
-            <p class="text-gray-400 text-sm">Assemble, share intelligence, and connect. Your **UNIT ID** is logged with every transmission.</p>
-
-            <!-- Post New Message -->
-            <div class="panel p-4 space-y-3">
-                <textarea id="huddle-post-input" placeholder="Transmit message (Max 200 chars)" rows="2" maxlength="200"></textarea>
-                <button id="post-message-btn" class="btn-primary w-full" disabled>
-                    TRANSMIT MESSAGE
-                </button>
-            </div>
-
-            <!-- Community Feed -->
-            <div id="community-feed" class="space-y-3 max-h-[60vh] overflow-y-auto">
-                <p id="feed-loading" class="text-center text-gray-500 py-4">:: LOADING CHANNEL FEED ::</p>
-            </div>
-        </div>
-        
-        <!-- --- TAB 5: EMPLOYMENT HUB (Active by default) --- -->
-        <div id="content-employment" class="space-y-6">
-            <h2 class="text-2xl font-bold accent-green border-b border-gray-600 pb-2 font-mono">EMPLOYMENT HUB: SKILLS TRANSLATOR</h2>
-            <p class="text-gray-400 text-sm">Translate MOS/Rate/Duty into **Civilian Credentials** for maximum resume impact.</p>
-
-            <!-- Translator Tool -->
-            <div class="panel p-4 space-y-4">
-                <h3 class="text-xl font-semibold accent-green">MILITARY TO CIVILIAN TRANSLATION</h3>
-                
-                <input type="text" id="military-term-input" placeholder="INPUT MOS, RATE, OR DUTY (e.g., 68W, EO, PLATOON LEADER)">
-                
-                <button id="translate-btn" class="bg-orange-500 text-gray-900 py-3 rounded-md font-bold shadow-md transition-colors duration-200 hover:bg-orange-600 w-full">
-                    EXECUTE TRANSLATION
-                </button>
-                
-                <div id="translation-result" class="hidden border-t border-gray-600 pt-4 space-y-3">
-                    <div id="job-title-output" class="text-lg font-bold text-green-400"></div>
-                    <div id="skills-output" class="text-gray-300 space-y-1"></div>
-                    <p class="text-xs text-gray-500 mt-2">:: CREDENTIALS READY FOR RESUME INTEGRATION ::</p>
-                </div>
-            </div>
-
-            <!-- Employment Resources Section -->
-            <div class="space-y-3">
-                <h3 class="text-xl font-semibold accent-green border-b border-gray-600 pb-2">TOP EMPLOYMENT ASSETS</h3>
-                <ul class="space-y-3 text-sm text-gray-300">
-                    <li class="p-3 bg-gray-700 rounded-md border-l-4 border-green-500">
-                        <a href="#" class="font-bold text-green-400 hover:text-green-300">LinkedIn for Veterans:</a> Priority Access to job seekers.
-                    </li>
-                    <li class="p-3 bg-gray-700 rounded-md border-l-4 border-green-500">
-                        <a href="#" class="font-bold text-green-400 hover:text-green-300">Dept. of Labor VETS:</a> Career training and workshops.
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-
-        
-        <!-- Message/Alert Container (Used instead of alert()) -->
-        <div id="message-box" class="fixed bottom-0 left-0 right-0 p-4 hidden">
-            <div id="message-content" class="bg-red-500 text-white p-3 rounded-md shadow-xl text-sm font-medium"></div>
-        </div>
-
-    <!-- History Modal -->
-    <div id="history-modal" class="modal-overlay hidden">
-        <div class="panel rounded-xl p-6 w-11/12 max-w-md max-h-[80vh] flex flex-col">
-            <h3 class="text-2xl font-bold accent-green mb-4 border-b border-gray-600 pb-2">ACCESS LOG: HISTORY</h3>
-            <div id="history-list" class="flex-grow overflow-y-auto space-y-3 pr-2">
-                <!-- History items will be inserted here -->
-            </div>
-            <button id="close-history-btn" class="mt-4 btn-secondary">
-                CLOSE LOG
-            </button>
-        </div>
-    </div>
-
-    <!-- Firebase SDKs -->
+    </main>
+    
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        // =========================================================================
+        // 1. FIREBASE IMPORTS AND GLOBAL CONFIGURATION
+        // =========================================================================
+        import { initializeApp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, collection, addDoc, query, updateDoc, onSnapshot, serverTimestamp, enableIndexedDbPersistence, setLogLevel, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- GLOBAL FIREBASE & APP VARIABLES ---
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-        
+        // --- Core Application and API Constants ---
+        const apiKey = "" // API key for Gemini is handled by runtime environment
+        const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+        // --- Global Firebase Instances ---
         let db;
         let auth;
         let userId = null;
         let isAuthReady = false;
-        let historyListener = null;
-        let goalListener = null;
-        let communityListener = null; 
 
-        // DOM Elements
-        const authStatusEl = document.getElementById('auth-status');
-        const findLocationBtn = document.getElementById('find-location-btn');
-        const viewHistoryBtn = document.getElementById('view-history-btn');
-        const historyListEl = document.getElementById('history-list');
-        const goalListContainerEl = document.getElementById('goal-list-container');
-        const addGoalBtn = document.getElementById('add-goal-btn');
-        const goalTitleInput = document.getElementById('goal-title');
-        const milestoneInputs = document.getElementById('milestone-inputs').querySelectorAll('input');
-        const postMessageBtn = document.getElementById('post-message-btn');
-        const huddlePostInput = document.getElementById('huddle-post-input');
-        const communityFeedEl = document.getElementById('community-feed');
-        const translateBtn = document.getElementById('translate-btn');
-        const militaryTermInput = document.getElementById('military-term-input');
-        const translationResult = document.getElementById('translation-result');
-        const jobTitleOutput = document.getElementById('job-title-output');
-        const skillsOutput = document.getElementById('skills-output');
+        // --- Global variables MANDATED by the Canvas environment ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // --- UI Element References (Caching DOM lookups) ---
+        const button = document.getElementById('location-scan-button');
+        const loading = document.getElementById('loading-indicator');
+        const locationInfo = document.getElementById('location-info');
+        const resourceSection = document.getElementById('resource-section');
+        const latOutput = document.getElementById('lat-output');
+        const lonOutput = document.getElementById('lon-output');
+        const suggestionsOutput = document.getElementById('resource-suggestions');
+        const sourcesList = document.getElementById('sources-list');
+        const lastUpdateDisplay = document.getElementById('last-update-display');
+        const authStatusDisplay = document.getElementById('auth-status');
+        const userIdDisplay = document.getElementById('user-id-display');
 
 
-        // Utility to show custom message boxes
+        // =========================================================================
+        // 2. UTILITY FUNCTIONS (Logging, UI feedback, Markdown processing)
+        // =========================================================================
+
+        /**
+         * Displays a formatted status message to the user in the dedicated UI area.
+         * @param {string} text - The message content.
+         * @param {boolean} [isError=false] - True if the message should be formatted as an error.
+         */
         function showMessage(text, isError = false) {
-            const msgBox = document.getElementById('message-box');
-            const msgContent = document.getElementById('message-content');
+            const statusDiv = document.getElementById('status-message');
+            // Clear previous classes and set text
+            statusDiv.textContent = text;
+            statusDiv.classList.remove('hidden', 'bg-red-800', 'text-red-200', 'bg-green-800', 'text-green-200');
             
+            // Apply appropriate styling based on message type
             if (isError) {
-                msgContent.className = 'bg-red-700 text-white p-3 rounded-md shadow-xl text-sm font-medium border border-red-500';
+                statusDiv.classList.add('bg-red-800', 'text-red-200');
             } else {
-                msgContent.className = 'bg-green-700 text-white p-3 rounded-md shadow-xl text-sm font-medium border border-green-500';
+                statusDiv.classList.add('bg-green-800', 'text-green-200');
             }
+            logFeatureUse('Status_Message', { message: text });
+        }
+
+        /**
+         * Resets the UI buttons and loading indicators to the default interactive state.
+         */
+        function resetUI() {
+            // Button state depends on authentication status
+            button.disabled = !isAuthReady; 
+            button.textContent = isAuthReady ? 'EXECUTE LOCATION SCAN' : 'AWAITING SYSTEM INITIALIZATION...';
+            loading.classList.add('hidden');
+        }
+
+        /**
+         * Logs events to the in-app system log window for technical review.
+         * @param {string} event - The type of event that occurred (e.g., 'Auth_Token_Login').
+         * @param {object} [details={}] - Optional details, e.g., coordinates or error reason.
+         */
+        function logFeatureUse(event, details = {}) {
+            const logElement = document.getElementById('system-log');
+            const timestamp = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const logEntry = document.createElement('div');
             
-            msgContent.textContent = text;
-            msgBox.classList.remove('hidden');
+            let detailString = '';
+            // Format coordinates if available
+            if (details.coords) {
+                detailString = ` (Lat: ${details.coords.latitude.toFixed(4)}, Lon: ${details.coords.longitude.toFixed(4)})`;
+            } else if (details.reason) {
+                detailString = ` (Reason: ${details.reason})`;
+            }
 
-            setTimeout(() => {
-                msgBox.classList.add('hidden');
-            }, 3000);
+            logEntry.className = 'log-entry text-gray-400';
+            logEntry.innerHTML = `<span class="text-yellow-500">[${timestamp}]</span> <span class="text-teal-400">${event}</span>${detailString}`;
+            
+            logElement.appendChild(logEntry);
+            logElement.scrollTop = logElement.scrollHeight; // Auto-scroll to the latest entry
         }
 
-        // --- CORE FUNCTIONS ---
+        /**
+         * Converts simple Markdown formatting from the LLM output into HTML for display.
+         * @param {string} markdown - The text output from the Gemini model.
+         * @returns {string} HTML formatted string.
+         */
+        function markdownToHtml(markdown) {
+            // 1. Convert **bolded text** to <strong>bolded text</strong>
+            let html = markdown.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            // 2. Convert double newlines to paragraph breaks (common LLM formatting)
+            html = html.replace(/\n\n/g, '</p><p>');
+            // 3. Convert single newlines to break tags (for list-like formatting preservation)
+            html = html.replace(/\n/g, '<br>');
+            // 4. Ensure the content is wrapped in a paragraph element
+            if (!html.startsWith('<p>')) {
+                html = '<p>' + html + '</p>';
+            }
+            return html;
+        }
         
-        // Function to set up secure path for private user data
-        function getPrivateCollectionRef(collectionName) {
-            if (!db || !userId) return null;
-            return collection(db, 'artifacts', appId, 'users', userId, collectionName);
-        }
-        
-        // Function for PUBLIC, shared data (the Muster)
-        function getPublicCollectionRef(collectionName) {
-            if (!db) return null;
-            return collection(db, 'artifacts', appId, 'public', 'data', collectionName);
-        }
+        /**
+         * Updates the UI elements based on the analysis data received from Firestore.
+         * This function is the primary display renderer.
+         * @param {object | null} data - The analysis object loaded from Firestore.
+         */
+        function displayAnalysis(data) {
+            if (!data || !data.analysisText) {
+                // Handle case where the document is empty or non-existent
+                suggestionsOutput.innerHTML = '<p>Scan location to generate collaborative analysis...</p>';
+                resourceSection.classList.add('hidden');
+                locationInfo.classList.add('hidden');
+                lastUpdateDisplay.textContent = 'N/A';
+                sourcesList.innerHTML = '';
+                return;
+            }
 
-        // Function for ANALYTICS LOGGING
-        function getAnalyticsCollectionRef(collectionName) {
-            if (!db) return null;
-            // Use a public collection for general, aggregated analytics data
-            return collection(db, 'artifacts', appId, 'public', 'data', collectionName); 
-        }
+            // 1. Update time and location displays
+            const date = new Date(data.timestamp);
+            lastUpdateDisplay.textContent = date.toLocaleString();
+            
+            latOutput.textContent = data.latitude.toFixed(6);
+            lonOutput.textContent = data.longitude.toFixed(6);
+            locationInfo.classList.remove('hidden');
 
-        async function logFeatureUse(featureName, details = {}) {
-            if (!db) return; 
-            const analyticsRef = getAnalyticsCollectionRef('usage_metrics');
-            if (!analyticsRef) return; // Guard for uninitialized db
+            // 2. Update LLM generated text
+            suggestionsOutput.innerHTML = markdownToHtml(data.analysisText);
 
-            try {
-                await addDoc(analyticsRef, {
-                    user_id: userId, 
-                    event: featureName,
-                    details: details,
-                    timestamp: serverTimestamp()
+            // 3. Update sources/citations
+            sourcesList.innerHTML = '';
+            const sources = data.sources || [];
+            if (sources.length > 0) {
+                sources.forEach(source => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `<a href="${source.uri}" target="_blank" class="text-blue-400 hover:text-blue-300 underline">${source.title || source.uri}</a>`;
+                    sourcesList.appendChild(listItem);
                 });
+            } else {
+                const listItem = document.createElement('li');
+                listItem.textContent = "No external grounding sources provided by the LLM.";
+                sourcesList.appendChild(listItem);
+            }
+
+            resourceSection.classList.remove('hidden');
+        }
+
+
+        // =========================================================================
+        // 3. FIREBASE INTERACTION LOGIC
+        // =========================================================================
+
+        /**
+         * Constructs the Firestore Document Reference path for the shared analysis data.
+         * We use the 'public' space for collaboration across all users of this app.
+         * Path: /artifacts/{appId}/public/data/analysis/master
+         */
+        function getAnalysisDocRef() {
+            if (!db) return null;
+            return doc(db, 'artifacts', appId, 'public', 'data', 'analysis', 'master');
+        }
+
+        /**
+         * Saves the newly generated analysis data to the Firestore master document.
+         * @param {object} data - The LLM analysis result and coordinates.
+         */
+        async function saveAnalysis(data) {
+            if (!db) {
+                logFeatureUse('Firestore_Error', { reason: 'DB not initialized for save' });
+                return;
+            }
+            try {
+                // Add metadata for auditing and display
+                const analysisData = {
+                    ...data,
+                    timestamp: Date.now(),
+                    generatedBy: userId,
+                    // Note: analysisText and sources are already in 'data'
+                };
+                
+                await setDoc(getAnalysisDocRef(), analysisData);
+                logFeatureUse('Firestore_Save_Success', { coords: { latitude: data.latitude, longitude: data.longitude } });
             } catch (e) {
-                // Check for permission errors specifically in the analytics logging to reduce console noise.
-                if (e.message && e.message.includes('Missing or insufficient permissions')) {
-                    console.warn(`[ANALYTICS] Failed to log usage event '${featureName}' due to security rules.`);
+                // Handle potential Firestore write errors (e.g., permission denied)
+                logFeatureUse('Firestore_Save_Failed', { reason: e.message });
+                showMessage(`ERROR: Failed to save analysis to collaborative store: ${e.message}`, true);
+            }
+        }
+
+        /**
+         * Sets up the real-time listener to update the UI whenever the Firestore
+         * master analysis document is modified by any collaborative user.
+         */
+        function listenForAnalysis() {
+            // Guard clause: ensure prerequisites are met before setting up listener
+            if (!db || !isAuthReady) return; 
+
+            logFeatureUse('Firestore_Listener_Start');
+            const docRef = getAnalysisDocRef();
+
+            // onSnapshot provides real-time updates
+            onSnapshot(docRef, (docSnapshot) => {
+                if (docSnapshot.exists()) {
+                    const data = docSnapshot.data();
+                    logFeatureUse('Firestore_Update_Received');
+                    displayAnalysis(data); // Render the received data
                 } else {
-                    console.error("Failed to log event:", e);
+                    logFeatureUse('Firestore_Update_Empty');
+                    displayAnalysis(null); // Clear display if document is deleted
+                }
+            }, (error) => {
+                // Error handling for the listener itself
+                logFeatureUse('Firestore_Listener_Error', { reason: error.message });
+                showMessage(`ERROR: Real-time data sync failed: ${error.message}`, true);
+            });
+        }
+
+
+        // =========================================================================
+        // 4. GEMINI LLM INTERACTION LOGIC
+        // =========================================================================
+
+        /**
+         * Fetches data from the LLM API, implementing exponential backoff for resilience.
+         * @param {string} url - The API endpoint URL.
+         * @param {object} options - Fetch options (method, headers, body).
+         * @param {number} maxRetries - Maximum number of retries.
+         */
+        async function fetchWithRetry(url, options, maxRetries = 5) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.status === 429) {
+                        // Rate limit exceeded: wait and retry
+                        const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue;
+                    }
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response;
+                } catch (error) {
+                    if (i === maxRetries - 1) throw error; // Re-throw only on final failure
+                    // Log the retry but don't show it as a user error
+                    logFeatureUse('API_Retry', { reason: `Attempt ${i + 1} failed.` });
+                    const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
                 }
             }
         }
-        // --- END ANALYTICS LOGGING FUNCTION ---
+        
+        /**
+         * Calls the Gemini API to get resource analysis for the provided coordinates.
+         * It uses Google Search Grounding for real-world context.
+         * @param {number} latitude - Current latitude.
+         * @param {number} longitude - Current longitude.
+         * @returns {Promise<object>} An object containing analysis text, sources, and coordinates.
+         */
+        async function getResourceSuggestions(latitude, longitude) {
+            logFeatureUse('LLM_QUERY_INIT', { coords: { latitude, longitude } });
 
+            const userQuery = `I am currently located at Latitude ${latitude.toFixed(6)} and Longitude ${longitude.toFixed(6)}. Based on this location, provide a concise tactical analysis of immediately accessible and potentially critical resources (like water sources, shelter, communication points, or useful terrain features). Structure your response with distinct, bolded headers for each suggested resource and provide a brief description for each.`;
+            
+            const systemPrompt = "You are a highly efficient, tactical mission analyst for a disaster recovery team. Your goal is to provide fast, actionable, and grounded resource intelligence based on a provided geospatial location. Output ONLY the analysis content, formatted in Markdown. Use Google Search grounding to find real-world context for the coordinates.";
 
-        // --- FIREBASE INITIALIZATION AND AUTHENTICATION ---
-        async function initFirebase() {
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                tools: [{ "google_search": {} }], // Enable real-time web search
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+            };
+
+            const options = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            };
+
             try {
-                // setLogLevel('debug'); // Uncomment for debugging
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-
-                try {
-                    await enableIndexedDbPersistence(db);
-                } catch (err) {
-                    console.warn("Firestore persistence failed:", err);
-                }
+                const response = await fetchWithRetry(GEMINI_API_URL, options);
+                const result = await response.json();
                 
-                await new Promise((resolve) => {
-                    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-                        if (user) {
-                            userId = user.uid;
-                            authStatusEl.innerHTML = `:: SECURE LINK ESTABLISHED - UNIT ID: <span class="accent-orange">${userId}</span> ::`;
-                            
-                            // Enable all interactive elements now that auth is ready
-                            findLocationBtn.disabled = false;
-                            addGoalBtn.disabled = false;
-                            postMessageBtn.disabled = false;
+                const candidate = result.candidates?.[0];
 
-                            isAuthReady = true;
-                            startHistoryListener();
-                            startGoalListener();
-                            startCommunityListener(); 
-                            unsubscribe();
-                            resolve();
-                        } else {
-                            try {
-                                if (initialAuthToken) {
-                                    await signInWithCustomToken(auth, initialAuthToken);
-                                } else {
-                                    await signInAnonymously(auth);
-                                }
-                            } catch (e) {
-                                console.error("Firebase Sign-in Failed:", e);
-                                authStatusEl.textContent = ":: ERROR: AUTHENTICATION FAILURE. DATA LOGGING DISABLED. ::";
-                                showMessage("Authentication failure. Cannot save logs.", true);
-                                isAuthReady = false;
-                                resolve();
-                            }
-                        }
-                    });
-                });
+                if (candidate && candidate.content?.parts?.[0]?.text) {
+                    const text = candidate.content.parts[0].text;
+                    logFeatureUse('LLM_QUERY_SUCCESS');
+
+                    // 1. Extract grounding sources (citations)
+                    let sources = [];
+                    const groundingMetadata = candidate.groundingMetadata;
+                    if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                        sources = groundingMetadata.groundingAttributions
+                            .map(attribution => ({
+                                uri: attribution.web?.uri,
+                                title: attribution.web?.title,
+                            }))
+                            .filter(source => source.uri && source.title);
+                    }
+
+                    return { analysisText: text, sources, latitude, longitude };
+
+                } else {
+                    const errorMessage = result.error?.message || "LLM did not return usable content or had a malformed response.";
+                    logFeatureUse('LLM_QUERY_FAIL', { reason: errorMessage });
+                    throw new Error(errorMessage);
+                }
 
             } catch (error) {
-                console.error("Firebase Initialization Error:", error);
-                authStatusEl.textContent = ":: ERROR: SYSTEM OFFLINE. CHECK FIREBASE LINK. ::";
-                isAuthReady = false;
-            }
-        }
-        
-        // --- HISTORY TRACKER FUNCTIONS ---
-
-        async function logSearch(lat, lon) {
-            if (!isAuthReady || !userId) return;
-            const historyRef = getPrivateCollectionRef('search_history');
-            if (!historyRef) return;
-
-            try {
-                await addDoc(historyRef, {
-                    timestamp: serverTimestamp(),
-                    latitude: lat,
-                    longitude: lon,
-                    mock_resources_found: 4,
-                    location_description: "San Antonio Area (MOCK)"
-                });
-                showMessage("Target identified. Mission log updated.", false);
-                logFeatureUse('Resource_Search_Success'); // ANALYTICS LOGGING
-            } catch (e) {
-                console.error("Error logging search to Firestore:", e);
-                showMessage("Error saving mission log.", true);
+                logFeatureUse('LLM_FETCH_ERROR', { reason: error.message });
+                throw new Error("Failed to contact intelligence servers: " + error.message);
             }
         }
 
-        function startHistoryListener() {
-            if (historyListener) historyListener();
 
-            const historyRef = getPrivateCollectionRef('search_history');
-            if (!historyRef) return;
+        // =========================================================================
+        // 5. GEOLOCATION AND MAIN CLICK HANDLER
+        // =========================================================================
 
-            const q = query(historyRef); 
-
-            historyListener = onSnapshot(q, (snapshot) => {
-                let historyItems = [];
-                snapshot.forEach(doc => {
-                    historyItems.push({ id: doc.id, ...doc.data() });
-                });
-                
-                historyItems.sort((a, b) => (b.timestamp?.toMillis() || 0) - (a.timestamp?.toMillis() || 0));
-                updateHistoryUI(historyItems);
-            }, (error) => {
-                console.error("Error listening to history:", error);
-                historyListEl.innerHTML = '<p class="text-red-500">:: ERROR: FAILED TO RETRIEVE LOGS ::</p>';
-                viewHistoryBtn.disabled = true;
-            });
-        }
-
-        function updateHistoryUI(historyItems) {
-            viewHistoryBtn.disabled = false;
-            viewHistoryBtn.textContent = `ACCESS LOG HISTORY (${historyItems.length} RECORDS)`;
-            
-            historyListEl.innerHTML = '';
-            
-            if (historyItems.length === 0) {
-                historyListEl.innerHTML = '<p class="text-center text-gray-500 mt-4">:: NO LOGS FOUND ::</p>';
-                return;
-            }
-
-            historyItems.forEach((item, index) => {
-                const date = item.timestamp ? new Date(item.timestamp.seconds * 1000).toLocaleString() : 'Saving...';
-                
-                const itemHtml = `
-                    <div class="bg-gray-700/50 p-3 rounded-md border border-gray-600">
-                        <p class="accent-green font-semibold">LOG ENTRY #${historyItems.length - index}</p>
-                        <p class="text-sm text-gray-400">TIMESTAMP: ${date}</p>
-                        <p class="text-sm text-gray-400 mt-1">
-                            <span class="font-medium">COORDS:</span> ${item.latitude}, ${item.longitude}
-                        </p>
-                        <p class="text-xs accent-orange mt-1">Found ${item.mock_resources_found} assets in the ${item.location_description} area.</p>
-                    </div>
-                `;
-                historyListEl.insertAdjacentHTML('beforeend', itemHtml);
-            });
-        }
-
-        // --- GOAL TRACKER FUNCTIONS ---
-
-        function startGoalListener() {
-            if (goalListener) goalListener();
-
-            const goalsRef = getPrivateCollectionRef('goals');
-            if (!goalsRef) return;
-            
-            const q = query(goalsRef); 
-
-            goalListener = onSnapshot(q, (snapshot) => {
-                let goals = [];
-                snapshot.forEach(doc => {
-                    goals.push({ id: doc.id, ...doc.data() });
-                });
-                
-                goals.sort((a, b) => (b.created_at?.toMillis() || 0) - (a.created_at?.toMillis() || 0));
-                renderGoals(goals);
-            }, (error) => {
-                console.error("Error listening to goals:", error);
-                goalListContainerEl.innerHTML = '<p class="text-red-500 text-center py-4">:: ERROR: FAILED TO LOAD MISSIONS ::</p>';
-            });
-        }
-
-        function renderGoals(goals) {
-            goalListContainerEl.innerHTML = '';
-
-            if (goals.length === 0) {
-                goalListContainerEl.innerHTML = '<p class="text-center text-gray-500 py-4">:: NO ACTIVE MISSIONS. SET OBJECTIVES ABOVE ::</p>';
-                return;
-            }
-
-            goals.forEach(goal => {
-                const totalSteps = goal.steps.length;
-                const completedSteps = goal.steps.filter(s => s.completed).length;
-                const progress = totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
-                
-                let stepsHtml = '';
-                goal.steps.forEach((step, index) => {
-                    const checked = step.completed ? 'checked' : '';
-                    const lineThrough = step.completed ? 'line-through text-gray-500' : 'text-gray-300';
-                    stepsHtml += `
-                        <label class="flex items-center space-x-2 py-1 cursor-pointer">
-                            <input type="checkbox" data-goal-id="${goal.id}" data-step-index="${index}" ${checked} class="form-checkbox h-4 w-4 text-green-400 rounded bg-gray-700/50" onchange="toggleStep(this)">
-                            <span class="text-sm ${lineThrough}">${step.text}</span>
-                        </label>
-                    `;
-                });
-
-                const goalHtml = `
-                    <div class="panel p-4 border-t-4 border-green-500">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="text-lg font-extrabold accent-orange">${goal.title}</h4>
-                            <span class="text-xs text-gray-400">${progress}% COMPLETE</span>
-                        </div>
-                        <div class="w-full bg-gray-600 rounded-full h-2.5 mb-4">
-                            <div class="bg-green-500 h-2.5 rounded-full" style="width: ${progress}%"></div>
-                        </div>
-                        <div class="space-y-1">
-                            ${stepsHtml}
-                        </div>
-                        <button onclick="deleteGoal('${goal.id}')" class="text-red-500 hover:text-red-300 text-xs mt-3 float-right">ABORT MISSION</button>
-                    </div>
-                `;
-                goalListContainerEl.insertAdjacentHTML('beforeend', goalHtml);
-            });
-        }
-
-        addGoalBtn.addEventListener('click', async () => {
-            if (!isAuthReady || !userId) return showMessage("Authentication not ready. Cannot save goal.", true);
-
-            const title = goalTitleInput.value.trim();
-            const steps = Array.from(milestoneInputs)
-                                .map(input => input.value.trim())
-                                .filter(text => text.length > 0)
-                                .map(text => ({ text: text, completed: false }));
-
-            if (title.length < 5) return showMessage("Input requires more detail for objective title.", true);
-            if (steps.length === 0) return showMessage("Input requires at least one defined step.", true);
-            
-            addGoalBtn.disabled = true;
-
-            const goalsRef = getPrivateCollectionRef('goals');
-            try {
-                await addDoc(goalsRef, {
-                    title: title,
-                    steps: steps,
-                    created_at: serverTimestamp(),
-                });
-                showMessage(`New mission "${title}" saved!`, false);
-                goalTitleInput.value = '';
-                milestoneInputs.forEach(input => input.value = '');
-                logFeatureUse('Goal_Created'); // ANALYTICS LOGGING
-            } catch (e) {
-                console.error("Error adding goal:", e);
-                showMessage("Failed to save mission. Check console.", true);
-            } finally {
-                addGoalBtn.disabled = false;
-            }
-        });
-
-        window.toggleStep = async function(checkbox) {
-            if (!isAuthReady || !userId) return;
-
-            const goalId = checkbox.dataset.goalId;
-            const stepIndex = parseInt(checkbox.dataset.stepIndex);
-            const isCompleted = checkbox.checked;
-
-            const goalsRef = getPrivateCollectionRef('goals');
-            if (!goalsRef) return;
-            
-            try {
-                const goalDocRef = doc(goalsRef, goalId);
-                const goalSnapshot = await getDoc(goalDocRef);
-                const goalData = goalSnapshot.data();
-                
-                if (goalData && goalData.steps && goalData.steps[stepIndex]) {
-                    goalData.steps[stepIndex].completed = isCompleted;
-                    
-                    await updateDoc(goalDocRef, {
-                        steps: goalData.steps,
-                        last_updated: serverTimestamp(),
-                    });
-                    showMessage(isCompleted ? "Step marked COMPLETE!" : "Step reverted.", false);
-                    logFeatureUse(isCompleted ? 'Step_Completed' : 'Step_Reverted'); // ANALYTICS LOGGING
-                }
-            } catch (e) {
-                console.error("Error toggling step:", e);
-                showMessage("Failed to update mission step.", true);
-                checkbox.checked = !isCompleted; // Revert checkbox state on failure
-            }
-        };
-
-        window.deleteGoal = async function(goalId) {
-            if (!isAuthReady || !userId) return;
-
-            const goalsRef = getPrivateCollectionRef('goals');
-            if (!goalsRef) return;
-
-            const goalDocRef = doc(goalsRef, goalId);
-            try {
-                await deleteDoc(goalDocRef);
-                showMessage("Mission aborted successfully.", false);
-                logFeatureUse('Goal_Deleted'); // ANALYTICS LOGGING
-            } catch (e) {
-                console.error("Error deleting goal:", e);
-                showMessage("Failed to abort mission.", true);
-            }
-        };
-        
-        // --- COMMUNITY MUSTER FUNCTIONS ---
-
-        postMessageBtn.addEventListener('click', async () => {
-            if (!isAuthReady || !userId) return showMessage("Authentication not ready. Cannot post.", true);
-            
-            const message = huddlePostInput.value.trim();
-            if (message.length < 5) return showMessage("Message too short. Requires minimum 5 characters.", true);
-
-            postMessageBtn.disabled = true;
-            const huddleRef = getPublicCollectionRef('community_messages');
-            
-            try {
-                await addDoc(huddleRef, {
-                    user_id: userId,
-                    message: message,
-                    timestamp: serverTimestamp()
-                });
-                showMessage("Transmission sent to The Muster channel.", false);
-                huddlePostInput.value = ''; // Clear input
-                logFeatureUse('Muster_Post_Created'); // ANALYTICS LOGGING
-            } catch (e) {
-                console.error("Error posting message:", e);
-                showMessage("Transmission failed.", true);
-            } finally {
-                postMessageBtn.disabled = false;
-            }
-        });
-
-        function startCommunityListener() {
-            if (communityListener) communityListener();
-            
-            const huddleRef = getPublicCollectionRef('community_messages');
-            if (!huddleRef) return;
-            
-            // Query for all posts
-            const q = query(huddleRef);
-
-            communityListener = onSnapshot(q, (snapshot) => {
-                let messages = [];
-                snapshot.forEach(doc => {
-                    messages.push({ id: doc.id, ...doc.data() });
-                });
-                
-                // Sort in memory by timestamp (descending)
-                messages.sort((a, b) => (b.timestamp?.toMillis() || 0) - (a.timestamp?.toMillis() || 0));
-                
-                renderCommunityFeed(messages);
-            }, (error) => {
-                console.error("Error listening to community feed:", error);
-                communityFeedEl.innerHTML = '<p class="text-red-500 text-center py-4">:: ERROR: CHANNEL OFFLINE ::</p>';
-            });
-        }
-        
-        function renderCommunityFeed(messages) {
-            communityFeedEl.innerHTML = '';
-            
-            if (messages.length === 0) {
-                communityFeedEl.innerHTML = '<p class="text-center text-gray-500 py-4">:: NO TRANSMISSIONS. BE FIRST TO REPORT ::</p>';
-                return;
-            }
-
-            messages.forEach(msg => {
-                const date = msg.timestamp ? new Date(msg.timestamp.seconds * 1000).toLocaleString() : 'Processing...';
-                
-                // Highlight if the post belongs to the current user
-                const isMine = msg.user_id === userId;
-                const postClass = isMine ? 'bg-green-900/40 border-green-500' : 'bg-gray-700/50 border-gray-600';
-                const userTag = isMine ? 'UNIT ID (SELF)' : `UNIT ID ${msg.user_id.substring(0, 8)}...`;
-                
-                const messageHtml = `
-                    <div class="p-3 rounded-md border-l-4 shadow-sm ${postClass}">
-                        <p class="font-medium text-sm text-gray-100">${msg.message}</p>
-                        <p class="text-xs mt-1 text-gray-500">
-                            TRANSMITTER: 
-                            <span class="font-mono text-xs ${isMine ? 'accent-orange font-bold' : 'accent-green'}">
-                                ${userTag}
-                            </span>
-                             :: ${date}
-                        </p>
-                    </div>
-                `;
-                communityFeedEl.insertAdjacentHTML('beforeend', messageHtml);
-            });
-        }
-        
-        // --- EMPLOYMENT HUB FUNCTIONS ---
-
-        const mockTranslations = {
-            "68W": { title: "EMERGENCY MEDICAL TECHNICIAN / CLINICAL ASSISTANT", skills: ["Advanced Trauma Care", "Patient Triage", "Field Operations Management", "Basic Life Support (BLS)"] },
-            "EO": { title: "HEAVY EQUIPMENT OPERATOR / SITE MANAGER", skills: ["Earth Moving Equipment Operation", "Site Preparation & Grading", "Safety Compliance (OSHA)", "Maintenance & Repair Scheduling"] },
-            "PLATOON LEADER": { title: "PROJECT MANAGER / OPERATIONS DIRECTOR", skills: ["Strategic Planning (Agile/Waterfall)", "Team Leadership (20+ Personnel)", "Logistics & Supply Chain Management", "Budget Allocation & Oversight"] },
-            "LOGISTICS": { title: "SUPPLY CHAIN ANALYST / INVENTORY CONTROL MANAGER", skills: ["Warehouse Operations", "Inventory Management Systems (WMS)", "Risk Mitigation", "Global Distribution Planning"] },
-            "HR": { title: "HUMAN RESOURCES SPECIALIST / PERSONNEL ADMINISTRATOR", skills: ["Talent Acquisition", "Employee Relations", "Confidential Record Keeping", "Benefits Administration"] },
-            "INFANTRY": { title: "SECURITY SPECIALIST / TEAM LEADER", skills: ["Risk Assessment", "Conflict Resolution", "Executive Protection", "Cross-Functional Team Collaboration"] },
-        };
-        
-        translateBtn.addEventListener('click', () => {
-            const term = militaryTermInput.value.trim().toUpperCase();
-            
-            if (term.length < 2) {
-                return showMessage("INPUT MOS OR DUTY CODE (MIN 2 CHARS).", true);
-            }
-            
-            translateBtn.disabled = true;
-            translationResult.classList.add('hidden');
-            jobTitleOutput.textContent = '';
-            skillsOutput.innerHTML = '';
-            
-            logFeatureUse('Skills_Translator_Attempt', { term: term }); // ANALYTICS LOGGING
-
-            setTimeout(() => {
-                const translation = mockTranslations[term] || mockTranslations[Object.keys(mockTranslations).find(key => term.includes(key))];
-                
-                if (translation) {
-                    jobTitleOutput.textContent = `CIVILIAN ROLE: ${translation.title}`;
-                    
-                    let skillsList = '';
-                    translation.skills.forEach(skill => {
-                        skillsList += `<p class="text-sm font-semibold flex items-center accent-green"><span class="accent-orange mr-2 text-xl">•</span>${skill}</p>`;
-                    });
-                    
-                    skillsOutput.innerHTML = `<h4 class="font-bold mt-2 accent-green">CORE SKILLS TRANSLATED:</h4><div class="space-y-1">${skillsList}</div>`;
-                    translationResult.classList.remove('hidden');
-                    showMessage(`Translation executed successfully for "${term}".`, false);
-                    logFeatureUse('Skills_Translator_Success', { term: term, title: translation.title }); // ANALYTICS LOGGING
-                } else {
-                    jobTitleOutput.textContent = ":: DIRECT TRANSLATION FAILED ::";
-                    skillsOutput.innerHTML = "<p class='text-sm text-gray-500'>Try a common rating (e.g., HR, EO) or a general duty area (e.g., INFANTRY, LOGISTICS).</p>";
-                    translationResult.classList.remove('hidden');
-                    showMessage("TRANSLATION FAIL. RE-ENTER TERM.", true);
-                    logFeatureUse('Skills_Translator_Fail', { term: term }); // ANALYTICS LOGGING
-                }
-                translateBtn.disabled = false;
-            }, 500); // Simulate API loading time
-        });
-
-        // --- UI LOGIC ---
-        
-        // Log tab access
-        window.logTabAccess = function(tabName) {
-            logFeatureUse(`Tab_View_${tabName}`);
-        }
-
-        // Modal Open/Close Logic
-        document.getElementById('view-history-btn').addEventListener('click', () => {
-            document.getElementById('history-modal').classList.remove('hidden');
-            logFeatureUse('History_Modal_Opened'); // ANALYTICS LOGGING
-        });
-
-        document.getElementById('close-history-btn').addEventListener('click', () => {
-            document.getElementById('history-modal').classList.add('hidden');
-        });
-
-        // Tab Switching Logic
-        window.switchTab = function(tabName) {
-            const tabs = ['map', 'benefits', 'goals', 'muster', 'employment'];
-            tabs.forEach(tab => {
-                const content = document.getElementById(`content-${tab}`);
-                const button = document.getElementById(`tab-${tab}`);
-                
-                if (tab === tabName) {
-                    content.classList.remove('hidden');
-                    button.classList.add('tab-active');
-                    button.classList.remove('tab-inactive');
-                    logTabAccess(tabName.charAt(0).toUpperCase() + tabName.slice(1)); // Log tab view
-                } else {
-                    content.classList.add('hidden');
-                    button.classList.remove('tab-active');
-                    button.classList.add('tab-inactive');
-                }
-            });
-        };
-        
-        // Set initial tab to employment
-        window.onload = () => switchTab('employment'); 
-        
-        // --- GEOLOCATION AND EVENT LISTENERS (For Map Tab) ---
-
-        document.addEventListener('DOMContentLoaded', initFirebase);
-
-        document.getElementById('find-location-btn').addEventListener('click', () => {
+        function handleScanClick() {
+            // Pre-check authentication status
             if (!isAuthReady) {
-                showMessage("Please wait for secure session initialization.", true);
-                return;
+                 showMessage("SYSTEM NOT READY: Authentication required. Standby.", true);
+                 return;
             }
 
-            const button = document.getElementById('find-location-btn');
-            const loading = document.getElementById('loading-indicator');
-            const locationInfo = document.getElementById('current-location');
-            const resourceSection = document.getElementById('resource-section');
-            const latLongDisplay = document.getElementById('lat-long');
-
-            // 1. Disable button and show loading indicator
+            logFeatureUse('EXECUTE_SCAN_CLICKED');
+            
+            // Set UI state to scanning/loading
             button.disabled = true;
-            button.textContent = 'EXECUTING SCAN...';
+            button.textContent = 'SCANNING...';
             loading.classList.remove('hidden');
-            logFeatureUse('Resource_Search_Initiated'); // ANALYTICS LOGGING
-
-            // 2. Check for geolocation support
+            document.getElementById('status-message').classList.add('hidden');
+            
+            // Check for browser geolocation support
             if (!navigator.geolocation) {
-                showMessage("GEOLOCATION HARDWARE FAILURE.", true);
-                button.disabled = false;
-                button.textContent = 'EXECUTE LOCATION SCAN';
-                loading.classList.add('hidden');
+                showMessage("ERROR: GEOLOCATION IS NOT SUPPORTED BY THIS BROWSER.", true);
                 logFeatureUse('Resource_Search_Failed', { reason: 'No_Geolocation' });
+                resetUI();
                 return;
             }
 
-            // 3. Request location
+            // Request user's location via browser API
             navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const lat = position.coords.latitude.toFixed(4);
-                    const lon = position.coords.longitude.toFixed(4);
+                async (position) => {
+                    const { latitude, longitude } = position.coords;
                     
-                    // Success handling
-                    button.textContent = 'SCAN COMPLETE';
-                    loading.classList.add('hidden');
+                    logFeatureUse('COORDS_RETRIEVED', { coords: { latitude, longitude } });
                     
-                    latLongDisplay.textContent = `${lat}, ${lon}`;
-                    locationInfo.classList.remove('hidden');
-                    
-                    // Show resource section (The MVP delivery)
-                    resourceSection.classList.remove('hidden');
+                    button.textContent = 'ANALYZING LOCATION DATA...';
 
-                    // LOG THE SEARCH DATA TO FIRESTORE
-                    logSearch(lat, lon);
+                    try {
+                        // 1. Get analysis from Gemini
+                        const analysisData = await getResourceSuggestions(latitude, longitude);
+                        
+                        // 2. Save analysis to collaborative Firestore document
+                        await saveAnalysis(analysisData);
+                        
+                        // Note: The UI display (displayAnalysis) is handled by the onSnapshot listener after save
+                        showMessage("SCAN COMPLETE. ANALYSIS GENERATED AND SHARED.", false);
+                        logFeatureUse('MISSION_COMPLETE');
 
-                    // Re-enable button after a delay and change text back
-                    setTimeout(() => {
-                        button.disabled = false;
-                        button.textContent = 'RE-EXECUTE SCAN';
-                        switchTab('map'); // Switch back to map tab if successful
-                    }, 1000);
+                    } catch (error) {
+                        showMessage(`CRITICAL ERROR: ${error.message}`, true);
+                        logFeatureUse('RESOURCE_ANALYSIS_FAILED', { reason: error.message });
+                    } finally {
+                        // Reset UI regardless of success or failure
+                        resetUI();
+                    }
                 },
                 (error) => {
-                    // Error handling
+                    // Detailed Geolocation Error Handling
                     let errorMessage = "ERROR: UNABLE TO RETRIEVE COORDS.";
                     let failReason = 'Unknown';
+                    
                     if (error.code === error.PERMISSION_DENIED) {
-                        errorMessage = "ERROR: GEOLOCATION DENIED. ENABLE DEVICE SERVICES.";
+                        errorMessage = "ERROR: GEOLOCATION DENIED. PLEASE ENABLE DEVICE LOCATION SERVICES.";
                         failReason = 'Permission_Denied';
                     } else if (error.code === error.POSITION_UNAVAILABLE) {
-                        errorMessage = "ERROR: LOCATION DATA UNAVAILABLE.";
+                        errorMessage = "ERROR: LOCATION DATA UNAVAILABLE. TRY MOVING TO AN OPEN AREA.";
                         failReason = 'Position_Unavailable';
                     } else if (error.code === error.TIMEOUT) {
-                        errorMessage = "ERROR: LOCATION REQUEST TIMEOUT.";
+                        errorMessage = "ERROR: LOCATION REQUEST TIMEOUT. CHECK CONNECTION STRENGTH.";
                         failReason = 'Timeout';
                     }
                     
                     showMessage(errorMessage, true);
-                    
-                    // Reset UI
-                    button.disabled = false;
-                    button.textContent = 'EXECUTE LOCATION SCAN';
-                    loading.classList.add('hidden');
-                    locationInfo.classList.add('hidden');
-                    resourceSection.classList.add('hidden');
-                    logFeatureUse('Resource_Search_Failed', { reason: failReason }); // ANALYTICS LOGGING
+                    resetUI();
+                    logFeatureUse('Resource_Search_Failed', { reason: failReason });
                 },
+                // Geolocation options
                 {
                     enableHighAccuracy: true,
                     timeout: 5000,
                     maximumAge: 0
                 }
             );
+        }
+
+        // =========================================================================
+        // 6. INITIALIZATION AND LIFECYCLE MANAGEMENT
+        // =========================================================================
+
+        /**
+         * Performs all Firebase initialization and authentication logic.
+         */
+        async function initializeFirebase() {
+            if (!firebaseConfig) {
+                showMessage("FATAL ERROR: Firebase configuration is missing. Cannot initialize database.", true);
+                logFeatureUse('Firebase_Init_Failed', { reason: 'No_Config' });
+                return;
+            }
+
+            try {
+                // IMPORTANT: Set debug level for better console logging
+                setLogLevel('debug');
+                
+                // Initialize Firebase app and services
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                logFeatureUse('Firebase_Services_Initialized');
+
+                // --- Sign-In Logic (using initial token or falling back to anonymous) ---
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                    logFeatureUse('Auth_Token_Login_Attempt');
+                } else {
+                    await signInAnonymously(auth);
+                    logFeatureUse('Auth_Anonymous_Login_Attempt');
+                }
+
+                // --- Authentication State Change Listener ---
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        // User successfully signed in
+                        userId = user.uid;
+                        isAuthReady = true;
+                        authStatusDisplay.textContent = 'CONNECTED';
+                        authStatusDisplay.classList.replace('text-yellow-400', 'text-green-400');
+                        userIdDisplay.textContent = userId;
+                        logFeatureUse('User_Authenticated_Success');
+                        
+                        // Enable main functionality and start real-time sync
+                        resetUI(); 
+                        listenForAnalysis();
+                    } else {
+                        // User signed out (should not happen in Canvas, but good practice)
+                        userId = null;
+                        isAuthReady = false;
+                        authStatusDisplay.textContent = 'DISCONNECTED';
+                        authStatusDisplay.classList.replace('text-green-400', 'text-yellow-400');
+                        userIdDisplay.textContent = 'Not Signed In';
+                        resetUI();
+                    }
+                });
+
+            } catch (e) {
+                // Catch all initialization and sign-in errors
+                showMessage(`FATAL ERROR: System Initialization Failed. ${e.message}`, true);
+                logFeatureUse('Firebase_Init_Failed', { reason: e.message });
+                authStatusDisplay.textContent = 'FAILED';
+                authStatusDisplay.classList.replace('text-yellow-400', 'text-red-400');
+                userIdDisplay.textContent = 'System Halted';
+            }
+        }
+
+
+        // --- APPLICATION ENTRY POINT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeFirebase();
+            button.addEventListener('click', handleScanClick);
+            logFeatureUse('DOM_Content_Loaded');
         });
     </script>
 </body>
