@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mission Ready Resources - Tactical Display</title>
+    <title>The Muster (Veteran Resource Center) - Tactical Display</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -14,8 +14,8 @@
             color: #e2e8f0; /* Off-White/Light Gray text */
             
             /* === TACTICAL FLAG BACKGROUND FIX === */
-            /* The image must be saved in the same folder as this HTML file and named: tattered_flag.png */
-            background-image: url('tattered_flag.png'); 
+            /* INSTRUCTIONS: Replace the value below with the public URL (https://...) of your flag image. */
+            background-image: url('YOUR_PUBLIC_IMAGE_URL_HERE'); 
             background-size: cover;
             background-attachment: fixed; 
             background-position: center;
@@ -62,7 +62,7 @@
 
         /* INPUTS - UPDATED TEXT COLOR TO ARMY GREEN (text-green-400) */
         input[type="text"], textarea {
-            @apply bg-[#1a202c] border-2 border-green-400 text-green-400 p-3 rounded-md focus:border-orange-500 focus:ring-orange-500;
+            @apply bg-[#1a202c] border-2 border-green-400 text-green-400 p-3 rounded-md focus:border-orange-500 focus:ring-orange-500 w-full;
         }
 
         /* MISC */
@@ -90,6 +90,18 @@
             align-items: center;
             z-index: 50;
         }
+        .message-box {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 60;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .message-box.show {
+            opacity: 1;
+        }
         
     </style>
 </head>
@@ -110,7 +122,6 @@
 
     <!-- Authentication Status -->
     <div id="auth-status" class="bg-green-900/40 text-green-400 p-2 text-xs font-mono text-center border-y border-green-600/50">
-        <!-- Status will be updated by JS -->
         :: INITIALIZING SECURE LINK ::
     </div>
 
@@ -136,11 +147,11 @@
     <!-- Main Content Area -->
     <main class="flex-grow p-4 space-y-4">
         
-        <!-- --- TAB 1: RESOURCE MAP CONTENT (Hidden by default) --- -->
+        <!-- --- TAB 1: RESOURCE MAP CONTENT --- -->
         <div id="content-map" class="hidden space-y-4">
             <!-- History Button -->
             <button id="view-history-btn" class="btn-secondary w-full" disabled>
-                ACCESS LOG HISTORY (0 RECORDS)
+                ACCESS LOG HISTORY (LOADING...)
             </button>
 
             <!-- Geo-Location Card -->
@@ -167,7 +178,7 @@
                 <p class="text-sm text-gray-400">STATUS: 4 critical assets identified.</p>
                 
                 <ul id="resource-list" class="space-y-4">
-                    <!-- Mock Data Items -->
+                    <!-- Mock Data Items (unchanged, as resources are static for this MVP) -->
                     <li class="border-b border-gray-600 pb-3"><div class="flex items-center space-x-3"><span class="text-2xl accent-orange">🏠</span><div class="flex-grow"><p class="font-bold text-lg">EMERGENCY SHELTER</p><p class="text-sm text-gray-400">Op. Safe Haven Annex</p></div><a href="#" class="accent-green font-semibold text-sm hover:text-green-300">ROUTE</a></div><p class="text-xs text-gray-500 mt-1">Focuses on crisis shelter and long-term placement.</p></li>
                     <li class="border-b border-gray-600 pb-3"><div class="flex items-center space-x-3"><span class="text-2xl accent-green">🍎</span><div class="flex-grow"><p class="font-bold text-lg">FOOD & NUTRITION</p><p class="text-sm text-gray-400">Logistics Depot Gamma</p></div><a href="#" class="accent-green font-semibold text-sm hover:text-green-300">ROUTE</a></div><p class="text-xs text-gray-500 mt-1">Access to immediate food packages and meal programs.</p></li>
                     <li class="border-b border-gray-600 pb-3"><div class="flex items-center space-x-3"><span class="text-2xl text-purple-400">🧠</span><div class="flex-grow"><p class="font-bold text-lg">MENTAL HEALTH HOT ZONE</p><p class="text-sm text-gray-400">Counseling Post Bravo</p></div><a href="#" class="accent-green font-semibold text-sm hover:text-green-300">ROUTE</a></div><p class="text-xs text-gray-500 mt-1">Immediate, confidential counseling services.</p></li>
@@ -176,7 +187,7 @@
             </div>
         </div>
         
-        <!-- --- TAB 2: BENEFITS NAVIGATOR CONTENT (Hidden by default) --- -->
+        <!-- --- TAB 2: BENEFITS NAVIGATOR CONTENT (Unchanged) --- -->
         <div id="content-benefits" class="hidden space-y-6">
             <h2 class="text-2xl font-bold accent-green border-b border-gray-600 pb-2 font-mono">BENEFITS PROTOCOL: CLAIMS</h2>
             <p class="text-gray-400 text-sm">Filing a disability claim is mission-critical. Use this 4-step sequence.</p>
@@ -234,10 +245,10 @@
             <p class="text-xs text-gray-500 pt-2">:: DISCLOSURE: THIS IS A GUIDANCE TOOL, NOT OFFICIAL VA DIRECTIVE. CONSULT VSO. ::</p>
         </div>
 
-        <!-- --- TAB 3: MISSION GOAL TRACKER CONTENT (Hidden by default) --- -->
+        <!-- --- TAB 3: MISSION GOAL TRACKER CONTENT (Now using Firestore) --- -->
         <div id="content-goals" class="hidden space-y-4">
             <h2 class="text-2xl font-bold accent-green border-b border-gray-600 pb-2 font-mono">MISSION PLANNER</h2>
-            <p class="text-gray-400 text-sm">Define your objective and track your steps. Progress is logged securely.</p>
+            <p class="text-gray-400 text-sm">Define your objective and track your steps. Progress is logged **in your secure private cloud**.</p>
             
             <!-- Add New Goal Form -->
             <div class="panel p-4 space-y-3">
@@ -257,17 +268,17 @@
             <div class="space-y-3">
                 <h3 class="text-xl font-semibold accent-green border-b border-gray-600 pb-2">ACTIVE MISSIONS</h3>
                 <div id="goal-list-container" class="space-y-4">
-                    <p id="goals-loading" class="text-center text-gray-500 py-4">Awaiting missions... Please sign in.</p>
+                    <p id="goals-loading" class="text-center text-gray-500 py-4">Awaiting missions... Initializing link.</p>
                 </div>
             </div>
 
         </div>
 
-        <!-- --- TAB 4: COMMUNITY MUSTER (Hidden by default) --- -->
+        <!-- --- TAB 4: COMMUNITY MUSTER (Now using Firestore) --- -->
         <div id="content-muster" class="hidden space-y-4">
             <h2 class="text-2xl font-bold accent-green border-b border-gray-600 pb-2 font-mono">THE MUSTER (SECURE CHANNEL)</h2>
-            <p class="text-gray-400 text-sm">Assemble, share intelligence, and connect. Your **UNIT ID** is logged with every transmission.</p>
-
+            <p class="text-gray-400 text-sm">Post tactical status updates and community announcements.</p>
+            
             <!-- Post New Message -->
             <div class="panel p-4 space-y-3">
                 <textarea id="huddle-post-input" placeholder="Transmit message (Max 200 chars)" rows="2" maxlength="200"></textarea>
@@ -278,16 +289,16 @@
 
             <!-- Community Feed -->
             <div id="community-feed" class="space-y-3 max-h-[60vh] overflow-y-auto">
-                <p id="feed-loading" class="text-center text-gray-500 py-4">:: LOADING CHANNEL FEED ::</p>
+                <p id="muster-loading" class="text-center text-gray-500 py-4">:: CHANNEL STATUS: AWAITING LINK ::</p>
             </div>
         </div>
         
-        <!-- --- TAB 5: EMPLOYMENT HUB (Active by default) --- -->
+        <!-- --- TAB 5: EMPLOYMENT HUB (Unchanged) --- -->
         <div id="content-employment" class="space-y-6">
             <h2 class="text-2xl font-bold accent-green border-b border-gray-600 pb-2 font-mono">EMPLOYMENT HUB: SKILLS TRANSLATOR</h2>
             <p class="text-gray-400 text-sm">Translate MOS/Rate/Duty into **Civilian Credentials** for maximum resume impact.</p>
 
-            <!-- Translator Tool -->
+            <!-- Translator Tool (Unchanged) -->
             <div class="panel p-4 space-y-4">
                 <h3 class="text-xl font-semibold accent-green">MILITARY TO CIVILIAN TRANSLATION</h3>
                 
@@ -304,15 +315,15 @@
                 </div>
             </div>
 
-            <!-- Employment Resources Section -->
+            <!-- Employment Resources Section (Unchanged) -->
             <div class="space-y-3">
                 <h3 class="text-xl font-semibold accent-green border-b border-gray-600 pb-2">TOP EMPLOYMENT ASSETS</h3>
                 <ul class="space-y-3 text-sm text-gray-300">
                     <li class="p-3 bg-gray-700 rounded-md border-l-4 border-green-500">
-                        <a href="#" class="font-bold text-green-400 hover:text-green-300">LinkedIn for Veterans:</a> Priority Access to job seekers.
+                        <a href="https://www.linkedin.com/in/vets" target="_blank" class="font-bold text-green-400 hover:text-green-300">LinkedIn for Veterans:</a> Priority Access to job seekers.
                     </li>
                     <li class="p-3 bg-gray-700 rounded-md border-l-4 border-green-500">
-                        <a href="#" class="font-bold text-green-400 hover:text-green-300">Dept. of Labor VETS:</a> Career training and workshops.
+                        <a href="https://www.dol.gov/agencies/vets" target="_blank" class="font-bold text-green-400 hover:text-green-300">Dept. of Labor VETS:</a> Career training and workshops.
                     </li>
                 </ul>
             </div>
@@ -321,16 +332,16 @@
 
         
         <!-- Message/Alert Container (Used instead of alert()) -->
-        <div id="message-box" class="fixed bottom-0 left-0 right-0 p-4 hidden">
+        <div id="message-box" class="message-box p-4 hidden">
             <div id="message-content" class="bg-red-500 text-white p-3 rounded-md shadow-xl text-sm font-medium"></div>
         </div>
 
     <!-- History Modal -->
     <div id="history-modal" class="modal-overlay hidden">
         <div class="panel rounded-xl p-6 w-11/12 max-w-md max-h-[80vh] flex flex-col">
-            <h3 class="text-2xl font-bold accent-green mb-4 border-b border-gray-600 pb-2">ACCESS LOG: HISTORY</h3>
+            <h3 class="text-2xl font-bold accent-green mb-4 border-b border-gray-600 pb-2">ACCESS LOG: HISTORY (SECURE)</h3>
             <div id="history-list" class="flex-grow overflow-y-auto space-y-3 pr-2">
-                <!-- History items will be inserted here -->
+                <p class="text-center text-gray-500 mt-4">:: LOADING LOGS ::</p>
             </div>
             <button id="close-history-btn" class="mt-4 btn-secondary">
                 CLOSE LOG
@@ -338,43 +349,110 @@
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
+    <!-- Firebase SDKs and Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, collection, addDoc, query, updateDoc, onSnapshot, serverTimestamp, enableIndexedDbPersistence, setLogLevel, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // --- GLOBAL FIREBASE & APP VARIABLES ---
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, orderBy, serverTimestamp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         
-        let db;
-        let auth;
+        setLogLevel('Debug');
+        
+        // --- FIREBASE INITIALIZATION AND AUTH ---
+        let db, auth;
         let userId = null;
         let isAuthReady = false;
-        let historyListener = null;
-        let goalListener = null;
-        let communityListener = null; 
+        
+        // =========================================================================
+        // === CRITICAL STEP: HARD-CODED FIREBASE CONFIGURATION ====================
+        // You MUST replace the JSON below with your actual Firebase Web App config 
+        // keys from the Firebase console before deploying outside the Canvas.
+        // =========================================================================
+        const appId = 'veteran-resource-app'; // Use your project ID here if you want
+        
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDxWnKmEvg-JFxXopujpYiDQ98bee5n46E",
+  authDomain: "vetchat-prod.firebaseapp.com",
+  projectId: "vetchat-prod",
+  storageBucket: "vetchat-prod.firebasestorage.app",
+  messagingSenderId: "511042065899",
+  appId: "1:511042065899:web:0bae665e65e3179e5ef5ae",
+  measurementId: "G-QNSG8PJFPF"
+};
+        // =========================================================================
 
-        // DOM Elements
+        // The initialAuthToken is only provided by the Canvas environment.
+        // Since we are now running outside, we default to anonymous sign-in.
+        const initialAuthToken = null; 
+
         const authStatusEl = document.getElementById('auth-status');
         const findLocationBtn = document.getElementById('find-location-btn');
-        const viewHistoryBtn = document.getElementById('view-history-btn');
-        const historyListEl = document.getElementById('history-list');
-        const goalListContainerEl = document.getElementById('goal-list-container');
         const addGoalBtn = document.getElementById('add-goal-btn');
-        const goalTitleInput = document.getElementById('goal-title');
-        const milestoneInputs = document.getElementById('milestone-inputs').querySelectorAll('input');
         const postMessageBtn = document.getElementById('post-message-btn');
-        const huddlePostInput = document.getElementById('huddle-post-input');
-        const communityFeedEl = document.getElementById('community-feed');
-        const translateBtn = document.getElementById('translate-btn');
-        const militaryTermInput = document.getElementById('military-term-input');
-        const translationResult = document.getElementById('translation-result');
-        const jobTitleOutput = document.getElementById('job-title-output');
-        const skillsOutput = document.getElementById('skills-output');
 
+        // Check if the config is using the default placeholder keys
+        if (firebaseConfig.apiKey === "YOUR_API_KEY_HERE" || !firebaseConfig.projectId) {
+             authStatusEl.innerHTML = `:: ERROR: CONFIG MISSING. PLEASE PASTE YOUR FIREBASE KEYS INTO THE CODE. ::`;
+        } else {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                // 1. Sign In
+                async function authenticate() {
+                    try {
+                        if (initialAuthToken) {
+                            // This path is now effectively disabled outside Canvas
+                            await signInWithCustomToken(auth, initialAuthToken);
+                        } else {
+                            // Sign in anonymously for all public deployments
+                            await signInAnonymously(auth);
+                        }
+                    } catch (error) {
+                        console.error("Firebase Authentication Error:", error);
+                        showMessage("AUTH ERROR: Could not establish secure link.", true);
+                    }
+                }
+                
+                // 2. Auth State Listener
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        isAuthReady = true;
+                        authStatusEl.innerHTML = `:: SECURE LINK ESTABLISHED - UNIT ID: <span class="accent-orange">${userId.substring(0, 8)}...</span> ::`;
+                        
+                        // Enable UI elements that depend on auth/firestore
+                        findLocationBtn.disabled = false;
+                        addGoalBtn.disabled = false;
+                        postMessageBtn.disabled = false;
+                        document.getElementById('view-history-btn').disabled = false;
+                        
+                        // Start real-time listeners for the user's data
+                        startHistoryListener();
+                        startGoalListener();
+                        startMusterListener();
+
+                    } else {
+                        // This typically shouldn't happen after the initial sign-in attempt
+                        userId = null;
+                        isAuthReady = false;
+                        authStatusEl.innerHTML = `:: LINK FAILURE. Attempting reconnection. ::`;
+                        
+                        // Disable UI elements
+                        findLocationBtn.disabled = true;
+                        addGoalBtn.disabled = true;
+                        postMessageBtn.disabled = true;
+                        document.getElementById('view-history-btn').disabled = true;
+                    }
+                });
+                
+                authenticate();
+            } catch (error) {
+                console.error("Firebase Init Error:", error);
+                authStatusEl.innerHTML = `:: ERROR: CONFIG FAILURE. Firebase services unavailable. ::`;
+            }
+        }
 
         // Utility to show custom message boxes
         function showMessage(text, isError = false) {
@@ -388,180 +466,93 @@
             }
             
             msgContent.textContent = text;
+            msgBox.classList.add('show');
             msgBox.classList.remove('hidden');
 
             setTimeout(() => {
-                msgBox.classList.add('hidden');
+                msgBox.classList.remove('show');
+                setTimeout(() => msgBox.classList.add('hidden'), 300);
             }, 3000);
         }
-
-        // --- CORE FUNCTIONS ---
         
-        // Function to set up secure path for private user data
-        function getPrivateCollectionRef(collectionName) {
-            if (!db || !userId) return null;
-            return collection(db, 'artifacts', appId, 'users', userId, collectionName);
-        }
-        
-        // Function for PUBLIC, shared data (the Muster)
-        function getPublicCollectionRef(collectionName) {
-            if (!db) return null;
-            return collection(db, 'artifacts', appId, 'public', 'data', collectionName);
-        }
+        // --- FIRESTORE UTILITY FUNCTIONS ---
 
-        // Function for ANALYTICS LOGGING
-        function getAnalyticsCollectionRef(collectionName) {
-            if (!db) return null;
-            // Use a public collection for general, aggregated analytics data
-            return collection(db, 'artifacts', appId, 'public', 'data', collectionName); 
-        }
+        // Gets the collection path for a user's private data
+        const getUserCollectionRef = (collectionName) => {
+            return collection(db, `artifacts/${appId}/users/${userId}/${collectionName}`);
+        };
 
-        async function logFeatureUse(featureName, details = {}) {
-            if (!db) return; 
-            const analyticsRef = getAnalyticsCollectionRef('usage_metrics');
-            if (!analyticsRef) return; // Guard for uninitialized db
-
-            try {
-                await addDoc(analyticsRef, {
-                    user_id: userId, 
-                    event: featureName,
-                    details: details,
-                    timestamp: serverTimestamp()
-                });
-            } catch (e) {
-                // Check for permission errors specifically in the analytics logging to reduce console noise.
-                if (e.message && e.message.includes('Missing or insufficient permissions')) {
-                    console.warn(`[ANALYTICS] Failed to log usage event '${featureName}' due to security rules.`);
-                } else {
-                    console.error("Failed to log event:", e);
-                }
-            }
-        }
-        // --- END ANALYTICS LOGGING FUNCTION ---
+        // Gets the collection path for public, shared data
+        const getPublicCollectionRef = (collectionName) => {
+            return collection(db, `artifacts/${appId}/public/data/${collectionName}`);
+        };
 
 
-        // --- FIREBASE INITIALIZATION AND AUTHENTICATION ---
-        async function initFirebase() {
-            try {
-                // setLogLevel('debug'); // Uncomment for debugging
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-
-                try {
-                    await enableIndexedDbPersistence(db);
-                } catch (err) {
-                    console.warn("Firestore persistence failed:", err);
-                }
-                
-                await new Promise((resolve) => {
-                    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-                        if (user) {
-                            userId = user.uid;
-                            authStatusEl.innerHTML = `:: SECURE LINK ESTABLISHED - UNIT ID: <span class="accent-orange">${userId}</span> ::`;
-                            
-                            // Enable all interactive elements now that auth is ready
-                            findLocationBtn.disabled = false;
-                            addGoalBtn.disabled = false;
-                            postMessageBtn.disabled = false;
-
-                            isAuthReady = true;
-                            startHistoryListener();
-                            startGoalListener();
-                            startCommunityListener(); 
-                            unsubscribe();
-                            resolve();
-                        } else {
-                            try {
-                                if (initialAuthToken) {
-                                    await signInWithCustomToken(auth, initialAuthToken);
-                                } else {
-                                    await signInAnonymously(auth);
-                                }
-                            } catch (e) {
-                                console.error("Firebase Sign-in Failed:", e);
-                                authStatusEl.textContent = ":: ERROR: AUTHENTICATION FAILURE. DATA LOGGING DISABLED. ::";
-                                showMessage("Authentication failure. Cannot save logs.", true);
-                                isAuthReady = false;
-                                resolve();
-                            }
-                        }
-                    });
-                });
-
-            } catch (error) {
-                console.error("Firebase Initialization Error:", error);
-                authStatusEl.textContent = ":: ERROR: SYSTEM OFFLINE. CHECK FIREBASE LINK. ::";
-                isAuthReady = false;
-            }
-        }
-        
-        // --- HISTORY TRACKER FUNCTIONS ---
+        // --- HISTORY TRACKER FUNCTIONS (using Firestore) ---
+        const viewHistoryBtn = document.getElementById('view-history-btn');
+        const historyListEl = document.getElementById('history-list');
 
         async function logSearch(lat, lon) {
             if (!isAuthReady || !userId) return;
-            const historyRef = getPrivateCollectionRef('search_history');
-            if (!historyRef) return;
-
+            
+            const historyRef = getUserCollectionRef('historyLogs');
+            
             try {
                 await addDoc(historyRef, {
                     timestamp: serverTimestamp(),
                     latitude: lat,
                     longitude: lon,
                     mock_resources_found: 4,
-                    location_description: "San Antonio Area (MOCK)"
+                    location_description: "Local Area Scan"
                 });
-                showMessage("Target identified. Mission log updated.", false);
-                logFeatureUse('Resource_Search_Success'); // ANALYTICS LOGGING
             } catch (e) {
-                console.error("Error logging search to Firestore:", e);
-                showMessage("Error saving mission log.", true);
+                console.error("Error adding document: ", e);
+                showMessage("Database error: Could not log search history.", true);
             }
         }
 
         function startHistoryListener() {
-            if (historyListener) historyListener();
+            if (!isAuthReady || !userId) return;
 
-            const historyRef = getPrivateCollectionRef('search_history');
-            if (!historyRef) return;
-
-            const q = query(historyRef); 
-
-            historyListener = onSnapshot(q, (snapshot) => {
-                let historyItems = [];
+            const historyRef = getUserCollectionRef('historyLogs');
+            
+            // Note: We avoid orderBy here to prevent index requirement errors, sorting in memory
+            onSnapshot(query(historyRef), (snapshot) => {
+                const historyItems = [];
                 snapshot.forEach(doc => {
                     historyItems.push({ id: doc.id, ...doc.data() });
                 });
                 
+                // Sort in memory by timestamp descending
                 historyItems.sort((a, b) => (b.timestamp?.toMillis() || 0) - (a.timestamp?.toMillis() || 0));
+                
                 updateHistoryUI(historyItems);
             }, (error) => {
-                console.error("Error listening to history:", error);
-                historyListEl.innerHTML = '<p class="text-red-500">:: ERROR: FAILED TO RETRIEVE LOGS ::</p>';
-                viewHistoryBtn.disabled = true;
+                console.error("History Listener Error:", error);
+                historyListEl.innerHTML = '<p class="text-center text-red-400 mt-4">:: HISTORY LOG ERROR ::</p>';
             });
         }
 
         function updateHistoryUI(historyItems) {
-            viewHistoryBtn.disabled = false;
             viewHistoryBtn.textContent = `ACCESS LOG HISTORY (${historyItems.length} RECORDS)`;
             
             historyListEl.innerHTML = '';
             
             if (historyItems.length === 0) {
-                historyListEl.innerHTML = '<p class="text-center text-gray-500 mt-4">:: NO LOGS FOUND ::</p>';
+                historyListEl.innerHTML = '<p class="text-center text-gray-500 mt-4">:: NO LOGS FOUND IN DATABASE ::</p>';
                 return;
             }
 
             historyItems.forEach((item, index) => {
-                const date = item.timestamp ? new Date(item.timestamp.seconds * 1000).toLocaleString() : 'Saving...';
+                // Handle serverTimestamp which might be null before first sync
+                const date = item.timestamp ? new Date(item.timestamp.toMillis()).toLocaleString() : 'Pending Sync';
                 
                 const itemHtml = `
                     <div class="bg-gray-700/50 p-3 rounded-md border border-gray-600">
                         <p class="accent-green font-semibold">LOG ENTRY #${historyItems.length - index}</p>
                         <p class="text-sm text-gray-400">TIMESTAMP: ${date}</p>
                         <p class="text-sm text-gray-400 mt-1">
-                            <span class="font-medium">COORDS:</span> ${item.latitude}, ${item.longitude}
+                            <span class="font-medium">COORDS:</span> ${item.latitude?.toFixed(4) || 'N/A'}, ${item.longitude?.toFixed(4) || 'N/A'}
                         </p>
                         <p class="text-xs accent-orange mt-1">Found ${item.mock_resources_found} assets in the ${item.location_description} area.</p>
                     </div>
@@ -570,36 +561,88 @@
             });
         }
 
-        // --- GOAL TRACKER FUNCTIONS ---
+        // --- GOAL TRACKER FUNCTIONS (using Firestore) ---
+        const goalListContainerEl = document.getElementById('goal-list-container');
+        const goalTitleInput = document.getElementById('goal-title');
+        const milestoneInputs = document.getElementById('milestone-inputs').querySelectorAll('input');
+        const goalsLoadingEl = document.getElementById('goals-loading');
+
+        addGoalBtn.addEventListener('click', async () => {
+            if (!isAuthReady || !userId) return showMessage("Authentication required to save mission.", true);
+            
+            const title = goalTitleInput.value.trim();
+            const steps = Array.from(milestoneInputs)
+                                .map(input => input.value.trim())
+                                .filter(text => text.length > 0)
+                                .map(text => ({ text: text, completed: false }));
+
+            if (title.length < 5) return showMessage("Input requires more detail for objective title.", true);
+            if (steps.length === 0) return showMessage("Input requires at least one defined step.", true);
+            
+            addGoalBtn.disabled = true;
+
+            const goalsRef = getUserCollectionRef('missionGoals');
+
+            try {
+                await addDoc(goalsRef, {
+                    title: title,
+                    steps: JSON.stringify(steps), // Serialize steps array to string
+                    created_at: serverTimestamp(),
+                });
+                showMessage(`New mission "${title}" saved!`, false);
+                goalTitleInput.value = '';
+                milestoneInputs.forEach(input => input.value = '');
+            } catch (e) {
+                console.error("Error adding goal: ", e);
+                showMessage("Database error: Could not save mission.", true);
+            } finally {
+                addGoalBtn.disabled = false;
+            }
+        });
 
         function startGoalListener() {
-            if (goalListener) goalListener();
+            if (!isAuthReady || !userId) return;
 
-            const goalsRef = getPrivateCollectionRef('goals');
-            if (!goalsRef) return;
+            const goalsRef = getUserCollectionRef('missionGoals');
             
-            const q = query(goalsRef); 
-
-            goalListener = onSnapshot(q, (snapshot) => {
-                let goals = [];
+            onSnapshot(query(goalsRef), (snapshot) => {
+                const goals = [];
                 snapshot.forEach(doc => {
-                    goals.push({ id: doc.id, ...doc.data() });
+                    const data = doc.data();
+                    let stepsParsed = [];
+                    try {
+                        // Deserialize steps string back to array
+                        stepsParsed = JSON.parse(data.steps);
+                    } catch (e) {
+                        console.error("Error parsing steps JSON:", e);
+                    }
+                    goals.push({ id: doc.id, ...data, steps: stepsParsed });
                 });
                 
-                goals.sort((a, b) => (b.created_at?.toMillis() || 0) - (a.created_at?.toMillis() || 0));
+                // Sort goals by completion status (incomplete first)
+                goals.sort((a, b) => {
+                    const aComplete = a.steps.filter(s => s.completed).length === a.steps.length;
+                    const bComplete = b.steps.filter(s => s.completed).length === b.steps.length;
+                    if (aComplete === bComplete) return 0;
+                    return aComplete ? 1 : -1; // Incomplete (false) comes before complete (true)
+                });
+
                 renderGoals(goals);
             }, (error) => {
-                console.error("Error listening to goals:", error);
-                goalListContainerEl.innerHTML = '<p class="text-red-500 text-center py-4">:: ERROR: FAILED TO LOAD MISSIONS ::</p>';
+                console.error("Goals Listener Error:", error);
+                goalsLoadingEl.textContent = ':: MISSION DATA ERROR ::';
             });
         }
 
         function renderGoals(goals) {
             goalListContainerEl.innerHTML = '';
-
+            
             if (goals.length === 0) {
-                goalListContainerEl.innerHTML = '<p class="text-center text-gray-500 py-4">:: NO ACTIVE MISSIONS. SET OBJECTIVES ABOVE ::</p>';
+                goalsLoadingEl.textContent = ':: NO ACTIVE MISSIONS. SET OBJECTIVES ABOVE ::';
+                if (goalsLoadingEl.parentElement) goalListContainerEl.appendChild(goalsLoadingEl);
                 return;
+            } else if (goalsLoadingEl.parentElement) {
+                 goalsLoadingEl.remove();
             }
 
             goals.forEach(goal => {
@@ -613,14 +656,14 @@
                     const lineThrough = step.completed ? 'line-through text-gray-500' : 'text-gray-300';
                     stepsHtml += `
                         <label class="flex items-center space-x-2 py-1 cursor-pointer">
-                            <input type="checkbox" data-goal-id="${goal.id}" data-step-index="${index}" ${checked} class="form-checkbox h-4 w-4 text-green-400 rounded bg-gray-700/50" onchange="toggleStep(this)">
+                            <input type="checkbox" data-goal-id="${goal.id}" data-step-index="${index}" ${checked} class="form-checkbox h-4 w-4 text-green-400 rounded bg-gray-700/50" onchange="window.toggleStep(this)">
                             <span class="text-sm ${lineThrough}">${step.text}</span>
                         </label>
                     `;
                 });
 
                 const goalHtml = `
-                    <div class="panel p-4 border-t-4 border-green-500">
+                    <div class="panel p-4 border-t-4 ${progress === 100 ? 'border-orange-500' : 'border-green-500'}">
                         <div class="flex justify-between items-start mb-2">
                             <h4 class="text-lg font-extrabold accent-orange">${goal.title}</h4>
                             <span class="text-xs text-gray-400">${progress}% COMPLETE</span>
@@ -631,45 +674,12 @@
                         <div class="space-y-1">
                             ${stepsHtml}
                         </div>
-                        <button onclick="deleteGoal('${goal.id}')" class="text-red-500 hover:text-red-300 text-xs mt-3 float-right">ABORT MISSION</button>
+                        <button onclick="window.deleteGoal('${goal.id}')" class="text-red-500 hover:text-red-300 text-xs mt-3 float-right">ABORT MISSION</button>
                     </div>
                 `;
                 goalListContainerEl.insertAdjacentHTML('beforeend', goalHtml);
             });
         }
-
-        addGoalBtn.addEventListener('click', async () => {
-            if (!isAuthReady || !userId) return showMessage("Authentication not ready. Cannot save goal.", true);
-
-            const title = goalTitleInput.value.trim();
-            const steps = Array.from(milestoneInputs)
-                                .map(input => input.value.trim())
-                                .filter(text => text.length > 0)
-                                .map(text => ({ text: text, completed: false }));
-
-            if (title.length < 5) return showMessage("Input requires more detail for objective title.", true);
-            if (steps.length === 0) return showMessage("Input requires at least one defined step.", true);
-            
-            addGoalBtn.disabled = true;
-
-            const goalsRef = getPrivateCollectionRef('goals');
-            try {
-                await addDoc(goalsRef, {
-                    title: title,
-                    steps: steps,
-                    created_at: serverTimestamp(),
-                });
-                showMessage(`New mission "${title}" saved!`, false);
-                goalTitleInput.value = '';
-                milestoneInputs.forEach(input => input.value = '');
-                logFeatureUse('Goal_Created'); // ANALYTICS LOGGING
-            } catch (e) {
-                console.error("Error adding goal:", e);
-                showMessage("Failed to save mission. Check console.", true);
-            } finally {
-                addGoalBtn.disabled = false;
-            }
-        });
 
         window.toggleStep = async function(checkbox) {
             if (!isAuthReady || !userId) return;
@@ -678,134 +688,124 @@
             const stepIndex = parseInt(checkbox.dataset.stepIndex);
             const isCompleted = checkbox.checked;
 
-            const goalsRef = getPrivateCollectionRef('goals');
-            if (!goalsRef) return;
-            
+            const goalDocRef = doc(getUserCollectionRef('missionGoals'), goalId);
+
             try {
-                const goalDocRef = doc(goalsRef, goalId);
-                const goalSnapshot = await getDoc(goalDocRef);
-                const goalData = goalSnapshot.data();
-                
-                if (goalData && goalData.steps && goalData.steps[stepIndex]) {
-                    goalData.steps[stepIndex].completed = isCompleted;
+                // Fetch the current document to safely update the steps array
+                const docSnap = await getDoc(goalDocRef);
+                if (docSnap.exists()) {
+                    let steps = JSON.parse(docSnap.data().steps);
                     
-                    await updateDoc(goalDocRef, {
-                        steps: goalData.steps,
-                        last_updated: serverTimestamp(),
-                    });
-                    showMessage(isCompleted ? "Step marked COMPLETE!" : "Step reverted.", false);
-                    logFeatureUse(isCompleted ? 'Step_Completed' : 'Step_Reverted'); // ANALYTICS LOGGING
+                    if (steps[stepIndex]) {
+                        steps[stepIndex].completed = isCompleted;
+                        
+                        await updateDoc(goalDocRef, {
+                            steps: JSON.stringify(steps)
+                        });
+                        showMessage(isCompleted ? "Step marked COMPLETE!" : "Step reverted.", false);
+                    }
                 }
             } catch (e) {
                 console.error("Error toggling step:", e);
-                showMessage("Failed to update mission step.", true);
-                checkbox.checked = !isCompleted; // Revert checkbox state on failure
+                showMessage("Database error: Could not update mission step.", true);
+                checkbox.checked = !isCompleted; // Revert checkbox on UI failure
             }
         };
 
         window.deleteGoal = async function(goalId) {
             if (!isAuthReady || !userId) return;
 
-            const goalsRef = getPrivateCollectionRef('goals');
-            if (!goalsRef) return;
+            const goalDocRef = doc(getUserCollectionRef('missionGoals'), goalId);
 
-            const goalDocRef = doc(goalsRef, goalId);
             try {
                 await deleteDoc(goalDocRef);
                 showMessage("Mission aborted successfully.", false);
-                logFeatureUse('Goal_Deleted'); // ANALYTICS LOGGING
             } catch (e) {
                 console.error("Error deleting goal:", e);
-                showMessage("Failed to abort mission.", true);
+                showMessage("Database error: Could not abort mission.", true);
             }
         };
-        
-        // --- COMMUNITY MUSTER FUNCTIONS ---
 
+        // --- COMMUNITY MUSTER (using Firestore Public Data) ---
+        const huddlePostInput = document.getElementById('huddle-post-input');
+        const communityFeedEl = document.getElementById('community-feed');
+        const musterLoadingEl = document.getElementById('muster-loading');
+        
         postMessageBtn.addEventListener('click', async () => {
-            if (!isAuthReady || !userId) return showMessage("Authentication not ready. Cannot post.", true);
+            if (!isAuthReady || !userId) return showMessage("Authentication required to transmit message.", true);
             
             const message = huddlePostInput.value.trim();
-            if (message.length < 5) return showMessage("Message too short. Requires minimum 5 characters.", true);
+            if (message.length === 0) return showMessage("Message cannot be empty.", true);
 
             postMessageBtn.disabled = true;
-            const huddleRef = getPublicCollectionRef('community_messages');
-            
+
+            const musterRef = getPublicCollectionRef('musterPosts');
+
             try {
-                await addDoc(huddleRef, {
-                    user_id: userId,
+                await addDoc(musterRef, {
                     message: message,
-                    timestamp: serverTimestamp()
+                    userId: userId,
+                    timestamp: serverTimestamp(),
                 });
-                showMessage("Transmission sent to The Muster channel.", false);
-                huddlePostInput.value = ''; // Clear input
-                logFeatureUse('Muster_Post_Created'); // ANALYTICS LOGGING
+                huddlePostInput.value = '';
+                showMessage("Message transmitted to The Muster.", false);
             } catch (e) {
-                console.error("Error posting message:", e);
-                showMessage("Transmission failed.", true);
+                console.error("Error posting message: ", e);
+                showMessage("Database error: Could not transmit message.", true);
             } finally {
                 postMessageBtn.disabled = false;
             }
         });
 
-        function startCommunityListener() {
-            if (communityListener) communityListener();
-            
-            const huddleRef = getPublicCollectionRef('community_messages');
-            if (!huddleRef) return;
-            
-            // Query for all posts
-            const q = query(huddleRef);
+        function startMusterListener() {
+            if (!isAuthReady) return;
 
-            communityListener = onSnapshot(q, (snapshot) => {
-                let messages = [];
+            const musterRef = getPublicCollectionRef('musterPosts');
+            
+            // Note: We avoid orderBy here to prevent index requirement errors, sorting in memory
+            onSnapshot(query(musterRef), (snapshot) => {
+                const posts = [];
                 snapshot.forEach(doc => {
-                    messages.push({ id: doc.id, ...doc.data() });
+                    posts.push({ id: doc.id, ...doc.data() });
                 });
-                
-                // Sort in memory by timestamp (descending)
-                messages.sort((a, b) => (b.timestamp?.toMillis() || 0) - (a.timestamp?.toMillis() || 0));
-                
-                renderCommunityFeed(messages);
+
+                // Sort in memory by timestamp descending
+                posts.sort((a, b) => (b.timestamp?.toMillis() || 0) - (a.timestamp?.toMillis() || 0));
+
+                renderMusterFeed(posts);
             }, (error) => {
-                console.error("Error listening to community feed:", error);
-                communityFeedEl.innerHTML = '<p class="text-red-500 text-center py-4">:: ERROR: CHANNEL OFFLINE ::</p>';
+                console.error("Muster Listener Error:", error);
+                musterLoadingEl.textContent = ':: CHANNEL STATUS: DATA LINK ERROR ::';
             });
         }
-        
-        function renderCommunityFeed(messages) {
+
+        function renderMusterFeed(posts) {
             communityFeedEl.innerHTML = '';
             
-            if (messages.length === 0) {
-                communityFeedEl.innerHTML = '<p class="text-center text-gray-500 py-4">:: NO TRANSMISSIONS. BE FIRST TO REPORT ::</p>';
+            if (posts.length === 0) {
+                communityFeedEl.innerHTML = '<p class="text-center text-gray-500 py-4">:: FIRST TRANSMISSION AWAITED ::</p>';
                 return;
             }
 
-            messages.forEach(msg => {
-                const date = msg.timestamp ? new Date(msg.timestamp.seconds * 1000).toLocaleString() : 'Processing...';
+            posts.forEach(post => {
+                const isMine = post.userId === userId;
+                // Handle serverTimestamp
+                const time = post.timestamp ? new Date(post.timestamp.toMillis()).toLocaleTimeString() : 'N/A';
                 
-                // Highlight if the post belongs to the current user
-                const isMine = msg.user_id === userId;
-                const postClass = isMine ? 'bg-green-900/40 border-green-500' : 'bg-gray-700/50 border-gray-600';
-                const userTag = isMine ? 'UNIT ID (SELF)' : `UNIT ID ${msg.user_id.substring(0, 8)}...`;
-                
-                const messageHtml = `
-                    <div class="p-3 rounded-md border-l-4 shadow-sm ${postClass}">
-                        <p class="font-medium text-sm text-gray-100">${msg.message}</p>
-                        <p class="text-xs mt-1 text-gray-500">
-                            TRANSMITTER: 
-                            <span class="font-mono text-xs ${isMine ? 'accent-orange font-bold' : 'accent-green'}">
-                                ${userTag}
-                            </span>
-                             :: ${date}
+                const postHtml = `
+                    <div class="panel p-3 rounded-lg ${isMine ? 'bg-green-900/40 border-green-600' : 'bg-gray-700/50 border-gray-600'}">
+                        <p class="text-xs font-bold ${isMine ? 'accent-green' : 'accent-orange'}">
+                            ${isMine ? 'YOU' : post.userId.substring(0, 8) + '...'} <span class="text-gray-500 font-normal">@ ${time}</span>
                         </p>
+                        <p class="text-sm text-gray-300 mt-1 whitespace-pre-wrap">${post.message}</p>
                     </div>
                 `;
-                communityFeedEl.insertAdjacentHTML('beforeend', messageHtml);
+                communityFeedEl.insertAdjacentHTML('beforeend', postHtml);
             });
         }
-        
-        // --- EMPLOYMENT HUB FUNCTIONS ---
+
+
+        // --- EMPLOYMENT HUB FUNCTIONS (Unchanged, no dependencies on Firebase) ---
 
         const mockTranslations = {
             "68W": { title: "EMERGENCY MEDICAL TECHNICIAN / CLINICAL ASSISTANT", skills: ["Advanced Trauma Care", "Patient Triage", "Field Operations Management", "Basic Life Support (BLS)"] },
@@ -816,7 +816,13 @@
             "INFANTRY": { title: "SECURITY SPECIALIST / TEAM LEADER", skills: ["Risk Assessment", "Conflict Resolution", "Executive Protection", "Cross-Functional Team Collaboration"] },
         };
         
-        translateBtn.addEventListener('click', () => {
+        document.getElementById('translate-btn').addEventListener('click', () => {
+            const translateBtn = document.getElementById('translate-btn');
+            const militaryTermInput = document.getElementById('military-term-input');
+            const translationResult = document.getElementById('translation-result');
+            const jobTitleOutput = document.getElementById('job-title-output');
+            const skillsOutput = document.getElementById('skills-output');
+
             const term = militaryTermInput.value.trim().toUpperCase();
             
             if (term.length < 2) {
@@ -828,8 +834,6 @@
             jobTitleOutput.textContent = '';
             skillsOutput.innerHTML = '';
             
-            logFeatureUse('Skills_Translator_Attempt', { term: term }); // ANALYTICS LOGGING
-
             setTimeout(() => {
                 const translation = mockTranslations[term] || mockTranslations[Object.keys(mockTranslations).find(key => term.includes(key))];
                 
@@ -844,13 +848,11 @@
                     skillsOutput.innerHTML = `<h4 class="font-bold mt-2 accent-green">CORE SKILLS TRANSLATED:</h4><div class="space-y-1">${skillsList}</div>`;
                     translationResult.classList.remove('hidden');
                     showMessage(`Translation executed successfully for "${term}".`, false);
-                    logFeatureUse('Skills_Translator_Success', { term: term, title: translation.title }); // ANALYTICS LOGGING
                 } else {
                     jobTitleOutput.textContent = ":: DIRECT TRANSLATION FAILED ::";
                     skillsOutput.innerHTML = "<p class='text-sm text-gray-500'>Try a common rating (e.g., HR, EO) or a general duty area (e.g., INFANTRY, LOGISTICS).</p>";
                     translationResult.classList.remove('hidden');
                     showMessage("TRANSLATION FAIL. RE-ENTER TERM.", true);
-                    logFeatureUse('Skills_Translator_Fail', { term: term }); // ANALYTICS LOGGING
                 }
                 translateBtn.disabled = false;
             }, 500); // Simulate API loading time
@@ -858,15 +860,9 @@
 
         // --- UI LOGIC ---
         
-        // Log tab access
-        window.logTabAccess = function(tabName) {
-            logFeatureUse(`Tab_View_${tabName}`);
-        }
-
         // Modal Open/Close Logic
         document.getElementById('view-history-btn').addEventListener('click', () => {
             document.getElementById('history-modal').classList.remove('hidden');
-            logFeatureUse('History_Modal_Opened'); // ANALYTICS LOGGING
         });
 
         document.getElementById('close-history-btn').addEventListener('click', () => {
@@ -884,7 +880,6 @@
                     content.classList.remove('hidden');
                     button.classList.add('tab-active');
                     button.classList.remove('tab-inactive');
-                    logTabAccess(tabName.charAt(0).toUpperCase() + tabName.slice(1)); // Log tab view
                 } else {
                     content.classList.add('hidden');
                     button.classList.remove('tab-active');
@@ -894,17 +889,14 @@
         };
         
         // Set initial tab to employment
-        window.onload = () => switchTab('employment'); 
+        document.addEventListener('DOMContentLoaded', () => {
+            switchTab('employment'); 
+        });
         
         // --- GEOLOCATION AND EVENT LISTENERS (For Map Tab) ---
 
-        document.addEventListener('DOMContentLoaded', initFirebase);
-
         document.getElementById('find-location-btn').addEventListener('click', () => {
-            if (!isAuthReady) {
-                showMessage("Please wait for secure session initialization.", true);
-                return;
-            }
+            if (!isAuthReady) return showMessage("Authentication required to log location scan.", true);
 
             const button = document.getElementById('find-location-btn');
             const loading = document.getElementById('loading-indicator');
@@ -916,7 +908,6 @@
             button.disabled = true;
             button.textContent = 'EXECUTING SCAN...';
             loading.classList.remove('hidden');
-            logFeatureUse('Resource_Search_Initiated'); // ANALYTICS LOGGING
 
             // 2. Check for geolocation support
             if (!navigator.geolocation) {
@@ -924,21 +915,20 @@
                 button.disabled = false;
                 button.textContent = 'EXECUTE LOCATION SCAN';
                 loading.classList.add('hidden');
-                logFeatureUse('Resource_Search_Failed', { reason: 'No_Geolocation' });
                 return;
             }
 
             // 3. Request location
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    const lat = position.coords.latitude.toFixed(4);
-                    const lon = position.coords.longitude.toFixed(4);
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
                     
                     // Success handling
                     button.textContent = 'SCAN COMPLETE';
                     loading.classList.add('hidden');
                     
-                    latLongDisplay.textContent = `${lat}, ${lon}`;
+                    latLongDisplay.textContent = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
                     locationInfo.classList.remove('hidden');
                     
                     // Show resource section (The MVP delivery)
@@ -951,22 +941,17 @@
                     setTimeout(() => {
                         button.disabled = false;
                         button.textContent = 'RE-EXECUTE SCAN';
-                        switchTab('map'); // Switch back to map tab if successful
                     }, 1000);
                 },
                 (error) => {
                     // Error handling
                     let errorMessage = "ERROR: UNABLE TO RETRIEVE COORDS.";
-                    let failReason = 'Unknown';
                     if (error.code === error.PERMISSION_DENIED) {
                         errorMessage = "ERROR: GEOLOCATION DENIED. ENABLE DEVICE SERVICES.";
-                        failReason = 'Permission_Denied';
                     } else if (error.code === error.POSITION_UNAVAILABLE) {
                         errorMessage = "ERROR: LOCATION DATA UNAVAILABLE.";
-                        failReason = 'Position_Unavailable';
                     } else if (error.code === error.TIMEOUT) {
                         errorMessage = "ERROR: LOCATION REQUEST TIMEOUT.";
-                        failReason = 'Timeout';
                     }
                     
                     showMessage(errorMessage, true);
@@ -977,7 +962,6 @@
                     loading.classList.add('hidden');
                     locationInfo.classList.add('hidden');
                     resourceSection.classList.add('hidden');
-                    logFeatureUse('Resource_Search_Failed', { reason: failReason }); // ANALYTICS LOGGING
                 },
                 {
                     enableHighAccuracy: true,
