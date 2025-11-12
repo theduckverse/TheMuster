@@ -364,33 +364,32 @@
         
         // =========================================================================
         // === CRITICAL STEP: HARD-CODED FIREBASE CONFIGURATION ====================
-        // You MUST replace the JSON below with your actual Firebase Web App config 
-        // keys from the Firebase console before deploying outside the Canvas.
+        // THIS CONFIGURATION HAS BEEN CONFIRMED BY THE USER.
         // =========================================================================
-        const appId = 'veteran-resource-app'; // Use your project ID here if you want
+        const appId = 'veteran-resource-app'; 
         
-const firebaseConfig = {
-    // Unique API Key provided by you
-    apiKey: "AIzaSyDxWnKmEvg-JFxXopujpYiDQ98bee5n46E", 
-    
-    // Confirmed Project ID from the console URL
-    authDomain: "vetchat-prod.firebaseapp.com",
-    
-    // Confirmed Project ID from the console URL
-    projectId: "vetchat-prod",
-    
-    // Uses the confirmed Project ID
-    storageBucket: "vetchat-prod.appspot.com", 
-    
-    // Unique numbers from the console
-    messagingSenderId: "511042065899", 
-    
-    // Unique numbers from the console
-    appId: "1:511042065899:web:da21e4652341903e5ef5ae", 
+        const firebaseConfig = {
+            // Unique API Key provided by you
+            apiKey: "AIzaSyDxWnKmEvg-JFxXopujpYiDQ98bee5n46E", 
+            
+            // Confirmed Project ID from the console URL
+            authDomain: "vetchat-prod.firebaseapp.com",
+            
+            // Confirmed Project ID from the console URL
+            projectId: "vetchat-prod",
+            
+            // Uses the confirmed Project ID
+            storageBucket: "vetchat-prod.appspot.com", 
+            
+            // Unique numbers from the console
+            messagingSenderId: "511042065899", 
+            
+            // Unique numbers from the console
+            appId: "1:511042065899:web:da21e4652341903e5ef5ae", 
 
-    // Unique numbers from the console
-    measurementId: "G-18R9J9CF33S"
-};
+            // Unique numbers from the console
+            measurementId: "G-18R9J9CF33S"
+        };
         // =========================================================================
 
         // The initialAuthToken is only provided by the Canvas environment.
@@ -402,69 +401,66 @@ const firebaseConfig = {
         const addGoalBtn = document.getElementById('add-goal-btn');
         const postMessageBtn = document.getElementById('post-message-btn');
 
-        // Check if the config is using the default placeholder keys
-        if (firebaseConfig.apiKey === "YOUR_API_KEY_HERE" || !firebaseConfig.projectId) {
-             authStatusEl.innerHTML = `:: ERROR: CONFIG MISSING. PLEASE PASTE YOUR FIREBASE KEYS INTO THE CODE. ::`;
-        } else {
-            try {
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-                
-                // 1. Sign In
-                async function authenticate() {
-                    try {
-                        if (initialAuthToken) {
-                            // This path is now effectively disabled outside Canvas
-                            await signInWithCustomToken(auth, initialAuthToken);
-                        } else {
-                            // Sign in anonymously for all public deployments
-                            await signInAnonymously(auth);
-                        }
-                    } catch (error) {
-                        console.error("Firebase Authentication Error:", error);
-                        showMessage("AUTH ERROR: Could not establish secure link.", true);
-                    }
-                }
-                
-                // 2. Auth State Listener
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        userId = user.uid;
-                        isAuthReady = true;
-                        authStatusEl.innerHTML = `:: SECURE LINK ESTABLISHED - UNIT ID: <span class="accent-orange">${userId.substring(0, 8)}...</span> ::`;
-                        
-                        // Enable UI elements that depend on auth/firestore
-                        findLocationBtn.disabled = false;
-                        addGoalBtn.disabled = false;
-                        postMessageBtn.disabled = false;
-                        document.getElementById('view-history-btn').disabled = false;
-                        
-                        // Start real-time listeners for the user's data
-                        startHistoryListener();
-                        startGoalListener();
-                        startMusterListener();
-
+        
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            
+            // 1. Sign In
+            async function authenticate() {
+                try {
+                    if (initialAuthToken) {
+                        // This path is now effectively disabled outside Canvas
+                        await signInWithCustomToken(auth, initialAuthToken);
                     } else {
-                        // This typically shouldn't happen after the initial sign-in attempt
-                        userId = null;
-                        isAuthReady = false;
-                        authStatusEl.innerHTML = `:: LINK FAILURE. Attempting reconnection. ::`;
-                        
-                        // Disable UI elements
-                        findLocationBtn.disabled = true;
-                        addGoalBtn.disabled = true;
-                        postMessageBtn.disabled = true;
-                        document.getElementById('view-history-btn').disabled = true;
+                        // Sign in anonymously for all public deployments
+                        await signInAnonymously(auth);
                     }
-                });
-                
-                authenticate();
-            } catch (error) {
-                console.error("Firebase Init Error:", error);
-                authStatusEl.innerHTML = `:: ERROR: CONFIG FAILURE. Firebase services unavailable. ::`;
+                } catch (error) {
+                    console.error("Firebase Authentication Error:", error);
+                    showMessage("AUTH ERROR: Could not establish secure link.", true);
+                }
             }
+            
+            // 2. Auth State Listener
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    userId = user.uid;
+                    isAuthReady = true;
+                    authStatusEl.innerHTML = `:: SECURE LINK ESTABLISHED - UNIT ID: <span class="accent-orange">${userId.substring(0, 8)}...</span> ::`;
+                    
+                    // Enable UI elements that depend on auth/firestore
+                    findLocationBtn.disabled = false;
+                    addGoalBtn.disabled = false;
+                    postMessageBtn.disabled = false;
+                    document.getElementById('view-history-btn').disabled = false;
+                    
+                    // Start real-time listeners for the user's data
+                    startHistoryListener();
+                    startGoalListener();
+                    startMusterListener();
+
+                } else {
+                    // This typically shouldn't happen after the initial sign-in attempt
+                    userId = null;
+                    isAuthReady = false;
+                    authStatusEl.innerHTML = `:: LINK FAILURE. Attempting reconnection. ::`;
+                    
+                    // Disable UI elements
+                    findLocationBtn.disabled = true;
+                    addGoalBtn.disabled = true;
+                    postMessageBtn.disabled = true;
+                    document.getElementById('view-history-btn').disabled = true;
+                }
+            });
+            
+            authenticate();
+        } catch (error) {
+            console.error("Firebase Init Error:", error);
+            authStatusEl.innerHTML = `:: ERROR: CONFIG FAILURE. Firebase services unavailable. ::`;
         }
+        
 
         // Utility to show custom message boxes
         function showMessage(text, isError = false) {
@@ -985,4 +981,3 @@ const firebaseConfig = {
     </script>
 </body>
 </html>
-
