@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soldiers of Valor (Veteran Resource Center) - Tactical Display</title>
+    <title>Mission Ready Resources - Tactical Display</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -13,12 +13,15 @@
             background-color: #1a202c; /* Deep Charcoal/Navy fallback */
             color: #e2e8f0; /* Off-White/Light Gray text */
             
-            /* === TACTICAL FLAG BACKGROUND FIX === */
-            /* INSTRUCTIONS: Replace the value below with the public URL (https://...) of your flag image. */
-            background-image: url('tattered_flag.png-d2b2cd9e-033d-4afd-a872-9e3d7baa7682');
+            /* === TACTICAL FLAG BACKGROUND FIX: USING UNIQUE FILE ID === */
+            /* We are now using the full, unique identifier for the JPEG file to ensure it loads correctly. */
+            background-image: url('tattered_flag.jpg-d2b2cd9e-033d-4afd-a872-9e3d7baa7682'); 
             background-size: cover;
             background-attachment: fixed; 
-            background-position: center;
+            background-position: center center; /* Specify both horizontal and vertical position */
+            background-repeat: no-repeat;
+            /* Ensure the body takes up the full viewport height */
+            min-height: 100vh; 
         }
 
         .crisis-card {
@@ -27,57 +30,527 @@
             border-bottom: 3px solid #f97316; /* Orange accent */
         }
         
-        /* GENERAL UI ELEMENTS - Increased opacity for better legibility */
-        .panel {
-            background-color: rgba(45, 55, 72, 0.95); /* Dark Panel Background with high opacity for contrast */
-            border: 1px solid #4a5568; 
-            border-radius: 6px;
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.1); 
-        }
-        .accent-green {
-            color: #10b981; /* Tactical Green */
-        }
-        .accent-orange {
-            color: #f97316; /* Rescue Orange */
-        }
-        
-        /* TABS */
-        .tab-button {
-            @apply p-2 flex-1 text-center text-[0.6rem] sm:text-sm font-bold border-b-2 transition-colors duration-200;
-        }
-        .tab-active {
-            @apply border-green-400 text-green-400 bg-gray-700/80; /* High opacity tab background */
-        }
-        .tab-inactive {
-            @apply border-gray-600 text-gray-400 hover:bg-gray-700/80;
-        }
-        
-        /* BUTTONS */
-        .btn-primary {
-            @apply bg-[#10b981] text-gray-900 py-3 rounded-md font-bold shadow-lg transition-colors duration-200 hover:bg-green-500 disabled:bg-gray-600 disabled:text-gray-400;
-        }
-        .btn-secondary {
-             @apply bg-gray-600 text-white py-2 rounded-md font-bold transition-colors duration-200 hover:bg-gray-700 disabled:bg-gray-700;
+        .data-display {
+            background-color: rgba(30, 41, 59, 0.9); /* Slate Blue with transparency */
+            border: 1px solid #475569; /* Slate border */
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
         }
 
-        /* INPUTS - UPDATED TEXT COLOR TO ARMY GREEN (text-green-400) */
-        input[type="text"], textarea {
-            @apply bg-[#1a202c] border-2 border-green-400 text-green-400 p-3 rounded-md focus:border-orange-500 focus:ring-orange-500 w-full;
+        .action-button {
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px #0f766e; /* Shadow for 3D effect */
         }
 
-        /* MISC */
-        .loading-ring {
-            border: 4px solid #4a5568; 
-            border-top: 4px solid #10b981; /* Tactical Green */
+        .action-button:active {
+            box-shadow: 0 1px #0f766e;
+            transform: translateY(3px);
+        }
+
+        .loading-animation {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #10b981; /* Emerald Green spinner */
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 24px;
+            height: 24px;
             animation: spin 1s linear infinite;
         }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        .log-entry {
+            border-left: 3px solid #475569;
+            padding-left: 0.5rem;
+        }
+
+        /* Ensure generated paragraph text looks readable */
+        #resource-suggestions p {
+            margin-bottom: 0.75rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 sm:p-8 flex flex-col items-center">
+    
+    <!-- HEADER / CRISIS LINE -->
+    <header class="w-full max-w-4xl mb-6 crisis-card p-3 rounded-lg text-center">
+        <h1 class="text-2xl font-bold uppercase tracking-wider text-white">
+            MISSION READY RESOURCES
+        </h1>
+        <p class="text-sm font-light text-gray-200">TACTICAL DISPLAY // GEOSPATIAL RESOURCE SCANNER</p>
+    </header>
+
+    <!-- MAIN INTERFACE CARD -->
+    <main class="w-full max-w-4xl data-display p-6 sm:p-8 rounded-xl">
+        
+        <!-- COLLABORATION INFO -->
+        <div id="collab-info" class="text-center text-xs text-gray-500 mb-4">
+            <p>User ID: <span id="user-id-display" class="font-mono text-teal-400">Authenticating...</span></p>
+            <p class="mt-1">Last Analysis Update: <span id="last-update-display" class="font-mono text-yellow-400">N/A</span></p>
+        </div>
+
+        <!-- STATUS MESSAGE / LOG -->
+        <div id="status-message" class="hidden mb-4 p-3 rounded-lg text-sm transition duration-300" role="alert">
+            <!-- Dynamic message content will go here -->
+        </div>
+
+        <!-- CONTROL PANEL -->
+        <div class="mb-6">
+            <button id="location-scan-button" 
+                    class="action-button w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-lg uppercase tracking-widest flex justify-center items-center"
+                    aria-live="polite" disabled>
+                INITIALIZING SYSTEMS...
+            </button>
+            <div id="loading-indicator" class="hidden mt-4 flex items-center justify-center space-x-2">
+                <div class="loading-animation"></div>
+                <span class="text-sm text-gray-400">ACCESSING GEOLOCATION SENSORS... STAND BY.</span>
+            </div>
+        </div>
+
+        <!-- CURRENT LOCATION DISPLAY -->
+        <section id="location-info" class="hidden mb-6 p-4 border border-teal-500 rounded-lg bg-slate-800">
+            <h2 class="text-xl font-semibold mb-2 text-teal-300">CURRENT POSITION DATA</h2>
+            <div class="grid grid-cols-2 gap-2 text-sm">
+                <div class="text-gray-400">Latitude:</div>
+                <div id="lat-output" class="text-teal-400 font-mono">--</div>
+                <div class="text-gray-400">Longitude:</div>
+                <div id="lon-output" class="text-teal-400 font-mono">--</div>
+            </div>
+        </section>
+
+        <!-- RESOURCE SUGGESTIONS -->
+        <section id="resource-section" class="hidden mb-6">
+            <h2 class="text-2xl font-semibold mb-4 text-emerald-400 border-b border-gray-600 pb-2 uppercase tracking-wide">
+                ANALYSIS & RESOURCE SUGGESTIONS
+            </h2>
+            <div id="resource-suggestions" class="space-y-4">
+                <!-- LLM Generated Content goes here -->
+            </div>
+            
+            <!-- Citation Sources Display -->
+            <div id="citation-sources" class="mt-6 pt-4 border-t border-gray-700">
+                <h3 class="text-lg font-medium text-gray-400 mb-2">Grounding Sources:</h3>
+                <ul id="sources-list" class="text-xs text-gray-500 space-y-1">
+                    <!-- Sources will be injected here -->
+                </ul>
+            </div>
+        </section>
+        
+        <!-- LOGGING / ANALYTICS WINDOW (Optional for advanced users) -->
+        <section>
+            <h2 class="text-xl font-semibold mt-6 mb-3 text-gray-400 border-b border-gray-700 pb-1">
+                SYSTEM LOG
+            </h2>
+            <div id="system-log" class="h-48 overflow-y-auto p-3 bg-gray-900 border border-gray-700 rounded-lg text-xs space-y-1">
+                <div class="log-entry text-gray-500">SYSTEM READY. AWAITING USER COMMAND.</div>
+            </div>
+        </section>
+
+    </main>
+    
+    <script type="module">
+        // --- FIREBASE IMPORTS ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            onSnapshot, 
+            query, 
+            collection,
+            limit,
+            setLogLevel 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- GLOBAL VARIABLES & CONSTANTS ---
+        let db;
+        let auth;
+        let currentUserId = 'unknown';
+        let isAuthReady = false;
+        
+        const apiKey = "" // API key for Gemini is handled by runtime environment
+        const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+        // Get environment variables (MANDATORY)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        // UI Elements
+        const button = document.getElementById('location-scan-button');
+        const loading = document.getElementById('loading-indicator');
+        const locationInfo = document.getElementById('location-info');
+        const resourceSection = document.getElementById('resource-section');
+        const latOutput = document.getElementById('lat-output');
+        const lonOutput = document.getElementById('lon-output');
+        const suggestionsOutput = document.getElementById('resource-suggestions');
+        const sourcesList = document.getElementById('sources-list');
+        const userIdDisplay = document.getElementById('user-id-display');
+        const lastUpdateDisplay = document.getElementById('last-update-display');
+
+
+        // --- UTILITY FUNCTIONS ---
+
+        function showMessage(text, isError = false) {
+            const statusDiv = document.getElementById('status-message');
+            statusDiv.textContent = text;
+            statusDiv.classList.remove('hidden', 'bg-red-800', 'text-red-200', 'bg-green-800', 'text-green-200');
+            if (isError) {
+                statusDiv.classList.add('bg-red-800', 'text-red-200');
+            } else {
+                statusDiv.classList.add('bg-green-800', 'text-green-200');
+            }
+            logFeatureUse('Status_Message', { message: text });
+        }
+
+        function logFeatureUse(event, details = {}) {
+            const logElement = document.getElementById('system-log');
+            const timestamp = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const logEntry = document.createElement('div');
+            
+            let detailString = '';
+            if (details.coords) {
+                detailString = ` (Lat: ${details.coords.latitude.toFixed(4)}, Lon: ${details.coords.longitude.toFixed(4)})`;
+            } else if (details.reason) {
+                detailString = ` (Reason: ${details.reason})`;
+            }
+
+            logEntry.className = 'log-entry text-gray-400';
+            logEntry.innerHTML = `<span class="text-yellow-500">[${timestamp}]</span> <span class="text-teal-400">${event}</span>${detailString}`;
+            
+            logElement.appendChild(logEntry);
+            logElement.scrollTop = logElement.scrollHeight; // Auto-scroll to bottom
+        }
+
+        // Simple Markdown to HTML converter for the LLM output
+        function markdownToHtml(markdown) {
+            // Convert **bolded text** to <strong>bolded text</strong>
+            let html = markdown.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            // Convert double newlines to paragraphs
+            html = html.replace(/\n\n/g, '</p><p>');
+            // Convert single newlines to break tags (for list-like formatting)
+            html = html.replace(/\n/g, '<br>');
+            // Wrap the whole thing in a paragraph if it doesn't start with one
+            if (!html.startsWith('<p>')) {
+                html = '<p>' + html + '</p>';
+            }
+            return html;
+        }
+
+        // --- FIREBASE LOGIC ---
+        
+        async function initFirebase() {
+            if (!firebaseConfig) {
+                logFeatureUse('FIREBASE_ERROR', { reason: 'Config not found.' });
+                showMessage('CRITICAL ERROR: Firebase configuration missing.', true);
+                return;
+            }
+
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                // Set debug level for logging
+                setLogLevel('debug');
+                logFeatureUse('FIREBASE_INIT', { reason: 'Services initialized.' });
+
+                // Authentication
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                    logFeatureUse('AUTH_SUCCESS', { reason: 'Signed in with Custom Token.' });
+                } else {
+                    await signInAnonymously(auth);
+                    logFeatureUse('AUTH_SUCCESS', { reason: 'Signed in Anonymously.' });
+                }
+
+                // Listener for Auth State Change (Critical for getting User ID)
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        currentUserId = user.uid;
+                        userIdDisplay.textContent = currentUserId;
+                        isAuthReady = true;
+                        button.disabled = false;
+                        button.textContent = 'EXECUTE LOCATION SCAN';
+                        logFeatureUse('USER_READY', { reason: `User ID: ${currentUserId}` });
+                        
+                        // Start listening for analysis updates
+                        setupAnalysisListener();
+                    } else {
+                        currentUserId = 'anonymous-pending';
+                        userIdDisplay.textContent = currentUserId;
+                        logFeatureUse('AUTH_PENDING');
+                    }
+                });
+
+            } catch (error) {
+                logFeatureUse('FIREBASE_AUTH_ERROR', { reason: error.message });
+                showMessage(`CRITICAL ERROR: Auth failed: ${error.message}`, true);
+            }
+        }
+
+        // Saves the generated analysis to a public collection
+        async function saveAnalysis(analysisData) {
+            if (!isAuthReady || !db) {
+                logFeatureUse('SAVE_FAILED', { reason: 'Auth not ready.' });
+                return;
+            }
+            
+            try {
+                // We use a fixed document ID ('latest') so onSnapshot only listens to one spot
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'tactical_analysis', 'latest');
+                
+                await setDoc(docRef, {
+                    ...analysisData,
+                    timestamp: Date.now(),
+                    userId: currentUserId,
+                });
+                logFeatureUse('DATA_SAVE_SUCCESS');
+            } catch (error) {
+                logFeatureUse('DATA_SAVE_ERROR', { reason: error.message });
+                showMessage(`DATA SAVE ERROR: ${error.message}`, true);
+            }
+        }
+
+        // Sets up a real-time listener for the latest analysis
+        function setupAnalysisListener() {
+            if (!isAuthReady || !db) return;
+
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'tactical_analysis', 'latest');
+            
+            onSnapshot(docRef, (doc) => {
+                if (doc.exists()) {
+                    const data = doc.data();
+                    displayAnalysis(data);
+                    logFeatureUse('DATA_LOAD_SUCCESS', { reason: 'Real-time update received.' });
+                } else {
+                    logFeatureUse('DATA_LOAD_INFO', { reason: 'No previous analysis found.' });
+                }
+            }, (error) => {
+                logFeatureUse('DATA_LISTENER_ERROR', { reason: error.message });
+                showMessage(`DATA LOAD ERROR: Could not subscribe to updates. ${error.message}`, true);
+            });
+        }
+
+        // Displays the loaded analysis data in the UI
+        function displayAnalysis(data) {
+            // Update time display
+            const date = new Date(data.timestamp);
+            lastUpdateDisplay.textContent = date.toLocaleString();
+            
+            // Update location
+            latOutput.textContent = data.latitude.toFixed(6);
+            lonOutput.textContent = data.longitude.toFixed(6);
+            locationInfo.classList.remove('hidden');
+
+            // Update LLM text
+            suggestionsOutput.innerHTML = markdownToHtml(data.analysisText);
+
+            // Update sources
+            sourcesList.innerHTML = '';
+            if (data.sources && data.sources.length > 0) {
+                data.sources.forEach(source => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `<a href="${source.uri}" target="_blank" class="text-blue-400 hover:text-blue-300 underline">${source.title || source.uri}</a>`;
+                    sourcesList.appendChild(listItem);
+                });
+            } else {
+                const listItem = document.createElement('li');
+                listItem.textContent = "No external grounding sources provided.";
+                sourcesList.appendChild(listItem);
+            }
+
+            resourceSection.classList.remove('hidden');
+        }
+
+
+        // --- LLM INTERACTION ---
+
+        // Function to call the Gemini API with exponential backoff
+        async function fetchWithRetry(url, options, maxRetries = 5) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.status === 429) {
+                        // Rate limit exceeded, prepare to retry
+                        const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue;
+                    }
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response;
+                } catch (error) {
+                    if (i === maxRetries - 1) throw error; // Re-throw if last retry
+                    const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+        
+        async function getResourceSuggestions(latitude, longitude) {
+            logFeatureUse('LLM_QUERY_INIT', { coords: { latitude, longitude } });
+
+            const userQuery = `I am currently located at Latitude ${latitude.toFixed(6)} and Longitude ${longitude.toFixed(6)}. Based on this location, provide a concise tactical analysis of immediately accessible and potentially critical resources (like water sources, shelter, communication points, or useful terrain features). Structure your response with distinct, bolded headers for each suggested resource and provide a brief description for each.`;
+            
+            const systemPrompt = "You are a highly efficient, tactical mission analyst for a disaster recovery team. Your goal is to provide fast, actionable, and grounded resource intelligence based on a provided geospatial location. Output ONLY the analysis content, formatted in Markdown. Use Google Search grounding to find real-world context for the coordinates.";
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                tools: [{ "google_search": {} }], // Enable Google Search grounding
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+            };
+
+            const options = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            };
+
+            try {
+                const response = await fetchWithRetry(GEMINI_API_URL, options);
+                const result = await response.json();
+                
+                const candidate = result.candidates?.[0];
+
+                if (candidate && candidate.content?.parts?.[0]?.text) {
+                    const text = candidate.content.parts[0].text;
+                    logFeatureUse('LLM_QUERY_SUCCESS');
+
+                    // 1. Extract grounding sources
+                    let sources = [];
+                    const groundingMetadata = candidate.groundingMetadata;
+                    if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                        sources = groundingMetadata.groundingAttributions
+                            .map(attribution => ({
+                                uri: attribution.web?.uri,
+                                title: attribution.web?.title,
+                            }))
+                            .filter(source => source.uri && source.title);
+                    }
+
+                    return { analysisText: text, sources, latitude, longitude };
+
+                } else {
+                    const errorMessage = result.error?.message || "LLM did not return usable content.";
+                    logFeatureUse('LLM_QUERY_FAIL', { reason: errorMessage });
+                    throw new Error(errorMessage);
+                }
+
+            } catch (error) {
+                logFeatureUse('LLM_FETCH_ERROR', { reason: error.message });
+                throw new Error("Failed to contact intelligence servers: " + error.message);
+            }
+        }
+
+        // --- UI & GEOLOCATION LOGIC ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // Initialize Firebase first
+            initFirebase();
+
+            button.addEventListener('click', () => {
+                if (!isAuthReady) {
+                    showMessage("SYSTEM PENDING: Please wait for authentication to complete.", true);
+                    return;
+                }
+
+                logFeatureUse('EXECUTE_SCAN_CLICKED');
+                
+                // Reset UI elements
+                button.disabled = true;
+                button.textContent = 'SCANNING...';
+                loading.classList.remove('hidden');
+                document.getElementById('status-message').classList.add('hidden');
+                suggestionsOutput.innerHTML = '';
+                sourcesList.innerHTML = '';
+                resourceSection.classList.add('hidden'); // Hide results until location is found
+
+                if (!navigator.geolocation) {
+                    showMessage("ERROR: GEOLOCATION IS NOT SUPPORTED BY THIS BROWSER.", true);
+                    button.disabled = false;
+                    button.textContent = 'EXECUTE LOCATION SCAN';
+                    loading.classList.add('hidden');
+                    logFeatureUse('Resource_Search_Failed', { reason: 'No_Geolocation' });
+                    return;
+                }
+
+                // Request user's location
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        const { latitude, longitude } = position.coords;
+                        
+                        logFeatureUse('COORDS_RETRIEVED', { coords: { latitude, longitude } });
+
+                        // Update location display (will be overwritten by Firestore listener if successful)
+                        latOutput.textContent = latitude.toFixed(6);
+                        lonOutput.textContent = longitude.toFixed(6);
+                        locationInfo.classList.remove('hidden');
+                        
+                        button.textContent = 'ANALYZING LOCATION DATA...';
+
+                        try {
+                            const analysisData = await getResourceSuggestions(latitude, longitude);
+                            
+                            // 1. Display data immediately via local function
+                            displayAnalysis(analysisData);
+
+                            // 2. Save data to Firestore for persistence and collaboration
+                            await saveAnalysis(analysisData);
+                            
+                            showMessage("SCAN COMPLETE. ANALYSIS GENERATED & SAVED.", false);
+                            logFeatureUse('MISSION_COMPLETE');
+
+                        } catch (error) {
+                            showMessage(`CRITICAL ERROR: ${error.message}`, true);
+                            logFeatureUse('RESOURCE_ANALYSIS_FAILED', { reason: error.message });
+                        } finally {
+                            // Final UI reset
+                            button.disabled = false;
+                            button.textContent = 'EXECUTE LOCATION SCAN';
+                            loading.classList.add('hidden');
+                        }
+                    },
+                    (error) => {
+                        let errorMessage = "ERROR: UNABLE TO RETRIEVE COORDS.";
+                        let failReason = 'Unknown';
+                        if (error.code === error.PERMISSION_DENIED) {
+                            errorMessage = "ERROR: GEOLOCATION DENIED. ENABLE DEVICE SERVICES.";
+                            failReason = 'Permission_Denied';
+                        } else if (error.code === error.POSITION_UNAVAILABLE) {
+                            errorMessage = "ERROR: LOCATION DATA UNAVAILABLE.";
+                            failReason = 'Position_Unavailable';
+                        } else if (error.code === error.TIMEOUT) {
+                            errorMessage = "ERROR: LOCATION REQUEST TIMEOUT.";
+                            failReason = 'Timeout';
+                        }
+                        
+                        showMessage(errorMessage, true);
+                        
+                        // Reset UI
+                        button.disabled = false;
+                        button.textContent = 'EXECUTE LOCATION SCAN';
+                        loading.classList.add('hidden');
+                        logFeatureUse('Resource_Search_Failed', { reason: failReason }); // ANALYTICS LOGGING
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 5000,
+                        maximumAge: 0
+                    }
+                );
+            });
+        });
+    </script>
+</body>
+</html>        }
         .modal-overlay {
             position: fixed;
             top: 0;
