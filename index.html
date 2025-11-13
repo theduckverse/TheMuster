@@ -484,11 +484,6 @@ function startResourceListener() {
             return ref(db, `artifacts/${appId}/users/${userId}/${path}`);
         };
 
-      const getPublicRef = (path) => {
-    if (!db) return null;
-    return ref(db, `artifacts/${appId}/_public/data/${path}`);
-};
-
         // --- INIT FIREBASE APP ---
         try {
             const app = initializeApp(firebaseConfig);
