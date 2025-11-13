@@ -359,34 +359,14 @@
             remove
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
-        // --- REALTIME RESOURCE LISTENER (MAP TAB) ---
-
-function startResourceListener() {
-    console.log("startResourceListener() CALLED");
-
-    const resourcesRef = getPublicRef("resource_locations");
-    const fullPath = `artifacts/${appId}/_public/data/resource_locations`;
-
-    console.log("🔥 FULL PATH:", firebaseConfig.databaseURL + "/" + fullPath);
-
-    onValue(resourcesRef, (snapshot) => {
-    const data = snapshot.val() || {};
-    console.log("🔥 Firebase snapshot received:", data);
-
-    const items = Object.keys(data).map(id => ({
-        id,
-        ...data[id]
-    }));
-
-    renderResourceList(items);
-});
+// --- RESOURCE RENDER FUNCTION ---
+function renderResourceList(items) {
     const section = document.getElementById("resource-section");
     const listEl = document.getElementById("resource-list");
 
-    // Clear previous
     listEl.innerHTML = "";
 
-    if (items.length === 0) {
+    if (!items || items.length === 0) {
         section.classList.add("hidden");
         return;
     }
@@ -397,17 +377,49 @@ function startResourceListener() {
         const html = `
             <li class="border-b border-gray-600 pb-3">
                 <div class="flex items-center space-x-3">
-                    <span class="text-2xl accent-orange">🏠</span>
+                    <span class="text-2xl accent-orange">⚑</span>
                     <div class="flex-grow">
                         <p class="font-bold text-lg">${item.name}</p>
                         <p class="text-sm text-gray-400">${item.facility}</p>
                     </div>
-                    <a href="${item.link || '#'}" class="accent-green font-semibold text-sm hover:text-green-300">ROUTE</a>
                 </div>
+                <a href="${item.link}" class="accent-green font-semibold text-sm hover:text-green-300">
+                    ROUTE
+                </a>
                 <p class="text-xs text-gray-500 mt-1">${item.description}</p>
             </li>
         `;
         listEl.insertAdjacentHTML("beforeend", html);
+    });
+}
+
+// --- PATH HELPER FOR PUBLIC REALTIME DATA ---
+function getPublicRef(path) {
+    return ref(
+        db,
+        `artifacts/${appId}/_public/data/${path}`
+    );
+}
+
+// --- REALTIME RESOURCE LISTENER ---
+function startResourceListener() {
+    console.log("startResourceListener() CALLED");
+
+    const resourcesRef = getPublicRef("resource_locations");
+    const fullPath = `artifacts/${appId}/_public/data/resource_locations`;
+
+    console.log("🔥 FULL PATH:", firebaseConfig.databaseURL + "/" + fullPath);
+
+    onValue(resourcesRef, (snapshot) => {
+        const data = snapshot.val() || {};
+        console.log("🔥 Firebase snapshot received:", data);
+
+        const items = Object.keys(data).map(id => ({
+            id,
+            ...data[id]
+        }));
+
+        renderResourceList(items);
     });
 }
 
