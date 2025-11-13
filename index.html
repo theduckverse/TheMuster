@@ -481,7 +481,7 @@ function renderResourceList(items) {
 
         const getPublicRef = (path) => {
             if (!db) return null;
-            return ref(db, `artifacts/${appId}/public/data/${path}`);
+            return ref(db, `${appId}/_public/data/${path}`);
         };
 
         // --- INIT FIREBASE APP ---
