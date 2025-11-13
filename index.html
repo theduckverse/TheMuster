@@ -369,12 +369,17 @@
 function startResourceListener() {
     console.log("🔥 startResourceListener() CALLED");
 
-    const resourcesRef = getPublicRef("resource_locations");
+    const resourcesRef = getPublicRef("data/resource_locations");
     console.log("📡 resourcesRef =", resourcesRef);
 
     onValue(resourcesRef, (snapshot) => {
-        console.log("📡 Firebase snapshot received:", snapshot.val());
+        const data = snapshot.val() || {};
+        console.log("📡 Firebase snapshot received:", data);
 
+        if (!data || typeof data !== "object") {
+            console.error("❌ Invalid data format from Firebase");
+            return;
+        }
 
         const items = Object.keys(data).map(id => ({
             id,
@@ -384,6 +389,7 @@ function startResourceListener() {
         renderResourceList(items);
     });
 }
+
 
 function renderResourceList(items) {
     const section = document.getElementById("resource-section");
