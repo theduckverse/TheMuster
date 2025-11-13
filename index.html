@@ -365,7 +365,7 @@ function startResourceListener() {
     console.log("🔥 startResourceListener() CALLED");
 
     const resourcesRef = getPublicRef("data/resource_locations");
-    console.log("📡 resourcesRef =", resourcesRef);
+    console.log("🔥 FULL PATH:", resourcesRef.toString());
 
     onValue(resourcesRef, (snapshot) => {
         const data = snapshot.val() || {};
