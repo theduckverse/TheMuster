@@ -608,6 +608,12 @@ function renderResourceList(items) {
     const section = document.getElementById("resource-section");
     const listEl = document.getElementById("resource-list");
 
+    // 🚧 Prevent crash if UI isn’t loaded yet
+    if (!section || !listEl) {
+        console.warn("Resource section not available yet — skipping render.");
+        return;
+    }
+
     listEl.innerHTML = "";
 
     if (!items || items.length === 0) {
@@ -636,6 +642,7 @@ function renderResourceList(items) {
         listEl.insertAdjacentHTML("beforeend", html);
     });
 }
+
 
 // --- PATH HELPER FOR PUBLIC REALTIME DATA ---
 function getPublicRef(path) {
