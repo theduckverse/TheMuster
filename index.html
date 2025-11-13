@@ -409,17 +409,10 @@
             </div>
 
            <!-- Resource List Section (LIVE DATA REPLACES MOCK DATA) -->
-<div class="flex items-center justify-between">
-    <h2 class="text-sm font-semibold accent-green tracking-[0.25em]">
-        LOCAL RESOURCE SCAN // LIVE
-    </h2>
-    <span class="text-[0.65rem] uppercase tracking-[0.2em] text-emerald-300">
-        STATUS: <span class="text-lime-400">LINKED</span>
-    </span>
-</div>
-<p class="text-xs text-gray-400">
-    Feed: Firebase Realtime Node &lt;resource_locations&gt;
-</p>
+<div id="resource-section" class="resource-list panel p-4 space-y-3">
+    <h2 class="text-xl font-semibold accent-green">LOCAL RESOURCE SCAN: LIVE DATA</h2>
+    <p class="text-sm text-gray-400">STATUS: synced with secure Firebase node.</p>
+
     <!-- Firebase will dynamically insert items here -->
     <ul id="resource-list" class="space-y-4"></ul>
 </div>
@@ -608,12 +601,6 @@ function renderResourceList(items) {
     const section = document.getElementById("resource-section");
     const listEl = document.getElementById("resource-list");
 
-    // 🚧 Prevent crash if UI isn’t loaded yet
-    if (!section || !listEl) {
-        console.warn("Resource section not available yet — skipping render.");
-        return;
-    }
-
     listEl.innerHTML = "";
 
     if (!items || items.length === 0) {
@@ -642,7 +629,6 @@ function renderResourceList(items) {
         listEl.insertAdjacentHTML("beforeend", html);
     });
 }
-
 
 // --- PATH HELPER FOR PUBLIC REALTIME DATA ---
 function getPublicRef(path) {
@@ -1181,28 +1167,28 @@ function startResourceListener() {
                     }, 1000);
                 },
                 (error) => {
-    let errorMessage = "ERROR: UNABLE TO RETRIEVE COORDS.";
-    if (error.code === error.PERMISSION_DENIED) {
-        errorMessage = "ERROR: GEOLOCATION DENIED. ENABLE DEVICE SERVICES.";
-    } else if (error.code === error.POSITION_UNAVAILABLE) {
-        errorMessage = "ERROR: LOCATION DATA UNAVAILABLE.";
-    } else if (error.code === error.TIMEOUT) {
-        errorMessage = "ERROR: LOCATION REQUEST TIMEOUT.";
-    }
-
-    showMessage(errorMessage, true);
-
-    // Prevent crashing when tab is not mounted
-    const locationInfo = document.getElementById("current-location");
-    const resourceSection = document.getElementById("resource-section");
-
-    if (locationInfo) locationInfo.classList.add("hidden");
-    if (resourceSection) resourceSection.classList.add("hidden");
-
-    button.disabled = false;
-    button.textContent = "EXECUTE LOCATION SCAN";
-    loading.classList.add("hidden");
-}
+                    let errorMessage = "ERROR: UNABLE TO RETRIEVE COORDS.";
+                    if (error.code === error.PERMISSION_DENIED) {
+                        errorMessage = "ERROR: GEOLOCATION DENIED. ENABLE DEVICE SERVICES.";
+                    } else if (error.code === error.POSITION_UNAVAILABLE) {
+                        errorMessage = "ERROR: LOCATION DATA UNAVAILABLE.";
+                    } else if (error.code === error.TIMEOUT) {
+                        errorMessage = "ERROR: LOCATION REQUEST TIMEOUT.";
+                    }
+                    
+                    showMessage(errorMessage, true);
+                    
+                    button.disabled = false;
+                    button.textContent = 'EXECUTE LOCATION SCAN';
+                    loading.classList.add('hidden');
+                    locationInfo.classList.add('hidden');
+                    resourceSection.classList.add('hidden');
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                }
             );
         });
     </script>
