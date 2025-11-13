@@ -171,20 +171,15 @@
                 </div>
             </div>
 
-            <!-- Resource List Section (Mock data stays static) -->
-            <div id="resource-section" class="resource-list panel p-4 hidden space-y-3">
-                <h2 class="text-xl font-semibold accent-green">ASSET MANIFEST (MOCK DATA)</h2>
-                <p class="text-sm text-gray-400">STATUS: 4 critical assets identified.</p>
-                
-                <ul id="resource-list" class="space-y-4">
-                    <li class="border-b border-gray-600 pb-3"><div class="flex items-center space-x-3"><span class="text-2xl accent-orange">🏠</span><div class="flex-grow"><p class="font-bold text-lg">EMERGENCY SHELTER</p><p class="text-sm text-gray-400">Op. Safe Haven Annex</p></div><a href="#" class="accent-green font-semibold text-sm hover:text-green-300">ROUTE</a></div><p class="text-xs text-gray-500 mt-1">Focuses on crisis shelter and long-term placement.</p></li>
-                    <li class="border-b border-gray-600 pb-3"><div class="flex items-center space-x-3"><span class="text-2xl accent-green">🍎</span><div class="flex-grow"><p class="font-bold text-lg">FOOD & NUTRITION</p><p class="text-sm text-gray-400">Logistics Depot Gamma</p></div><a href="#" class="accent-green font-semibold text-sm hover:text-green-300">ROUTE</a></div><p class="text-xs text-gray-500 mt-1">Access to immediate food packages and meal programs.</p></li>
-                    <li class="border-b border-gray-600 pb-3"><div class="flex items-center space-x-3"><span class="text-2xl text-purple-400">🧠</span><div class="flex-grow"><p class="font-bold text-lg">MENTAL HEALTH HOT ZONE</p><p class="text-sm text-gray-400">Counseling Post Bravo</p></div><a href="#" class="accent-green font-semibold text-sm hover:text-green-300">ROUTE</a></div><p class="text-xs text-gray-500 mt-1">Immediate, confidential counseling services.</p></li>
-                    <li class="pb-2"><div class="flex items-center space-x-3"><span class="text-2xl text-red-500">💰</span><div class="flex-grow"><p class="font-bold text-lg">EMERGENCY FUNDING</p><p class="text-sm text-gray-400">Operation Comfort Fund</p></div><a href="#" class="accent-green font-semibold text-sm hover:text-green-300">LINK</a></div><p class="text-xs text-gray-500 mt-1">Application for one-time critical financial support.</p></li>
-                </ul>
-            </div>
-        </div>
-        
+           <!-- Resource List Section (LIVE DATA REPLACES MOCK DATA) -->
+<div id="resource-section" class="resource-list panel p-4 hidden space-y-3">
+    <h2 class="text-xl font-semibold accent-green">LOCAL RESOURCE SCAN: LIVE DATA</h2>
+    <p class="text-sm text-gray-400">STATUS: synced with secure Firebase node.</p>
+
+    <!-- Firebase will dynamically insert items here -->
+    <ul id="resource-list" class="space-y-4"></ul>
+</div>
+       
         <!-- --- TAB 2: BENEFITS NAVIGATOR CONTENT (Unchanged) --- -->
         <div id="content-benefits" class="hidden space-y-6">
             <h2 class="text-2xl font-bold accent-green border-b border-gray-600 pb-2 font-mono">BENEFITS PROTOCOL: CLAIMS</h2>
