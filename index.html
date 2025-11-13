@@ -367,10 +367,14 @@
         // --- REALTIME RESOURCE LISTENER (MAP TAB) ---
 
 function startResourceListener() {
+    console.log("🔥 startResourceListener() CALLED");
+
     const resourcesRef = getPublicRef("resource_locations");
+    console.log("📡 resourcesRef =", resourcesRef);
 
     onValue(resourcesRef, (snapshot) => {
-        const data = snapshot.val() || {};
+        console.log("📡 Firebase snapshot received:", snapshot.val());
+
 
         const items = Object.keys(data).map(id => ({
             id,
