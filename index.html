@@ -479,10 +479,11 @@ function renderResourceList(items) {
             return ref(db, `artifacts/${appId}/users/${userId}/${path}`);
         };
 
-        const getPublicRef = (path) => {
+      const getPublicRef = (path) => {
     if (!db) return null;
-    return ref(db, `veteran-resource-app/_public/data/${path}`);
+    return ref(db, `artifacts/${appId}/_public/data/${path}`);
 };
+
 
         // --- INIT FIREBASE APP ---
         try {
