@@ -362,31 +362,24 @@
         // --- REALTIME RESOURCE LISTENER (MAP TAB) ---
 
 function startResourceListener() {
-    console.log("🔥 startResourceListener() CALLED");
+    console.log("startResourceListener() CALLED");
 
-    const resourcesRef = getPublicRef("data/resource_locations");
-    console.log("🔥 FULL PATH:", resourcesRef.toString());
+    const resourcesRef = getPublicRef("resource_locations");
+    const fullPath = `artifacts/${appId}/_public/data/resource_locations`;
+
+    console.log("🔥 FULL PATH:", firebaseConfig.databaseURL + "/" + fullPath);
 
     onValue(resourcesRef, (snapshot) => {
-        const data = snapshot.val() || {};
-        console.log("📡 Firebase snapshot received:", data);
+    const data = snapshot.val() || {};
+    console.log("🔥 Firebase snapshot received:", data);
 
-        if (!data || typeof data !== "object") {
-            console.error("❌ Invalid data format from Firebase");
-            return;
-        }
+    const items = Object.keys(data).map(id => ({
+        id,
+        ...data[id]
+    }));
 
-        const items = Object.keys(data).map(id => ({
-            id,
-            ...data[id]
-        }));
-
-        renderResourceList(items);
-    });
-}
-
-
-function renderResourceList(items) {
+    renderResourceList(items);
+});
     const section = document.getElementById("resource-section");
     const listEl = document.getElementById("resource-list");
 
@@ -483,7 +476,6 @@ function renderResourceList(items) {
     if (!db) return null;
     return ref(db, `artifacts/${appId}/_public/data/${path}`);
 };
-
 
         // --- INIT FIREBASE APP ---
         try {
