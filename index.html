@@ -1,494 +1,340 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soldiers of Valor (Veteran Resource Center) - Tactical Display</title>
-    <!-- Load Tailwind CSS -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Soldiers of Valor - Veteran Resource Command Console</title>
+
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
-    /* ========== BASE HUD AESTHETIC ========== */
-    body {
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-        background-color: #020617; /* slate-950 */
-        color: #e2e8f0; /* slate-200 */
+        :root {
+            --hud-green: #31ff7a;
+            --hud-green-dark: #1f3324;
+            --hud-bg: #09100d;
+            --hud-card: #0e1612;
+        }
 
-        /* layered HUD background: vignette + grid + flag image */
-        background-image:
-            radial-gradient(circle at top left, rgba(22, 163, 74, 0.25), transparent 55%),
-            radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.2), transparent 60%),
-            linear-gradient(
+        body {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            background-color: #020617;
+            color: #e5e7eb;
+        }
+
+        .hud-glow { text-shadow: 0 0 8px rgba(49,255,122,0.5); }
+        .hud-border { border: 1px solid rgba(49,255,122,0.25); }
+        .hud-border-strong { border: 1px solid rgba(49,255,122,0.5); }
+
+        .nav-shadow { box-shadow: 0 4px 24px rgba(0,0,0,0.6); }
+        .hero-bg {
+            background: linear-gradient(
                 to bottom,
-                rgba(15, 23, 42, 0.95),
-                rgba(15, 23, 42, 0.98)
+                rgba(9,16,13,0.95),
+                rgba(4,7,5,0.99)
             );
-        background-attachment: fixed;
-        background-size: cover;
-        background-position: center;
-    }
+            border-bottom: 1px solid rgba(49,255,122,0.25);
+        }
 
-    /* subtle scanline overlay */
-    body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        background-image: 
-            repeating-linear-gradient(
-                to bottom,
-                rgba(148, 163, 184, 0.10),
-                rgba(148, 163, 184, 0.10) 1px,
-                transparent 2px,
-                transparent 3px
+        /* Cards */
+        .panel {
+            background: var(--hud-card);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(148,163,184,0.25);
+            padding: 1.2rem;
+            box-shadow: 0 0 16px rgba(0,0,0,0.4);
+        }
+
+        .accent-green { color: #22c55e; }
+        .accent-orange { color: #f97316; }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(to bottom, var(--hud-green), #0f3d24);
+            color: #020617;
+            padding: 0.7rem 1.2rem;
+            border-radius: 0.6rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            border: 1px solid rgba(49,255,122,0.8);
+            transition: 0.15s ease;
+        }
+        .btn-primary:hover:not(:disabled) {
+            filter: brightness(1.15);
+            box-shadow: 0 0 18px rgba(49,255,122,0.7);
+        }
+        .btn-primary:disabled {
+            background: #374151;
+            color: #9ca3af;
+            border-color: rgba(75,85,99,0.8);
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #0c1410;
+            border: 1px solid rgba(148,163,184,0.4);
+            padding: 0.65rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            color: #e5e7eb;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            transition: 0.15s ease;
+        }
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(49,255,122,0.15);
+            border-color: var(--hud-green);
+            box-shadow: 0 0 12px rgba(49,255,122,0.5);
+        }
+        .btn-secondary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Tab Bar */
+        .tab-button {
+            flex: 1;
+            padding: 0.75rem;
+            background: #0b1310;
+            border-bottom: 3px solid rgba(49,255,122,0.25);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            transition: 0.15s ease;
+            font-size: 0.74rem;
+            text-transform: uppercase;
+        }
+        .tab-button:hover {
+            background: rgba(49,255,122,0.1);
+        }
+        .tab-active {
+            background: rgba(49,255,122,0.18);
+            border-color: var(--hud-green);
+            box-shadow: 0 0 12px rgba(49,255,122,0.4);
+            color: var(--hud-green);
+        }
+        .tab-inactive {
+            opacity: 0.8;
+            color: #9ca3af;
+        }
+
+        /* Inputs / Textareas */
+        input[type="text"],
+        textarea {
+            background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 1));
+            border: 1px solid rgba(34, 197, 94, 0.7);
+            color: #bbf7d0;
+            padding: 0.7rem 0.8rem;
+            border-radius: 0.65rem;
+            font-size: 0.85rem;
+            outline: none;
+            box-shadow: 0 0 0 1px rgba(15, 23, 42, 1);
+            transition:
+                border-color 0.16s ease,
+                box-shadow 0.16s ease,
+                background 0.16s ease;
+        }
+        input[type="text"]::placeholder,
+        textarea::placeholder {
+            color: rgba(148, 163, 184, 0.7);
+        }
+        input[type="text"]:focus,
+        textarea:focus {
+            border-color: #f97316;
+            box-shadow:
+                0 0 0 1px rgba(15, 23, 42, 1),
+                0 0 18px rgba(249, 115, 22, 0.7);
+            background: radial-gradient(circle at top left, rgba(22, 163, 74, 0.22), rgba(15, 23, 42, 0.98));
+        }
+
+        /* Loading ring */
+        .loading-ring {
+            border: 4px solid rgba(30, 64, 175, 0.6);
+            border-top: 4px solid #22c55e;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 18px rgba(34, 197, 94, 0.7);
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Modal overlay */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.98));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Toast / message box */
+        .message-box {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 60;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        .message-box.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-3px);
+        }
+
+        /* Resource section tweaks */
+        #resource-section h2 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+        #resource-section h2::before {
+            content: "◉";
+            font-size: 0.85rem;
+            color: #22c55e;
+            text-shadow: 0 0 12px rgba(34, 197, 94, 0.8);
+        }
+        #resource-list li {
+            position: relative;
+            overflow: hidden;
+        }
+        #resource-list li::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(
+                120deg,
+                transparent 0%,
+                rgba(34, 197, 94, 0.06) 40%,
+                rgba(59, 130, 246, 0.05) 60%,
+                transparent 100%
             );
-        opacity: 0.12;
-        z-index: -1;
-    }
-
-    /* faint grid overlay */
-    body::after {
-        content: "";
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        background-image:
-            linear-gradient(to right, rgba(30, 64, 175, 0.22) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(30, 64, 175, 0.22) 1px, transparent 1px);
-        background-size: 64px 64px;
-        opacity: 0.18;
-        z-index: -2;
-    }
-
-    /* ========== HEADER / CRISIS CARD ========== */
-    .crisis-card {
-        background: radial-gradient(circle at top, #b91c1c 0%, #7f1d1d 40%, #111827 90%);
-        box-shadow:
-            0 0 20px rgba(248, 113, 113, 0.4),
-            0 0 60px rgba(248, 113, 113, 0.15);
-        border-bottom: 2px solid rgba(248, 113, 113, 0.85);
-    }
-
-    .crisis-card h1 {
-        letter-spacing: 0.12em;
-        text-shadow:
-            0 0 12px rgba(248, 250, 252, 0.7),
-            0 0 24px rgba(248, 113, 113, 0.6);
-    }
-
-    .crisis-card a {
-        border: 1px solid rgba(248, 250, 252, 0.18);
-        text-shadow: 0 0 6px rgba(15, 23, 42, 0.9);
-    }
-
-  <!-- 🔥 CONTENT SECTIONS EXAMPLE (Styling Upgrade) -->
-  <section id="mission" class="py-16 max-w-6xl mx-auto px-4">
-    <h2 class="text-3xl font-bold text-[var(--hud-accent)] hud-glow mb-6">
-      Mission Planner
-    </h2>
-
-    <p class="text-gray-300 mb-4">
-      Build your customized tactical transition plan. Identify goals, unlock strategic checklists, 
-      and track your route to stability, benefits, and long-term success.
-    </p>
-
-    <div class="hud-border bg-[#101915] rounded p-6 mt-6">
-      <p class="text-gray-200">[Your existing Mission Planner tool goes here]</p>
-    </div>
-  </section>
-
-
-  <!-- FOOTER -->
-  <footer class="py-10 bg-[#0b110c] border-t border-green-900 text-center text-gray-400">
-    <p>© 2025 SoldiersOfValor.org — Built for Veterans, by Veterans.</p>
-  </footer>
-
-</body>
-</html>
-    /* ========== GENERIC PANELS / CARDS ========== */
-    .panel {
-        background: radial-gradient(circle at top left, rgba(34, 197, 94, 0.14), rgba(15, 23, 42, 0.98));
-        border-radius: 0.85rem;
-        border: 1px solid rgba(148, 163, 184, 0.55);
-        box-shadow:
-            0 0 0 1px rgba(15, 23, 42, 0.9),
-            0 0 22px rgba(22, 163, 74, 0.25),
-            0 0 60px rgba(15, 23, 42, 0.9);
-        backdrop-filter: blur(8px);
-    }
-
-    .panel h2,
-    .panel h3 {
-        letter-spacing: 0.06em;
-    }
-
-    .accent-green {
-        color: #22c55e; /* emerald-500 */
-    }
-
-    .accent-orange {
-        color: #f97316; /* orange-500 */
-    }
-
-    /* ========== TABS ========== */
-    .tab-button {
-        flex: 1;
-        padding: 0.5rem 0.25rem;
-        text-align: center;
-        font-size: 0.65rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.09em;
-        border-bottom: 2px solid rgba(30, 64, 175, 0.6);
-        background: rgba(15, 23, 42, 0.95);
-        color: rgba(148, 163, 184, 0.9);
-        transition: 
-            background-color 0.18s ease,
-            color 0.18s ease,
-            border-color 0.18s ease,
-            box-shadow 0.18s ease;
-    }
-
-    .tab-button:hover {
-        background: rgba(30, 64, 175, 0.6);
-        color: #e5e7eb;
-        box-shadow: 0 0 14px rgba(59, 130, 246, 0.45);
-    }
-
-    .tab-active {
-        border-color: #22c55e;
-        color: #bbf7d0;
-        background: radial-gradient(circle at top, rgba(21, 128, 61, 0.85), rgba(15, 23, 42, 0.96));
-        box-shadow:
-            0 0 0 1px rgba(21, 128, 61, 0.6),
-            0 0 20px rgba(34, 197, 94, 0.55);
-    }
-
-    .tab-inactive {
-        opacity: 0.8;
-    }
-
-    /* ========== BUTTONS ========== */
-    .btn-primary {
-        background: radial-gradient(circle at top, #22c55e, #15803d);
-        color: #020617;
-        padding: 0.65rem 1rem;
-        border-radius: 0.6rem;
-        font-weight: 800;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        border: 1px solid rgba(187, 247, 208, 0.9);
-        box-shadow:
-            0 0 0 1px rgba(21, 128, 61, 0.75),
-            0 0 18px rgba(34, 197, 94, 0.6);
-        transition:
-            transform 0.12s ease,
-            box-shadow 0.12s ease,
-            filter 0.12s ease,
-            background 0.12s ease;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-        transform: translateY(-1px);
-        filter: brightness(1.1);
-        box-shadow:
-            0 0 0 1px rgba(74, 222, 128, 0.9),
-            0 0 26px rgba(34, 197, 94, 0.85);
-    }
-
-    .btn-primary:disabled {
-        background: radial-gradient(circle at top, #374151, #111827);
-        color: #9ca3af;
-        border-color: rgba(75, 85, 99, 0.8);
-        box-shadow: none;
-        cursor: not-allowed;
-    }
-
-    .btn-secondary {
-        background: rgba(15, 23, 42, 0.95);
-        color: #e5e7eb;
-        padding: 0.5rem 0.9rem;
-        border-radius: 0.55rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.07em;
-        border: 1px solid rgba(148, 163, 184, 0.7);
-        box-shadow:
-            0 0 0 1px rgba(15, 23, 42, 0.95),
-            0 0 14px rgba(30, 64, 175, 0.55);
-        transition:
-            background 0.18s ease,
-            box-shadow 0.18s ease,
-            border-color 0.18s ease;
-    }
-
-    .btn-secondary:hover:not(:disabled) {
-        background: rgba(30, 64, 175, 0.75);
-        border-color: rgba(191, 219, 254, 0.95);
-        box-shadow:
-            0 0 0 1px rgba(59, 130, 246, 0.9),
-            0 0 20px rgba(96, 165, 250, 0.9);
-    }
-
-    .btn-secondary:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        box-shadow: none;
-    }
-
-    /* ========== INPUTS / TEXTAREAS ========== */
-    input[type="text"],
-    textarea {
-        background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 1));
-        border: 1px solid rgba(34, 197, 94, 0.7);
-        color: #bbf7d0;
-        padding: 0.7rem 0.8rem;
-        border-radius: 0.65rem;
-        font-size: 0.85rem;
-        outline: none;
-        box-shadow: 0 0 0 1px rgba(15, 23, 42, 1);
-        transition:
-            border-color 0.16s ease,
-            box-shadow 0.16s ease,
-            background 0.16s ease;
-    }
-
-    input[type="text"]::placeholder,
-    textarea::placeholder {
-        color: rgba(148, 163, 184, 0.7);
-    }
-
-    input[type="text"]:focus,
-    textarea:focus {
-        border-color: #f97316;
-        box-shadow:
-            0 0 0 1px rgba(15, 23, 42, 1),
-            0 0 18px rgba(249, 115, 22, 0.7);
-        background: radial-gradient(circle at top left, rgba(22, 163, 74, 0.22), rgba(15, 23, 42, 0.98));
-    }
-
-    /* ========== LOADING RING ========== */
-    .loading-ring {
-        border: 4px solid rgba(30, 64, 175, 0.6);
-        border-top: 4px solid #22c55e;
-        border-radius: 50%;
-        width: 30px;
-        height: 30px;
-        animation: spin 1s linear infinite;
-        box-shadow: 0 0 18px rgba(34, 197, 94, 0.7);
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    /* ========== MODAL OVERLAY ========== */
-    .modal-overlay {
-        position: fixed;
-        inset: 0;
-        background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.98));
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 50;
-        backdrop-filter: blur(10px);
-    }
-
-    /* ========== MESSAGE BOX / TOAST ========== */
-    .message-box {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 60;
-        opacity: 0;
-        transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-    }
-
-    .message-box.show {
-        opacity: 1;
-        transform: translateX(-50%) translateY(-3px);
-    }
-
-    /* ========== RESOURCE LIST HUD TWEAKS ========== */
-    #resource-section h2 {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.95rem;
-    }
-
-    #resource-section h2::before {
-        content: "◉";
-        font-size: 0.85rem;
-        color: #22c55e;
-        text-shadow: 0 0 12px rgba(34, 197, 94, 0.8);
-    }
-
-    #resource-list li {
-        position: relative;
-        overflow: hidden;
-    }
-
-    #resource-list li::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background: linear-gradient(
-            120deg,
-            transparent 0%,
-            rgba(34, 197, 94, 0.06) 40%,
-            rgba(59, 130, 246, 0.05) 60%,
-            transparent 100%
-        );
-        opacity: 0;
-        transition: opacity 0.18s ease-in-out;
-    }
-
-    #resource-list li:hover::before {
-        opacity: 1;
-    }
-
-    #resource-list .accent-orange {
-        text-shadow: 0 0 10px rgba(249, 115, 22, 0.9);
-    }
-
-    #resource-list a {
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        font-size: 0.7rem;
-    }
-
-    #resource-list a:hover {
-        text-shadow: 0 0 9px rgba(34, 197, 94, 0.9);
-    }
-</style>
+            opacity: 0;
+            transition: opacity 0.18s ease-in-out;
+        }
+        #resource-list li:hover::before {
+            opacity: 1;
+        }
+        #resource-list .accent-orange {
+            text-shadow: 0 0 10px rgba(249, 115, 22, 0.9);
+        }
+        #resource-list a {
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+        }
+        #resource-list a:hover {
+            text-shadow: 0 0 9px rgba(34, 197, 94, 0.9);
+        }
+    </style>
 </head>
+
 <body class="min-h-screen flex flex-col">
 
-    <!-- Header and Crisis Line Card -->
-    <header class="p-4 crisis-card text-white text-center rounded-b-xl shadow-lg">
-        <h1 class="text-2xl font-bold font-mono tracking-widest">Soldiers of Valor</h1>
-        <p class="text-sm opacity-90 mb-3 font-sans">OPERATIONAL STATUS: HIGH</p>
-        
-        <!-- Crisis Hotline Button -->
-        <a href="tel:988" class="bg-[#f97316] text-white font-extrabold py-3 px-6 rounded-md shadow-2xl transition-all duration-300 hover:bg-orange-700 flex items-center justify-center space-x-2">
-            <!-- Siren Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-siren"><path d="M7 16l-3-7h14l-3 7"/><path d="M12 21v-5"/><path d="M12 11V3"/><path d="M12 3L8 9h8z"/></svg>
-            <span class="text-lg font-mono">IF YOU ARE EXPERIENCING A CRISIS PLEASE CALL (988)</span>
+    <!-- CRISIS HEADER -->
+    <header class="p-4 bg-red-700/30 text-white text-center shadow-md border-b border-red-500">
+        <h1 class="text-3xl font-extrabold tracking-widest hud-glow">
+            SOLDIERS OF VALOR
+        </h1>
+        <p class="text-sm opacity-80">OPERATIONAL STATUS: HIGH</p>
+
+        <a href="tel:988"
+           class="mt-3 inline-flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md font-bold transition shadow-xl">
+           <span>🚨 CRISIS LINE: CALL 988</span>
         </a>
     </header>
 
-    <!-- Authentication Status -->
-    <div id="auth-status" class="bg-green-900/40 text-green-400 p-2 text-xs font-mono text-center border-y border-green-600/50">
+    <!-- AUTH STATUS -->
+    <div id="auth-status" class="bg-green-900/40 text-green-400 p-2 text-xs text-center border-b border-green-700">
         :: INITIALIZING SECURE LINK ::
     </div>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Soldiers of Valor - Your Tactical Advantage</title>
 
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
+    <!-- NEW STICKY NAVBAR -->
+    <nav class="sticky top-0 z-50 bg-[#0f1a14] nav-shadow border-b border-green-900">
+        <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
 
-  <style>
-    /* Tactical HUD theme */
-    :root {
-      --military-green: #1f3324;
-      --military-green-light: #2f4a35;
-      --hud-accent: #31ff7a;
-    }
+            <!-- LOGO -->
+            <span class="text-lg font-bold text-[var(--hud-green)] hud-glow tracking-widest">
+                COMMAND CONSOLE
+            </span>
 
-    body {
-      background-color: #0a0f10;
-      color: #e5e7eb;
-    }
+            <!-- SEARCH -->
+            <input id="sov-search"
+                   type="text"
+                   placeholder="Search benefits, jobs, resources..."
+                   onkeydown="if(event.key==='Enter'){performSearch()}"
+                   class="hidden md:block px-3 py-2 bg-[#0c140f] text-gray-300 hud-border rounded focus:outline-none w-72" />
 
-    .hud-border {
-      border: 1px solid rgba(49, 255, 122, 0.25);
-    }
-
-    .hud-glow {
-      text-shadow: 0 0 8px rgba(49, 255, 122, 0.4);
-    }
-
-    /* Sticky nav shadow */
-    .nav-shadow {
-      box-shadow: 0 3px 6px rgba(0,0,0,0.35);
-    }
-  </style>
-</head>
-
-<body class="font-mono">
-
-  <!-- 🔥 STICKY NAVIGATION BAR -->
-  <header class="sticky top-0 z-50 bg-[#142117] nav-shadow border-b border-green-900">
-    <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
-
-      <!-- Logo -->
-      <a href="/" class="text-hud-accent text-xl font-bold hud-glow tracking-widest">
-        SOLDIERS OF VALOR
-      </a>
-
-      <!-- Search Bar -->
-      <div class="hidden md:flex items-center space-x-2">
-        <input 
-          type="text" 
-          placeholder="Search resources, benefits, jobs..." 
-          class="px-3 py-2 bg-[#0f1712] text-gray-300 hud-border rounded focus:outline-none"
-        />
-      </div>
-
-      <!-- Nav Links -->
-      <nav class="hidden md:flex items-center space-x-6 uppercase text-sm">
-        <a href="#mission" class="hover:text-[var(--hud-accent)]">Mission Planner</a>
-        <a href="#resources" class="hover:text-[var(--hud-accent)]">Local Resources</a>
-        <a href="#employment" class="hover:text-[var(--hud-accent)]">Employment</a>
-        <a href="#benefits" class="hover:text-[var(--hud-accent)]">Benefits</a>
-      </nav>
-    </div>
-  </header>
-    <!-- Tab Navigation -->
-    <nav class="flex w-full bg-[#1a202c] shadow-md z-10 sticky top-0">
-        <button id="tab-map" class="tab-button tab-inactive" onclick="switchTab('map')">
-            :: RESOURCE LOCATOR ::
-        </button>
-        <button id="tab-benefits" class="tab-button tab-inactive" onclick="switchTab('benefits')">
-            :: BENEFITS PROTOCOL ::
-        </button>
-        <button id="tab-goals" class="tab-button tab-inactive" onclick="switchTab('goals')">
-            :: MISSION PLANNER ::
-        </button>
-        <button id="tab-muster" class="tab-button tab-inactive" onclick="switchTab('muster')">
-            :: THE MUSTER ::
-        </button>
-        <button id="tab-employment" class="tab-button tab-active" onclick="switchTab('employment')">
-            :: EMPLOYMENT HUB ::
-        </button>
+            <!-- NAV LINKS -->
+            <div class="hidden md:flex space-x-6 text-sm uppercase tracking-widest">
+                <button class="hover:text-[var(--hud-green)]" onclick="window.switchTab('goals')">Mission Planner</button>
+                <button class="hover:text-[var(--hud-green)]" onclick="window.switchTab('map')">Local Resources</button>
+                <button class="hover:text-[var(--hud-green)]" onclick="window.switchTab('employment')">Employment</button>
+                <button class="hover:text-[var(--hud-green)]" onclick="window.switchTab('benefits')">Benefits</button>
+                <button class="hover:text-[var(--hud-green)]" onclick="window.switchTab('muster')">The Muster</button>
+            </div>
+        </div>
     </nav>
 
-    <!-- Main Content Area -->
-    <main class="flex-grow p-4 space-y-4">
-        
-        <!-- --- TAB 1: RESOURCE MAP CONTENT --- -->
-        <div id="content-map" class="hidden space-y-4">
-            <!-- History Button -->
+    <!-- HERO SECTION -->
+    <section class="hero-bg py-16 text-center">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-[var(--hud-green)] hud-glow tracking-wide">
+            YOUR TACTICAL ADVANTAGE IN CIVILIAN LIFE
+        </h1>
+        <p class="mt-6 text-gray-300 text-lg max-w-2xl mx-auto">
+            Real-time resources, mission-ready planning, employment translation, and community support —
+            all inside a unified HUD-style veteran platform.
+        </p>
+
+        <div class="mt-8 flex justify-center space-x-4">
+            <button onclick="window.switchTab('goals')" class="btn-primary">
+                Launch Mission Planner
+            </button>
+            <button onclick="window.switchTab('map')" class="btn-secondary">
+                Scan Local Resources
+            </button>
+        </div>
+    </section>
+
+    <!-- TAB BAR -->
+    <div class="flex bg-[#0b1310] border-b border-green-800">
+        <button id="tab-map" class="tab-button tab-inactive" onclick="window.switchTab('map')">RESOURCE LOCATOR</button>
+        <button id="tab-benefits" class="tab-button tab-inactive" onclick="window.switchTab('benefits')">BENEFITS PROTOCOL</button>
+        <button id="tab-goals" class="tab-button tab-inactive" onclick="window.switchTab('goals')">MISSION PLANNER</button>
+        <button id="tab-muster" class="tab-button tab-inactive" onclick="window.switchTab('muster')">THE MUSTER</button>
+        <button id="tab-employment" class="tab-button tab-active" onclick="window.switchTab('employment')">EMPLOYMENT HUB</button>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow max-w-6xl mx-auto w-full px-4 py-6 space-y-6">
+
+        <!-- TAB 1: RESOURCE MAP CONTENT -->
+        <section id="content-map" class="hidden space-y-4">
             <button id="view-history-btn" class="btn-secondary w-full" disabled>
                 ACCESS LOG HISTORY (LOADING...)
             </button>
 
-            <!-- Geo-Location Card -->
-            <div id="location-card" class="panel p-4 space-y-3">
+            <div id="location-card" class="panel space-y-3">
                 <h2 class="text-xl font-semibold accent-green flex items-center space-x-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-target"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                    <span>🎯</span>
                     <span>TARGET: Local Resources</span>
                 </h2>
                 <div id="location-info" class="text-gray-300">
                     <p>Execute location scan to identify nearby services.</p>
-                    <p id="current-location" class="font-medium mt-2 hidden">COORDS: <span id="lat-long" class="accent-orange"></span></p>
+                    <p id="current-location" class="font-medium mt-2 hidden">
+                        COORDS: <span id="lat-long" class="accent-orange"></span>
+                    </p>
                 </div>
                 <button id="find-location-btn" class="btn-primary w-full" disabled>
                     EXECUTE LOCATION SCAN
@@ -498,85 +344,103 @@
                 </div>
             </div>
 
-           <!-- Resource List Section (LIVE DATA REPLACES MOCK DATA) -->
-<div id="resource-section" class="resource-list panel p-4 space-y-3">
-    <h2 class="text-xl font-semibold accent-green">LOCAL RESOURCE SCAN: LIVE DATA</h2>
-    <p class="text-sm text-gray-400">STATUS: synced with secure Firebase node.</p>
-</div>
-    <!-- Firebase will dynamically insert items here -->
-    <ul id="resource-list" class="space-y-4"></ul>
-      </div>
-</div>  
-        
-        <!-- --- TAB 2: BENEFITS NAVIGATOR CONTENT (Unchanged) --- -->
-        <div id="content-benefits" class="hidden space-y-6">
-            <h2 class="text-2xl font-bold accent-green border-b border-gray-600 pb-2 font-mono">BENEFITS PROTOCOL: CLAIMS</h2>
-            <p class="text-gray-400 text-sm">Filing a disability claim is mission-critical. The steps provided are general knowledge and in no way constitute legal advice. Every outcome is different and we share our knowledge to help get the best outcome for our veteran brothers and sisters. Feel free to email us if you have anything to add to this sequence.</p>
-            
+            <div id="resource-section" class="resource-list panel space-y-3 hidden">
+                <h2 class="text-xl font-semibold accent-green">LOCAL RESOURCE SCAN: LIVE DATA</h2>
+                <p class="text-sm text-gray-400">STATUS: synced with secure Firebase node.</p>
+                <ul id="resource-list" class="space-y-4"></ul>
+            </div>
+        </section>
+
+        <!-- TAB 2: BENEFITS NAVIGATOR CONTENT -->
+        <section id="content-benefits" class="hidden space-y-6">
+            <h2 class="text-2xl font-bold accent-green border-b border-gray-600 pb-2 font-mono">
+                BENEFITS PROTOCOL: CLAIMS
+            </h2>
+            <p class="text-gray-400 text-sm">
+                Filing a disability claim is mission-critical. The steps provided are general knowledge and in no way
+                constitute legal advice. Every outcome is different and we share our knowledge to help get the best
+                outcome for our veteran brothers and sisters. Feel free to email us if you have anything to add to this
+                sequence.
+            </p>
+
             <!-- Step 1 -->
-            <div class="panel p-4 space-y-2 border-l-4 border-green-500">
+            <div class="panel space-y-2 border-l-4 border-green-500">
                 <div class="flex items-center space-x-2">
                     <span class="text-xl font-extrabold accent-orange">01</span>
                     <h3 class="font-bold text-lg accent-green">DATA ACQUISITION</h3>
                 </div>
                 <ul class="list-disc ml-5 text-sm text-gray-400 space-y-1">
                     <li>***The best practice before filing a claim is to seek outside medical attention.*** If it is a PTSD claim, seek mental health providers ahead of time, if it is an injury, seek help from a specialist before filing, this step alone is crucial in establishing your nexus, which is discussed later in these steps.</li>
-                    <li>**Service Connection:** Acquire DD-214 and Service Treatment Records (STRs).You can request records from the National Archives online, by mail, or by fax. (If you’re submitting an application for VA benefits, VA will request your DD214 for you when they receive your application. You don’t need to do this yourself through the National Archives.) If you already have a copy, you can upload it with your claim. You can request your military service records online using the National Archives’ eVetRecs tool. When you get to eVetRecs, select Make a new request. There is also a link and instructions here (<a href="https://www.va.gov/records/get-military-service-records/" target="_blank" class="accent-orange hover:text-red-500">MILITARY SERVICE RECORDS</a>). You’ll then need to sign in with an identity-verified ID.me account. The National Archives may ask you to take a “live selfie” photo with your smartphone as an added step to verification. Option 2: Fill out the National Archive’s request form (to mail or fax)
-Fill out a Request Pertaining to Military Records (Standard Form 180). You can get the form here (<a href="https://www.va.gov/find-forms/about-form-sf180/" target="_blank" class="accent-orange hover:text-red-500">VA FORM SF180</a>). Mail or fax your completed form to the appropriate address or fax number listed on the last page of the form. To find the right address or fax number for you, you’ll need to use the first chart on that page to find your branch of service, separation date, and type of record. </li>
-                    <li>**Medical Evidence:** Secure your Service Treatment Records (STRs): These documents detail any medical issues you experienced during your active duty. They serve as direct evidence of in-service events or injuries that may have contributed to your current condition. VA and Private Medical Records: Include records from both VA facilities and private healthcare providers. These documents help establish a history of treatment and demonstrate the progression and severity of your condition. Independent Medical Opinions (IMOs) and NEXUS Letters: A NEXUS letter from a qualified medical professional is crucial. It should explicitly state whether your condition is "at least as likely as not" related to your military service, providing a clear connection for the VA. Diagnostic Test Results: Include results from X-rays, MRIs, lab tests, and other diagnostic procedures that confirm your diagnosis. This evidence is particularly important for conditions like PTSD, chronic pain, and orthopedic injuries. Lay Evidence (Buddy Statements): Statements from fellow service members, family, or friends who can attest to the onset or worsening of your condition can support your medical evidence, especially if your service records are incomplete.</li>
-                    <li>**Nexus:** As stated above, this step is crucial in linking current status to service actions (e.g., doctor's statement). (<a target="_blank" class="accent-orange hover:text-red-500">!!! BE AWARE!!!</a>) Several companies are filing claims for veterans' benefits, often charging fees for services that are legally required to be free. Here are some key points: For-Profit Consultants: Many for-profit companies charge veterans fees for help filing disability claims, operating in a legal loophole where only accredited agents and Veterans Service Organizations (VSOs) can assist with claims. Legislative Actions: States like Maine, New Jersey, and New York have passed laws to crack down on these practices, while Louisiana has allowed companies to charge up to $12,500 for services that should be free. Opposition to Legislation: Advocacy groups, including the Veterans of Foreign Wars, oppose bills that would allow for-profit companies to charge veterans for initial claims assistance, arguing that free help is already available through accredited representatives. Predatory Practices: Some companies exploit veterans' trust by offering misleading services, often resulting in financial strain and limited improvement in claims outcomes. These practices raise significant concerns about the integrity of the veterans' claims process and the exploitation of vulnerable populations.!!! Please look into these with caution if you decide to go this route. Although some say you do not have to pay unless your claim is accepted, many take large portions or all of the backpay you would recieve. </li>
+                    <li><strong>Service Connection:</strong> Acquire DD-214 and Service Treatment Records (STRs)... (content unchanged)</li>
+                    <li><strong>Medical Evidence:</strong> Secure your Service Treatment Records (STRs)...</li>
+                    <li><strong>Nexus:</strong> As stated above, this step is crucial in linking current status to service actions... Be cautious of for-profit claim companies.</li>
                 </ul>
             </div>
-            
+
             <!-- Step 2 -->
-            <div class="panel p-4 space-y-2 border-l-4 border-green-500">
+            <div class="panel space-y-2 border-l-4 border-green-500">
                 <div class="flex items-center space-x-2">
                     <span class="text-xl font-extrabold accent-orange">02</span>
                     <h3 class="font-bold text-lg accent-green">SUBMISSION ROUTE</h3>
                 </div>
                 <ul class="list-disc ml-5 text-sm text-gray-400 space-y-1">
-                    <li>**Fast Track:** Utilize the VA digital portal (<a href="https://www.va.gov" target="_blank" class="accent-orange hover:text-red-500">VA.gov</a>). Although this is a "fasttrack", the VA takes time to review all of your information. This is really only a "fast track" in the sense that it is an easy way to submit your application. All claims are different and some may be faster than others. Be patient, but file your Intent To File ASAP. More on this later. </li>
-                    <li>**Priority Channel:** Contact a Veterans Service Officer (VSO) for free, expert support. This is a prefered channel. VSO's are there to help and navigate the VA system of forms and filing. One of the issues that can arise though is the speed at which you can be seen. Depending on location and number of VSO's, it can take some time to schedule to meet and go throguh your filing process.</li>
-                    <li>(<a target="_blank" class="accent-orange hover:text-red-500">!!!Effective Date Lock!!!</a>): File an Intent to File immediately!!! You can do so here (<a href="https://www.va.gov/supporting-forms-for-claims/intent-to-file-form-21-0966/introduction" target="_blank" class="accent-orange hover:text-red-500">INTENT TO FILE</a>). An intent to file is a formal notification to the VA that a veteran plans to submit a claim for disability compensation, pension, or survivors' benefits. This process allows veterans to gather necessary documentation while protecting the earliest possible effective date for their claim, which can lead to retroactive benefits if the claim is approved. This means if you are getting backpay it will be retroactive to the date of your intent to file. </li>
+                    <li><strong>Fast Track:</strong> Utilize the VA digital portal
+                        <a href="https://www.va.gov" target="_blank" class="accent-orange hover:text-red-500">VA.gov</a>.
+                    </li>
+                    <li><strong>Priority Channel:</strong> Contact a Veterans Service Officer (VSO) for free, expert support.</li>
+                    <li><strong>Effective Date Lock:</strong> File an Intent to File immediately:
+                        <a href="https://www.va.gov/supporting-forms-for-claims/intent-to-file-form-21-0966/introduction"
+                           target="_blank"
+                           class="accent-orange hover:text-red-500">INTENT TO FILE</a>.
+                    </li>
                 </ul>
             </div>
-            
+
             <!-- Step 3 -->
-            <div class="panel p-4 space-y-2 border-l-4 border-green-500">
+            <div class="panel space-y-2 border-l-4 border-green-500">
                 <div class="flex items-center space-x-2">
                     <span class="text-xl font-extrabold accent-orange">03</span>
                     <h3 class="font-bold text-lg accent-green">C&P EVALUATION</h3>
                 </div>
                 <ul class="list-disc ml-5 text-sm text-gray-400 space-y-1">
-                    <li>**Compliance:** Attend all mandated Compensation & Pension (C&P) exams. A claim (C&P) exam isn’t like a normal medical exam. The provider won’t treat you for any illness or injury, give you referrals to other providers, or prescribe medicine. The purpose of the exam is to gather information that will help the VA make a decision on your claim. During your exam, the provider may do any or all of these things: Perform a basic physical exam. (This may or may not include physical contact) Ask you questions based on the medical records in your claim file. These may include questions from the Disability Benefits Questionnaire (DBQ) for each service-connected condition you’re claiming. Ask you to get other tests (like X-rays or blood work), at no cost to you. Note: If you have questions about what’s happening during your exam, you can ask the provider. But they can’t answer questions about the claims process, tell you the exam results, or make decisions about your claim. </li>
-                    <li>**Reporting:** Describe your condition's CURRENT impact on daily function. Make sure to be thurough in your descriptions. If you have trouble sleeping, let them know how many nights in any given week you may have trouble. The more info given, the better the VA can assess and treat when your claim is accepted. </li>
+                    <li><strong>Compliance:</strong> Attend all mandated Compensation &amp; Pension (C&amp;P) exams.</li>
+                    <li><strong>Reporting:</strong> Describe your condition's current impact on daily function. Be specific.</li>
                 </ul>
             </div>
-            
+
             <!-- Step 4 -->
-            <div class="panel p-4 space-y-2 border-l-4 border-green-500">
+            <div class="panel space-y-2 border-l-4 border-green-500">
                 <div class="flex items-center space-x-2">
                     <span class="text-xl font-extrabold accent-orange">04</span>
-                    <h3 class="font-bold text-lg accent-green">RESOLUTION & APPEAL</h3>
+                    <h3 class="font-bold text-lg accent-green">RESOLUTION &amp; APPEAL</h3>
                 </div>
                 <ul class="list-disc ml-5 text-sm text-gray-400 space-y-1">
-                    <li>**Review:** Confirm the rating accuracy upon decision.</li>
-                    <li>**Recourse:** If denied, consult VSO immediately to initiate Supplemental, HLR, or Board Appeal.</li>
+                    <li><strong>Review:</strong> Confirm rating accuracy upon decision.</li>
+                    <li><strong>Recourse:</strong> If denied, consult a VSO immediately to initiate Supplemental, HLR, or Board Appeal.</li>
                 </ul>
             </div>
 
-            <p class="text-xs text-gray-500 pt-2">:: DISCLOSURE: THIS IS A GUIDANCE TOOL, NOT OFFICIAL VA DIRECTIVE. CONSULT VSO. ::</p>
-        </div>
+            <p class="text-xs text-gray-500 pt-2">
+                :: DISCLOSURE: THIS IS A GUIDANCE TOOL, NOT OFFICIAL VA DIRECTIVE. CONSULT VSO. ::
+            </p>
+        </section>
 
-        <!-- --- TAB 3: MISSION GOAL TRACKER CONTENT --- -->
-        <div id="content-goals" class="hidden space-y-4">
-            <h2 class="text-2xl font-bold accent-green border-b border-gray-600 pb-2 font-mono">MISSION PLANNER</h2>
-            <p class="text-gray-400 text-sm">Define your objective and track your steps. Progress is logged in your secure private cloud.</p>
-            
-            <!-- Add New Goal Form -->
-            <div class="panel p-4 space-y-3">
-                <h3 class="text-xl font-semibold accent-green border-b border-gray-600 pb-2">INPUT NEW OBJECTIVE</h3>
-                <input type="text" id="goal-title" placeholder="E.g., Complete my degree, Find a career in tech, Improve fitness" maxlength="80">
+        <!-- TAB 3: MISSION GOAL TRACKER CONTENT -->
+        <section id="content-goals" class="hidden space-y-4">
+            <h2 class="text-2xl font-bold accent-green border-b border-gray-600 pb-2 font-mono">
+                MISSION PLANNER
+            </h2>
+            <p class="text-gray-400 text-sm">
+                Define your objective and track your steps. Progress is logged in your secure private cloud.
+            </p>
+
+            <div class="panel space-y-3">
+                <h3 class="text-xl font-semibold accent-green border-b border-gray-600 pb-2">
+                    INPUT NEW OBJECTIVE
+                </h3>
+                <input type="text" id="goal-title"
+                       placeholder="E.g., Complete my degree, Find a career in tech, Improve fitness"
+                       maxlength="80">
                 <div id="milestone-inputs" class="space-y-2">
                     <input type="text" data-milestone="1" placeholder="Step 1: Define specific task" class="text-sm">
                     <input type="text" data-milestone="2" placeholder="Step 2: Define specific task" class="text-sm">
@@ -586,81 +450,111 @@ Fill out a Request Pertaining to Military Records (Standard Form 180). You can g
                     SAVE NEW MISSION
                 </button>
             </div>
-            
-            <!-- Goal List Display -->
+
             <div class="space-y-3">
-                <h3 class="text-xl font-semibold accent-green border-b border-gray-600 pb-2">ACTIVE MISSIONS</h3>
+                <h3 class="text-xl font-semibold accent-green border-b border-gray-600 pb-2">
+                    ACTIVE MISSIONS
+                </h3>
                 <div id="goal-list-container" class="space-y-4">
-                    <p id="goals-loading" class="text-center text-gray-500 py-4">Awaiting missions... Initializing link.</p>
+                    <p id="goals-loading" class="text-center text-gray-500 py-4">
+                        Awaiting missions... Initializing link.
+                    </p>
                 </div>
             </div>
+        </section>
 
-        </div>
+        <!-- TAB 4: COMMUNITY MUSTER -->
+        <section id="content-muster" class="hidden space-y-4">
+            <h2 class="text-2xl font-bold accent-green border-b border-gray-600 pb-2 font-mono">
+                THE MUSTER (SECURE CHANNEL)
+            </h2>
+            <p class="text-gray-400 text-sm">
+                Post tactical status updates and community announcements.
+            </p>
 
-        <!-- --- TAB 4: COMMUNITY MUSTER --- -->
-        <div id="content-muster" class="hidden space-y-4">
-            <h2 class="text-2xl font-bold accent-green border-b border-gray-600 pb-2 font-mono">THE MUSTER (SECURE CHANNEL)</h2>
-            <p class="text-gray-400 text-sm">Post tactical status updates and community announcements.</p>
-            
-            <!-- Post New Message -->
-            <div class="panel p-4 space-y-3">
-                <textarea id="huddle-post-input" placeholder="Transmit message (Max 200 chars)" rows="2" maxlength="200"></textarea>
+            <div class="panel space-y-3">
+                <textarea id="huddle-post-input"
+                          placeholder="Transmit message (Max 200 chars)"
+                          rows="2"
+                          maxlength="200"></textarea>
                 <button id="post-message-btn" class="btn-primary w-full" disabled>
                     TRANSMIT MESSAGE
                 </button>
             </div>
 
-            <!-- Community Feed -->
             <div id="community-feed" class="space-y-3 max-h-[60vh] overflow-y-auto">
-                <p id="muster-loading" class="text-center text-gray-500 py-4">:: CHANNEL STATUS: AWAITING LINK ::</p>
+                <p id="muster-loading" class="text-center text-gray-500 py-4">
+                    :: CHANNEL STATUS: AWAITING LINK ::
+                </p>
             </div>
-        </div>
-        
-        <!-- --- TAB 5: EMPLOYMENT HUB (Unchanged) --- -->
-        <div id="content-employment" class="space-y-6">
-            <h2 class="text-2xl font-bold accent-green border-b border-gray-600 pb-2 font-mono">EMPLOYMENT HUB: SKILLS TRANSLATOR</h2>
-            <p class="text-gray-400 text-sm">Translate MOS/Rate/Duty into Civilian Credentials for maximum resume impact.</p>
+        </section>
 
-            <!-- Translator Tool -->
-            <div class="panel p-4 space-y-4">
-                <h3 class="text-xl font-semibold accent-green">MILITARY TO CIVILIAN TRANSLATION</h3>
-                
-                <input type="text" id="military-term-input" placeholder="INPUT MOS, RATE, OR DUTY (e.g., 68W, EO, PLATOON LEADER)">
-                
-                <button id="translate-btn" class="bg-orange-500 text-gray-900 py-3 rounded-md font-bold shadow-md transition-colors duration-200 hover:bg-orange-600 w-full">
+        <!-- TAB 5: EMPLOYMENT HUB -->
+        <section id="content-employment" class="space-y-6">
+            <h2 class="text-2xl font-bold accent-green border-b border-gray-600 pb-2 font-mono">
+                EMPLOYMENT HUB: SKILLS TRANSLATOR
+            </h2>
+            <p class="text-gray-400 text-sm">
+                Translate MOS/Rate/Duty into Civilian Credentials for maximum resume impact.
+            </p>
+
+            <div class="panel space-y-4">
+                <h3 class="text-xl font-semibold accent-green">
+                    MILITARY TO CIVILIAN TRANSLATION
+                </h3>
+
+                <input type="text" id="military-term-input"
+                       placeholder="INPUT MOS, RATE, OR DUTY (e.g., 68W, EO, PLATOON LEADER)">
+
+                <button id="translate-btn"
+                        class="bg-orange-500 text-gray-900 py-3 rounded-md font-bold shadow-md transition-colors duration-200 hover:bg-orange-600 w-full">
                     EXECUTE TRANSLATION
                 </button>
-                
+
                 <div id="translation-result" class="hidden border-t border-gray-600 pt-4 space-y-3">
                     <div id="job-title-output" class="text-lg font-bold text-green-400"></div>
                     <div id="skills-output" class="text-gray-300 space-y-1"></div>
-                    <p class="text-xs text-gray-500 mt-2">:: CREDENTIALS READY FOR RESUME INTEGRATION ::</p>
+                    <p class="text-xs text-gray-500 mt-2">
+                        :: CREDENTIALS READY FOR RESUME INTEGRATION ::
+                    </p>
                 </div>
             </div>
 
-            <!-- Employment Resources Section -->
             <div class="space-y-3">
-                <h3 class="text-xl font-semibold accent-green border-b border-gray-600 pb-2">TOP EMPLOYMENT ASSETS</h3>
+                <h3 class="text-xl font-semibold accent-green border-b border-gray-600 pb-2">
+                    TOP EMPLOYMENT ASSETS
+                </h3>
                 <ul class="space-y-3 text-sm text-gray-300">
-                    <li class="p-3 bg-gray-700 rounded-md border-l-4 border-green-500">
-                        <a href="https://www.linkedin.com/in/vets" target="_blank" class="font-bold text-green-400 hover:text-green-300">LinkedIn for Veterans:</a> Priority Access to job seekers.
+                    <li class="p-3 bg-gray-800 rounded-md border-l-4 border-green-500">
+                        <a href="https://www.linkedin.com/in/vets"
+                           target="_blank"
+                           class="font-bold text-green-400 hover:text-green-300">
+                            LinkedIn for Veterans:
+                        </a> Priority access to job seekers.
                     </li>
-                    <li class="p-3 bg-gray-700 rounded-md border-l-4 border-green-500">
-                        <a href="https://www.dol.gov/agencies/vets" target="_blank" class="font-bold text-green-400 hover:text-green-300">Dept. of Labor VETS:</a> Career training and workshops.
+                    <li class="p-3 bg-gray-800 rounded-md border-l-4 border-green-500">
+                        <a href="https://www.dol.gov/agencies/vets"
+                           target="_blank"
+                           class="font-bold text-green-400 hover:text-green-300">
+                            Dept. of Labor VETS:
+                        </a> Career training and workshops.
                     </li>
                 </ul>
             </div>
-        </div>
+        </section>
 
-        <!-- Message/Alert Container -->
+        <!-- MESSAGE / ALERT CONTAINER -->
         <div id="message-box" class="message-box p-4 hidden">
-            <div id="message-content" class="bg-red-500 text-white p-3 rounded-md shadow-xl text-sm font-medium"></div>
+            <div id="message-content"
+                 class="bg-red-700 text-white p-3 rounded-md shadow-xl text-sm font-medium border border-red-500"></div>
         </div>
 
-        <!-- History Modal -->
+        <!-- HISTORY MODAL -->
         <div id="history-modal" class="modal-overlay hidden">
             <div class="panel rounded-xl p-6 w-11/12 max-w-md max-h-[80vh] flex flex-col">
-                <h3 class="text-2xl font-bold accent-green mb-4 border-b border-gray-600 pb-2">ACCESS LOG: HISTORY (SECURE)</h3>
+                <h3 class="text-2xl font-bold accent-green mb-4 border-b border-gray-600 pb-2">
+                    ACCESS LOG: HISTORY (SECURE)
+                </h3>
                 <div id="history-list" class="flex-grow overflow-y-auto space-y-3 pr-2">
                     <p class="text-center text-gray-500 mt-4">:: LOADING LOGS ::</p>
                 </div>
@@ -670,14 +564,16 @@ Fill out a Request Pertaining to Military Records (Standard Form 180). You can g
             </div>
         </div>
 
-    <!-- Firebase SDKs and Logic -->
+    </main>
+
+    <!-- FIREBASE + APP LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { 
-            getAuth, 
-            signInAnonymously, 
-            signInWithCustomToken, 
-            onAuthStateChanged 
+        import {
+            getAuth,
+            signInAnonymously,
+            signInWithCustomToken,
+            onAuthStateChanged
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import {
             getDatabase,
@@ -689,76 +585,11 @@ Fill out a Request Pertaining to Military Records (Standard Form 180). You can g
             remove
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
-// --- RESOURCE RENDER FUNCTION ---
-function renderResourceList(items) {
-    const section = document.getElementById("resource-section");
-    const listEl = document.getElementById("resource-list");
-
-    listEl.innerHTML = "";
-
-    if (!items || items.length === 0) {
-        section.classList.add("hidden");
-        return;
-    }
-
-    section.classList.remove("hidden");
-
-    items.forEach(item => {
-        const html = `
-            <li class="border-b border-gray-600 pb-3">
-                <div class="flex items-center space-x-3">
-                    <span class="text-2xl accent-orange">⚑</span>
-                    <div class="flex-grow">
-                        <p class="font-bold text-lg">${item.name}</p>
-                        <p class="text-sm text-gray-400">${item.facility}</p>
-                    </div>
-                </div>
-                <a href="${item.link}" class="accent-green font-semibold text-sm hover:text-green-300">
-                    ROUTE
-                </a>
-                <p class="text-xs text-gray-500 mt-1">${item.description}</p>
-            </li>
-        `;
-        listEl.insertAdjacentHTML("beforeend", html);
-    });
-}
-
-// --- PATH HELPER FOR PUBLIC REALTIME DATA ---
-function getPublicRef(path) {
-    return ref(
-        db,
-        `artifacts/${appId}/_public/data/${path}`
-    );
-}
-
-// --- REALTIME RESOURCE LISTENER ---
-function startResourceListener() {
-    console.log("startResourceListener() CALLED");
-
-    const resourcesRef = getPublicRef("resource_locations");
-    const fullPath = `artifacts/${appId}/_public/data/resource_locations`;
-
-    console.log("🔥 FULL PATH:", firebaseConfig.databaseURL + "/" + fullPath);
-
-    onValue(resourcesRef, (snapshot) => {
-        const data = snapshot.val() || {};
-        console.log("🔥 Firebase snapshot received:", data);
-
-        const items = Object.keys(data).map(id => ({
-            id,
-            ...data[id]
-        }));
-
-        renderResourceList(items);
-    });
-}
-
-        // --- FIREBASE INITIALIZATION AND AUTH (REALTIME DB ONLY) ---
         let db, auth;
         let userId = null;
         let isAuthReady = false;
 
-        const appId = 'veteran-resource-app'; 
+        const appId = 'veteran-resource-app';
 
         const firebaseConfig = {
             apiKey: "AIzaSyDxWnKmEvg-JFxXopujpYiDQ98bee5n46E",
@@ -771,33 +602,32 @@ function startResourceListener() {
             databaseURL: "https://vetchat-prod-default-rtdb.firebaseio.com"
         };
 
-        const initialAuthToken = null; // we’ll just use anonymous auth here
+        const initialAuthToken = null;
 
-        const authStatusEl     = document.getElementById('auth-status');
-        const findLocationBtn  = document.getElementById('find-location-btn');
-        const addGoalBtn       = document.getElementById('add-goal-btn');
-        const postMessageBtn   = document.getElementById('post-message-btn');
-        const viewHistoryBtn   = document.getElementById('view-history-btn');
-        const historyListEl    = document.getElementById('history-list');
+        const authStatusEl        = document.getElementById('auth-status');
+        const findLocationBtn     = document.getElementById('find-location-btn');
+        const addGoalBtn          = document.getElementById('add-goal-btn');
+        const postMessageBtn      = document.getElementById('post-message-btn');
+        const viewHistoryBtn      = document.getElementById('view-history-btn');
+        const historyListEl       = document.getElementById('history-list');
         const goalListContainerEl = document.getElementById('goal-list-container');
-        const goalTitleInput   = document.getElementById('goal-title');
-        const milestoneInputs  = document.getElementById('milestone-inputs').querySelectorAll('input');
-        const goalsLoadingEl   = document.getElementById('goals-loading');
-        const huddlePostInput  = document.getElementById('huddle-post-input');
-        const communityFeedEl  = document.getElementById('community-feed');
-        const musterLoadingEl  = document.getElementById('muster-loading');
+        const goalTitleInput      = document.getElementById('goal-title');
+        const milestoneInputs     = document.getElementById('milestone-inputs').querySelectorAll('input');
+        const goalsLoadingEl      = document.getElementById('goals-loading');
+        const huddlePostInput     = document.getElementById('huddle-post-input');
+        const communityFeedEl     = document.getElementById('community-feed');
+        const musterLoadingEl     = document.getElementById('muster-loading');
 
-        // --- Utility to show custom message boxes ---
         function showMessage(text, isError = false) {
             const msgBox = document.getElementById('message-box');
             const msgContent = document.getElementById('message-content');
-            
+
             if (isError) {
                 msgContent.className = 'bg-red-700 text-white p-3 rounded-md shadow-xl text-sm font-medium border border-red-500';
             } else {
                 msgContent.className = 'bg-green-700 text-white p-3 rounded-md shadow-xl text-sm font-medium border border-green-500';
             }
-            
+
             msgContent.textContent = text;
             msgBox.classList.add('show');
             msgBox.classList.remove('hidden');
@@ -808,13 +638,58 @@ function startResourceListener() {
             }, 3000);
         }
 
-        // --- PATH HELPERS (Realtime DB) ---
         const getPrivateRef = (path) => {
             if (!db || !userId) return null;
             return ref(db, `artifacts/${appId}/users/${userId}/${path}`);
         };
 
-        // --- INIT FIREBASE APP ---
+        function getPublicRef(path) {
+            return ref(db, `artifacts/${appId}/_public/data/${path}`);
+        }
+
+        function renderResourceList(items) {
+            const section = document.getElementById("resource-section");
+            const listEl = document.getElementById("resource-list");
+
+            listEl.innerHTML = "";
+
+            if (!items || items.length === 0) {
+                section.classList.add("hidden");
+                return;
+            }
+
+            section.classList.remove("hidden");
+
+            items.forEach(item => {
+                const html = `
+                    <li class="border-b border-gray-600 pb-3">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-2xl accent-orange">⚑</span>
+                            <div class="flex-grow">
+                                <p class="font-bold text-lg">${item.name || 'Resource'}</p>
+                                <p class="text-sm text-gray-400">${item.facility || ''}</p>
+                            </div>
+                        </div>
+                        ${item.link ? `<a href="${item.link}" target="_blank" class="accent-green font-semibold text-sm hover:text-green-300">ROUTE</a>` : ''}
+                        <p class="text-xs text-gray-500 mt-1">${item.description || ''}</p>
+                    </li>
+                `;
+                listEl.insertAdjacentHTML("beforeend", html);
+            });
+        }
+
+        function startResourceListener() {
+            const resourcesRef = getPublicRef("resource_locations");
+            onValue(resourcesRef, (snapshot) => {
+                const data = snapshot.val() || {};
+                const items = Object.keys(data).map(id => ({
+                    id,
+                    ...data[id]
+                }));
+                renderResourceList(items);
+            });
+        }
+
         try {
             const app = initializeApp(firebaseConfig);
             auth = getAuth(app);
@@ -866,7 +741,6 @@ function startResourceListener() {
             authStatusEl.innerHTML = ":: ERROR: CONFIG FAILURE. Firebase services unavailable. ::";
         }
 
-        // --- HISTORY (Realtime) ---
         async function logSearch(lat, lon) {
             if (!isAuthReady || !userId) return;
             const historyRef = getPrivateRef('search_history');
@@ -923,14 +797,15 @@ function startResourceListener() {
                         <p class="text-sm text-gray-400 mt-1">
                             <span class="font-medium">COORDS:</span> ${lat}, ${lon}
                         </p>
-                        <p class="text-xs accent-orange mt-1">Found ${item.mock_resources_found || 0} assets in the ${item.location_description || 'Area'} area.</p>
+                        <p class="text-xs accent-orange mt-1">
+                            Found ${item.mock_resources_found || 0} assets in the ${item.location_description || 'Area'} area.
+                        </p>
                     </div>
                 `;
                 historyListEl.insertAdjacentHTML('beforeend', itemHtml);
             });
         }
 
-        // --- GOALS (Realtime) ---
         addGoalBtn.addEventListener('click', async () => {
             if (!isAuthReady || !userId) return showMessage("Authentication required to save mission.", true);
 
@@ -972,7 +847,6 @@ function startResourceListener() {
                 const data = snapshot.val() || {};
                 const goals = Object.keys(data).map(id => ({ id, ...data[id] }));
 
-                // incomplete missions first
                 goals.sort((a, b) => {
                     const aComplete = (a.steps || []).every(s => s.completed);
                     const bComplete = (b.steps || []).every(s => s.completed);
@@ -1010,7 +884,10 @@ function startResourceListener() {
                     const lineThrough = step.completed ? 'line-through text-gray-500' : 'text-gray-300';
                     stepsHtml += `
                         <label class="flex items-center space-x-2 py-1 cursor-pointer">
-                            <input type="checkbox" data-goal-id="${goal.id}" data-step-index="${index}" ${checked}
+                            <input type="checkbox"
+                                   data-goal-id="${goal.id}"
+                                   data-step-index="${index}"
+                                   ${checked}
                                    class="form-checkbox h-4 w-4 text-green-400 rounded bg-gray-700/50"
                                    onchange="window.toggleStep(this)">
                             <span class="text-sm ${lineThrough}">${step.text}</span>
@@ -1019,7 +896,7 @@ function startResourceListener() {
                 });
 
                 const goalHtml = `
-                    <div class="panel p-4 border-t-4 ${progress === 100 ? 'border-orange-500' : 'border-green-500'}">
+                    <div class="panel border-t-4 ${progress === 100 ? 'border-orange-500' : 'border-green-500'}">
                         <div class="flex justify-between items-start mb-2">
                             <h4 class="text-lg font-extrabold accent-orange">${goal.title}</h4>
                             <span class="text-xs text-gray-400">${progress}% COMPLETE</span>
@@ -1030,7 +907,10 @@ function startResourceListener() {
                         <div class="space-y-1">
                             ${stepsHtml}
                         </div>
-                        <button onclick="window.deleteGoal('${goal.id}')" class="text-red-500 hover:text-red-300 text-xs mt-3 float-right">ABORT MISSION</button>
+                        <button onclick="window.deleteGoal('${goal.id}')"
+                                class="text-red-500 hover:text-red-300 text-xs mt-3 float-right">
+                            ABORT MISSION
+                        </button>
                     </div>
                 `;
                 goalListContainerEl.insertAdjacentHTML('beforeend', goalHtml);
@@ -1068,7 +948,6 @@ function startResourceListener() {
             }
         };
 
-        // --- COMMUNITY MUSTER (Realtime public data) ---
         postMessageBtn.addEventListener('click', async () => {
             if (!isAuthReady || !userId) return showMessage("Authentication required to transmit message.", true);
 
@@ -1123,9 +1002,9 @@ function startResourceListener() {
                 const time = post.timestamp ? new Date(post.timestamp).toLocaleTimeString() : 'N/A';
 
                 const postHtml = `
-                    <div class="panel p-3 rounded-lg ${isMine ? 'bg-green-900/40 border-green-600' : 'bg-gray-700/50 border-gray-600'}">
+                    <div class="panel ${isMine ? 'bg-green-900/40 border-green-600' : 'bg-gray-700/50 border-gray-600'}">
                         <p class="text-xs font-bold ${isMine ? 'accent-green' : 'accent-orange'}">
-                            ${isMine ? 'YOU' : (post.user_id || '').substring(0, 8) + '...'} 
+                            ${isMine ? 'YOU' : (post.user_id || '').substring(0, 8) + '...'}
                             <span class="text-gray-500 font-normal">@ ${time}</span>
                         </p>
                         <p class="text-sm text-gray-300 mt-1 whitespace-pre-wrap">${post.message}</p>
@@ -1135,7 +1014,6 @@ function startResourceListener() {
             });
         }
 
-        // --- EMPLOYMENT HUB (no Firebase deps) ---
         const mockTranslations = {
             "68W": { title: "EMERGENCY MEDICAL TECHNICIAN / CLINICAL ASSISTANT", skills: ["Advanced Trauma Care", "Patient Triage", "Field Operations Management", "Basic Life Support (BLS)"] },
             "EO": { title: "HEAVY EQUIPMENT OPERATOR / SITE MANAGER", skills: ["Earth Moving Equipment Operation", "Site Preparation & Grading", "Safety Compliance (OSHA)", "Maintenance & Repair Scheduling"] },
@@ -1144,7 +1022,7 @@ function startResourceListener() {
             "HR": { title: "HUMAN RESOURCES SPECIALIST / PERSONNEL ADMINISTRATOR", skills: ["Talent Acquisition", "Employee Relations", "Confidential Record Keeping", "Benefits Administration"] },
             "INFANTRY": { title: "SECURITY SPECIALIST / TEAM LEADER", skills: ["Risk Assessment", "Conflict Resolution", "Executive Protection", "Cross-Functional Team Collaboration"] },
         };
-        
+
         document.getElementById('translate-btn').addEventListener('click', () => {
             const translateBtn      = document.getElementById('translate-btn');
             const militaryTermInput = document.getElementById('military-term-input');
@@ -1153,33 +1031,36 @@ function startResourceListener() {
             const skillsOutput      = document.getElementById('skills-output');
 
             const term = militaryTermInput.value.trim().toUpperCase();
-            
+
             if (term.length < 2) {
                 return showMessage("INPUT MOS OR DUTY CODE (MIN 2 CHARS).", true);
             }
-            
+
             translateBtn.disabled = true;
             translationResult.classList.add('hidden');
             jobTitleOutput.textContent = '';
             skillsOutput.innerHTML = '';
-            
+
             setTimeout(() => {
-                const translation = mockTranslations[term] || mockTranslations[Object.keys(mockTranslations).find(key => term.includes(key))];
-                
+                const translation =
+                    mockTranslations[term] ||
+                    mockTranslations[Object.keys(mockTranslations).find(key => term.includes(key))];
+
                 if (translation) {
                     jobTitleOutput.textContent = `CIVILIAN ROLE: ${translation.title}`;
-                    
                     let skillsList = '';
                     translation.skills.forEach(skill => {
-                        skillsList += `<p class="text-sm font-semibold flex items-center accent-green"><span class="accent-orange mr-2 text-xl">•</span>${skill}</p>`;
+                        skillsList += `<p class="text-sm font-semibold flex items-center accent-green">
+                            <span class="accent-orange mr-2 text-xl">•</span>${skill}</p>`;
                     });
-                    
-                    skillsOutput.innerHTML = `<h4 class="font-bold mt-2 accent-green">CORE SKILLS TRANSLATED:</h4><div class="space-y-1">${skillsList}</div>`;
+                    skillsOutput.innerHTML =
+                        `<h4 class="font-bold mt-2 accent-green">CORE SKILLS TRANSLATED:</h4><div class="space-y-1">${skillsList}</div>`;
                     translationResult.classList.remove('hidden');
                     showMessage(`Translation executed successfully for "${term}".`, false);
                 } else {
                     jobTitleOutput.textContent = ":: DIRECT TRANSLATION FAILED ::";
-                    skillsOutput.innerHTML = "<p class='text-sm text-gray-500'>Try a common rating (e.g., HR, EO) or a general duty area (e.g., INFANTRY, LOGISTICS).</p>";
+                    skillsOutput.innerHTML =
+                        "<p class='text-sm text-gray-500'>Try a common rating (e.g., HR, EO) or a general duty area (e.g., INFANTRY, LOGISTICS).</p>";
                     translationResult.classList.remove('hidden');
                     showMessage("TRANSLATION FAIL. RE-ENTER TERM.", true);
                 }
@@ -1187,7 +1068,6 @@ function startResourceListener() {
             }, 500);
         });
 
-        // --- UI LOGIC ---
         document.getElementById('view-history-btn').addEventListener('click', () => {
             document.getElementById('history-modal').classList.remove('hidden');
         });
@@ -1201,7 +1081,9 @@ function startResourceListener() {
             tabs.forEach(tab => {
                 const content = document.getElementById(`content-${tab}`);
                 const button  = document.getElementById(`tab-${tab}`);
-                
+
+                if (!content || !button) return;
+
                 if (tab === tabName) {
                     content.classList.remove('hidden');
                     button.classList.add('tab-active');
@@ -1212,13 +1094,17 @@ function startResourceListener() {
                     button.classList.add('tab-inactive');
                 }
             });
+
+            const section = document.getElementById(`content-${tabName}`);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         };
-        
+
         document.addEventListener('DOMContentLoaded', () => {
-            switchTab('employment');
+            window.switchTab('employment');
         });
 
-        // --- GEOLOCATION / MAP ---
         document.getElementById('find-location-btn').addEventListener('click', () => {
             if (!isAuthReady) return showMessage("Authentication required to log location scan.", true);
 
@@ -1244,10 +1130,10 @@ function startResourceListener() {
                 (position) => {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
-                    
+
                     button.textContent = 'SCAN COMPLETE';
                     loading.classList.add('hidden');
-                    
+
                     latLongDisplay.textContent = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
                     locationInfo.classList.remove('hidden');
                     resourceSection.classList.remove('hidden');
@@ -1268,9 +1154,9 @@ function startResourceListener() {
                     } else if (error.code === error.TIMEOUT) {
                         errorMessage = "ERROR: LOCATION REQUEST TIMEOUT.";
                     }
-                    
+
                     showMessage(errorMessage, true);
-                    
+
                     button.disabled = false;
                     button.textContent = 'EXECUTE LOCATION SCAN';
                     loading.classList.add('hidden');
@@ -1284,6 +1170,48 @@ function startResourceListener() {
                 }
             );
         });
+
+        // 🔎 SEARCH FUNCTION – hooks into tabs + sections
+        window.performSearch = function() {
+            const input = document.getElementById('sov-search');
+            if (!input) return;
+
+            const q = input.value.toLowerCase().trim();
+            if (!q) return;
+
+            const sections = [
+                { id: "content-map",       tab: "map" },
+                { id: "content-benefits",  tab: "benefits" },
+                { id: "content-goals",     tab: "goals" },
+                { id: "content-muster",    tab: "muster" },
+                { id: "content-employment",tab: "employment" }
+            ];
+
+            let found = false;
+
+            sections.forEach(sec => {
+                const el = document.getElementById(sec.id);
+                if (!el) return;
+
+                if (!found && el.innerText.toLowerCase().includes(q)) {
+                    found = true;
+                    window.switchTab(sec.tab);
+
+                    el.scrollIntoView({ behavior: "smooth", block: "start" });
+                    el.style.transition = "background 0.6s ease";
+                    el.style.background = "rgba(56, 189, 248, 0.18)";
+
+                    setTimeout(() => {
+                        el.style.background = "";
+                    }, 1400);
+                }
+            });
+
+            if (!found) {
+                showMessage("No results found for: " + q, true);
+            }
+        };
     </script>
+
 </body>
 </html>
