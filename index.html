@@ -237,6 +237,31 @@
         #resource-list a:hover {
             text-shadow: 0 0 9px rgba(34, 197, 94, 0.9);
         }
+
+        /* Resume preview (Style 2 - clean professional) */
+        .resume-card {
+            background: #f9fafb;
+            color: #111827;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+        .resume-section-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #4b5563;
+            margin-top: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+        .resume-divider {
+            border-top: 1px solid #e5e7eb;
+            margin-top: 0.4rem;
+            margin-bottom: 0.6rem;
+        }
     </style>
 </head>
 
@@ -281,6 +306,7 @@
                 <button class="hover:text-[var(--hud-green)]" onclick="window.switchTab('goals')">Mission Planner</button>
                 <button class="hover:text-[var(--hud-green)]" onclick="window.switchTab('map')">Local Resources</button>
                 <button class="hover:text-[var(--hud-green)]" onclick="window.switchTab('employment')">Employment</button>
+                <button class="hover:text-[var(--hud-green)]" onclick="window.switchTab('resume')">Resume Forge</button>
                 <button class="hover:text-[var(--hud-green)]" onclick="window.switchTab('benefits')">Benefits</button>
                 <button class="hover:text-[var(--hud-green)]" onclick="window.switchTab('muster')">The Muster</button>
             </div>
@@ -293,13 +319,16 @@
             YOUR TACTICAL ADVANTAGE IN CIVILIAN LIFE
         </h1>
         <p class="mt-6 text-gray-300 text-lg max-w-2xl mx-auto">
-            Real-time resources, mission-ready planning, employment translation, and community support —
+            Real-time resources, mission-ready planning, employment translation, resume building, and community support —
             all inside a unified HUD-style veteran platform.
         </p>
 
-        <div class="mt-8 flex justify-center space-x-4">
+        <div class="mt-8 flex flex-wrap justify-center gap-4">
             <button onclick="window.switchTab('goals')" class="btn-primary">
                 Launch Mission Planner
+            </button>
+            <button onclick="window.switchTab('resume')" class="btn-secondary">
+                Forge My Resume
             </button>
             <button onclick="window.switchTab('map')" class="btn-secondary">
                 Scan Local Resources
@@ -308,12 +337,13 @@
     </section>
 
     <!-- TAB BAR -->
-    <div class="flex bg-[#0b1310] border-b border-green-800">
+    <div class="flex bg-[#0b1310] border-b border-green-800 overflow-x-auto">
         <button id="tab-map" class="tab-button tab-inactive" onclick="window.switchTab('map')">RESOURCE LOCATOR</button>
         <button id="tab-benefits" class="tab-button tab-inactive" onclick="window.switchTab('benefits')">BENEFITS PROTOCOL</button>
         <button id="tab-goals" class="tab-button tab-inactive" onclick="window.switchTab('goals')">MISSION PLANNER</button>
         <button id="tab-muster" class="tab-button tab-inactive" onclick="window.switchTab('muster')">THE MUSTER</button>
         <button id="tab-employment" class="tab-button tab-active" onclick="window.switchTab('employment')">EMPLOYMENT HUB</button>
+        <button id="tab-resume" class="tab-button tab-inactive" onclick="window.switchTab('resume')">RESUME FORGE</button>
     </div>
 
     <!-- MAIN CONTENT -->
@@ -358,24 +388,10 @@
             </h2>
             <p class="text-gray-400 text-sm">
                 Filing a disability claim is mission-critical. The steps provided are general knowledge and in no way
-                constitute legal advice. Every outcome is different and we share our knowledge to help get the best
-                outcome for our veteran brothers and sisters. Feel free to email us if you have anything to add to this
-                sequence.
+                constitute legal advice. Every outcome is different...
             </p>
 
-            <!-- Step 1 -->
-            <div class="panel space-y-2 border-l-4 border-green-500">
-                <div class="flex items-center space-x-2">
-                    <span class="text-xl font-extrabold accent-orange">01</span>
-                    <h3 class="font-bold text-lg accent-green">DATA ACQUISITION</h3>
-                </div>
-                <ul class="list-disc ml-5 text-sm text-gray-400 space-y-1">
-                    <li>***The best practice before filing a claim is to seek outside medical attention.*** If it is a PTSD claim, seek mental health providers ahead of time, if it is an injury, seek help from a specialist before filing, this step alone is crucial in establishing your nexus, which is discussed later in these steps.</li>
-                    <li><strong>Service Connection:</strong> Acquire DD-214 and Service Treatment Records (STRs)... (content unchanged)</li>
-                    <li><strong>Medical Evidence:</strong> Secure your Service Treatment Records (STRs)...</li>
-                    <li><strong>Nexus:</strong> As stated above, this step is crucial in linking current status to service actions... Be cautious of for-profit claim companies.</li>
-                </ul>
-            </div>
+            BENEFITS PROTOCOL: CLAIMS</h2> <p class="text-gray-400 text-sm">Filing a disability claim is mission-critical. The steps provided are general knowledge and in no way constitute legal advice. Every outcome is different and we share our knowledge to help get the best outcome for our veteran brothers and sisters. Feel free to email us if you have anything to add to this sequence.</p> <!-- Step 1 --> <div class="panel p-4 space-y-2 border-l-4 border-green-500"> <div class="flex items-center space-x-2"> <span class="text-xl font-extrabold accent-orange">01</span> <h3 class="font-bold text-lg accent-green">DATA ACQUISITION</h3> </div> <ul class="list-disc ml-5 text-sm text-gray-400 space-y-1"> <li>***The best practice before filing a claim is to seek outside medical attention.*** If it is a PTSD claim, seek mental health providers ahead of time, if it is an injury, seek help from a specialist before filing, this step alone is crucial in establishing your nexus, which is discussed later in these steps.</li> <li>**Service Connection:** Acquire DD-214 and Service Treatment Records (STRs).You can request records from the National Archives online, by mail, or by fax. (If you’re submitting an application for VA benefits, VA will request your DD214 for you when they receive your application. You don’t need to do this yourself through the National Archives.) If you already have a copy, you can upload it with your claim. You can request your military service records online using the National Archives’ eVetRecs tool. When you get to eVetRecs, select Make a new request. There is also a link and instructions here (<a href="https://www.va.gov/records/get-military-service-records/" target="_blank" class="accent-orange hover:text-red-500">MILITARY SERVICE RECORDS</a>). You’ll then need to sign in with an identity-verified ID.me account. The National Archives may ask you to take a “live selfie” photo with your smartphone as an added step to verification. Option 2: Fill out the National Archive’s request form (to mail or fax) Fill out a Request Pertaining to Military Records (Standard Form 180). You can get the form here (<a href="https://www.va.gov/find-forms/about-form-sf180/" target="_blank" class="accent-orange hover:text-red-500">VA FORM SF180</a>). Mail or fax your completed form to the appropriate address or fax number listed on the last page of the form. To find the right address or fax number for you, you’ll need to use the first chart on that page to find your branch of service, separation date, and type of record. </li> <li>**Medical Evidence:** Secure your Service Treatment Records (STRs): These documents detail any medical issues you experienced during your active duty. They serve as direct evidence of in-service events or injuries that may have contributed to your current condition. VA and Private Medical Records: Include records from both VA facilities and private healthcare providers. These documents help establish a history of treatment and demonstrate the progression and severity of your condition. Independent Medical Opinions (IMOs) and NEXUS Letters: A NEXUS letter from a qualified medical professional is crucial. It should explicitly state whether your condition is "at least as likely as not" related to your military service, providing a clear connection for the VA. Diagnostic Test Results: Include results from X-rays, MRIs, lab tests, and other diagnostic procedures that confirm your diagnosis. This evidence is particularly important for conditions like PTSD, chronic pain, and orthopedic injuries. Lay Evidence (Buddy Statements): Statements from fellow service members, family, or friends who can attest to the onset or worsening of your condition can support your medical evidence, especially if your service records are incomplete.</li> <li>**Nexus:** As stated above, this step is crucial in linking current status to service actions (e.g., doctor's statement). (<a target="_blank" class="accent-orange hover:text-red-500">!!! BE AWARE!!!</a>) Several companies are filing claims for veterans' benefits, often charging fees for services that are legally required to be free. Here are some key points: For-Profit Consultants: Many for-profit companies charge veterans fees for help filing disability claims, operating in a legal loophole where only accredited agents and Veterans Service Organizations (VSOs) can assist with claims. Legislative Actions: States like Maine, New Jersey, and New York have passed laws to crack down on these practices, while Louisiana has allowed companies to charge up to $12,500 for services that should be free. Opposition to Legislation: Advocacy groups, including the Veterans of Foreign Wars, oppose bills that would allow for-profit companies to charge veterans for initial claims assistance, arguing that free help is already available through accredited representatives. Predatory Practices: Some companies exploit veterans' trust by offering misleading services, often resulting in financial strain and limited improvement in claims outcomes. These practices raise significant concerns about the integrity of the veterans' claims process and the exploitation of vulnerable populations.!!! Please look into these with caution if you decide to go this route. Although some say you do not have to pay unless your claim is accepted, many take large portions or all of the backpay you would recieve. </li> </ul> </div>
 
             <!-- Step 2 -->
             <div class="panel space-y-2 border-l-4 border-green-500">
@@ -384,11 +400,11 @@
                     <h3 class="font-bold text-lg accent-green">SUBMISSION ROUTE</h3>
                 </div>
                 <ul class="list-disc ml-5 text-sm text-gray-400 space-y-1">
-                    <li><strong>Fast Track:</strong> Utilize the VA digital portal
+                    <li><strong>Fast Track:</strong> Use
                         <a href="https://www.va.gov" target="_blank" class="accent-orange hover:text-red-500">VA.gov</a>.
                     </li>
-                    <li><strong>Priority Channel:</strong> Contact a Veterans Service Officer (VSO) for free, expert support.</li>
-                    <li><strong>Effective Date Lock:</strong> File an Intent to File immediately:
+                    <li><strong>Priority Channel:</strong> Work with a Veterans Service Officer (VSO) for support.</li>
+                    <li><strong>Effective Date Lock:</strong> File an Intent to File:
                         <a href="https://www.va.gov/supporting-forms-for-claims/intent-to-file-form-21-0966/introduction"
                            target="_blank"
                            class="accent-orange hover:text-red-500">INTENT TO FILE</a>.
@@ -416,7 +432,7 @@
                 </div>
                 <ul class="list-disc ml-5 text-sm text-gray-400 space-y-1">
                     <li><strong>Review:</strong> Confirm rating accuracy upon decision.</li>
-                    <li><strong>Recourse:</strong> If denied, consult a VSO immediately to initiate Supplemental, HLR, or Board Appeal.</li>
+                    <li><strong>Recourse:</strong> If denied, consult a VSO immediately to initiate an appeal.</li>
                 </ul>
             </div>
 
@@ -540,6 +556,183 @@
                         </a> Career training and workshops.
                     </li>
                 </ul>
+            </div>
+        </section>
+
+        <!-- TAB 6: RESUME FORGE (STYLE 2) -->
+        <section id="content-resume" class="hidden space-y-6">
+            <h2 class="text-2xl font-bold accent-green border-b border-gray-600 pb-2 font-mono">
+                RESUME FORGE: PROFESSIONAL BUILDER
+            </h2>
+            <p class="text-gray-400 text-sm">
+                Build a clean, recruiter-ready resume that translates your service into civilian language.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6 items-start">
+                <!-- Builder Form -->
+                <div class="panel space-y-4">
+                    <h3 class="text-xl font-semibold accent-green border-b border-gray-600 pb-2">
+                        INPUT RESUME DATA
+                    </h3>
+
+                    <!-- Contact -->
+                    <div class="space-y-2">
+                        <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wide">
+                            Contact Information
+                        </h4>
+                        <input type="text" data-resume-input id="res-name" placeholder="Full Name">
+                        <input type="text" data-resume-input id="res-email" placeholder="Email">
+                        <input type="text" data-resume-input id="res-phone" placeholder="Phone">
+                        <input type="text" data-resume-input id="res-location" placeholder="Location (City, State)">
+                    </div>
+
+                    <!-- Headline / Target Role -->
+                    <div class="space-y-2">
+                        <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wide">
+                            Target Role / Headline
+                        </h4>
+                        <input type="text" data-resume-input id="res-target-role"
+                               placeholder="e.g., Project Manager / Operations Lead">
+                    </div>
+
+                    <!-- Summary -->
+                    <div class="space-y-2">
+                        <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wide">
+                            Professional Summary
+                        </h4>
+                        <textarea data-resume-input id="res-summary" rows="3"
+                                  placeholder="Brief 2–3 sentence summary highlighting your service, strengths, and career goals."></textarea>
+                    </div>
+
+                    <!-- Experience -->
+                    <div class="space-y-3">
+                        <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wide">
+                            Experience (Up to 3 Roles)
+                        </h4>
+
+                        <!-- Experience 1 -->
+                        <div class="border border-gray-700 rounded-md p-3 space-y-2">
+                            <input type="text" data-resume-input id="exp1-title" placeholder="Job Title (e.g., Squad Leader)">
+                            <input type="text" data-resume-input id="exp1-company" placeholder="Organization / Unit">
+                            <input type="text" data-resume-input id="exp1-dates" placeholder="Dates (e.g., 2018 – 2022)">
+                            <textarea data-resume-input id="exp1-bullets" rows="2"
+                                      placeholder="Bullets (separate with semicolons ; )"></textarea>
+                        </div>
+
+                        <!-- Experience 2 -->
+                        <div class="border border-gray-700 rounded-md p-3 space-y-2">
+                            <input type="text" data-resume-input id="exp2-title" placeholder="Job Title">
+                            <input type="text" data-resume-input id="exp2-company" placeholder="Organization / Company">
+                            <input type="text" data-resume-input id="exp2-dates" placeholder="Dates">
+                            <textarea data-resume-input id="exp2-bullets" rows="2"
+                                      placeholder="Bullets (separate with semicolons ; )"></textarea>
+                        </div>
+
+                        <!-- Experience 3 -->
+                        <div class="border border-gray-700 rounded-md p-3 space-y-2">
+                            <input type="text" data-resume-input id="exp3-title" placeholder="Job Title">
+                            <input type="text" data-resume-input id="exp3-company" placeholder="Organization / Company">
+                            <input type="text" data-resume-input id="exp3-dates" placeholder="Dates">
+                            <textarea data-resume-input id="exp3-bullets" rows="2"
+                                      placeholder="Bullets (separate with semicolons ; )"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Education -->
+                    <div class="space-y-3">
+                        <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wide">
+                            Education (Up to 2 Entries)
+                        </h4>
+
+                        <div class="border border-gray-700 rounded-md p-3 space-y-2">
+                            <input type="text" data-resume-input id="edu1-school" placeholder="School / Institution">
+                            <input type="text" data-resume-input id="edu1-degree" placeholder="Degree / Program">
+                            <input type="text" data-resume-input id="edu1-year" placeholder="Year (e.g., 2023)">
+                        </div>
+
+                        <div class="border border-gray-700 rounded-md p-3 space-y-2">
+                            <input type="text" data-resume-input id="edu2-school" placeholder="School / Institution">
+                            <input type="text" data-resume-input id="edu2-degree" placeholder="Degree / Program">
+                            <input type="text" data-resume-input id="edu2-year" placeholder="Year">
+                        </div>
+                    </div>
+
+                    <!-- Skills -->
+                    <div class="space-y-2">
+                        <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wide">
+                            Skills (Comma Separated)
+                        </h4>
+                        <textarea data-resume-input id="res-skills" rows="2"
+                                  placeholder="Leadership, Logistics, Risk Management, Training & Development"></textarea>
+                    </div>
+
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <button type="button" class="btn-secondary" id="res-clear-btn">
+                            Reset Builder
+                        </button>
+                        <p class="text-xs text-gray-500">
+                            :: Tip: Copy text from the preview panel into Word/Indeed/USAJOBS. ::
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Resume Preview -->
+                <div class="resume-card text-left">
+                    <div id="resume-preview">
+
+                        <!-- Header -->
+                        <div>
+                            <h1 id="resume-name" style="font-size:1.6rem; font-weight:700;">YOUR NAME</h1>
+                            <div id="resume-contact" style="font-size:0.8rem; color:#4b5563; margin-top:0.15rem;">
+                                City, ST • email@example.com • (555) 555-5555
+                            </div>
+                            <div id="resume-target-role" style="font-size:0.9rem; font-weight:600; color:#111827; margin-top:0.6rem;">
+                                Target Role / Headline
+                            </div>
+                        </div>
+
+                        <!-- Summary -->
+                        <div>
+                            <div class="resume-section-title">PROFESSIONAL SUMMARY</div>
+                            <div class="resume-divider"></div>
+                            <p id="resume-summary" style="font-size:0.85rem; color:#111827;">
+                                Motivated veteran with a proven record of leadership, accountability, and mission success. Skilled at
+                                translating complex objectives into clear action, building cohesive teams, and delivering results under
+                                pressure.
+                            </p>
+                        </div>
+
+                        <!-- Skills -->
+                        <div>
+                            <div class="resume-section-title">KEY SKILLS</div>
+                            <div class="resume-divider"></div>
+                            <ul id="resume-skills-list" style="font-size:0.85rem; color:#111827; display:flex; flex-wrap:wrap; gap:0.35rem;">
+                                <li>Leadership</li>
+                                <li>Team Coordination</li>
+                                <li>Operations Planning</li>
+                            </ul>
+                        </div>
+
+                        <!-- Experience -->
+                        <div>
+                            <div class="resume-section-title">EXPERIENCE</div>
+                            <div class="resume-divider"></div>
+                            <div id="resume-experience" style="font-size:0.85rem; color:#111827;">
+                                <!-- Filled by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Education -->
+                        <div>
+                            <div class="resume-section-title">EDUCATION</div>
+                            <div class="resume-divider"></div>
+                            <div id="resume-education" style="font-size:0.85rem; color:#111827;">
+                                <!-- Filled by JS -->
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -1077,7 +1270,7 @@
         });
 
         window.switchTab = function(tabName) {
-            const tabs = ['map', 'benefits', 'goals', 'muster', 'employment'];
+            const tabs = ['map', 'benefits', 'goals', 'muster', 'employment', 'resume'];
             tabs.forEach(tab => {
                 const content = document.getElementById(`content-${tab}`);
                 const button  = document.getElementById(`tab-${tab}`);
@@ -1103,6 +1296,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             window.switchTab('employment');
+            initResumeBuilder();
         });
 
         document.getElementById('find-location-btn').addEventListener('click', () => {
@@ -1171,7 +1365,7 @@
             );
         });
 
-        // 🔎 SEARCH FUNCTION – hooks into tabs + sections
+        // 🔎 SEARCH FUNCTION – hooks into tabs + sections (includes resume now)
         window.performSearch = function() {
             const input = document.getElementById('sov-search');
             if (!input) return;
@@ -1180,11 +1374,12 @@
             if (!q) return;
 
             const sections = [
-                { id: "content-map",       tab: "map" },
-                { id: "content-benefits",  tab: "benefits" },
-                { id: "content-goals",     tab: "goals" },
-                { id: "content-muster",    tab: "muster" },
-                { id: "content-employment",tab: "employment" }
+                { id: "content-map",        tab: "map" },
+                { id: "content-benefits",   tab: "benefits" },
+                { id: "content-goals",      tab: "goals" },
+                { id: "content-muster",     tab: "muster" },
+                { id: "content-employment", tab: "employment" },
+                { id: "content-resume",     tab: "resume" }
             ];
 
             let found = false;
@@ -1211,6 +1406,162 @@
                 showMessage("No results found for: " + q, true);
             }
         };
+
+        // ===================== RESUME BUILDER LOGIC =====================
+        function initResumeBuilder() {
+            const inputs = document.querySelectorAll('[data-resume-input]');
+            const clearBtn = document.getElementById('res-clear-btn');
+
+            function updatePreview() {
+                const name      = (document.getElementById('res-name').value || '').trim();
+                const email     = (document.getElementById('res-email').value || '').trim();
+                const phone     = (document.getElementById('res-phone').value || '').trim();
+                const location  = (document.getElementById('res-location').value || '').trim();
+                const target    = (document.getElementById('res-target-role').value || '').trim();
+                const summary   = (document.getElementById('res-summary').value || '').trim();
+                const skillsStr = (document.getElementById('res-skills').value || '').trim();
+
+                // Header
+                document.getElementById('resume-name').textContent =
+                    name || 'YOUR NAME';
+
+                let contactLine = [];
+                if (location) contactLine.push(location);
+                if (email) contactLine.push(email);
+                if (phone) contactLine.push(phone);
+                document.getElementById('resume-contact').textContent =
+                    contactLine.join(' • ') || 'City, ST • email@example.com • (555) 555-5555';
+
+                document.getElementById('resume-target-role').textContent =
+                    target || 'Target Role / Headline';
+
+                // Summary
+                document.getElementById('resume-summary').textContent =
+                    summary ||
+                    'Motivated veteran with a proven record of leadership, accountability, and mission success. Skilled at translating complex objectives into clear action, building cohesive teams, and delivering results under pressure.';
+
+                // Skills
+                const skillsListEl = document.getElementById('resume-skills-list');
+                skillsListEl.innerHTML = '';
+                let skills = [];
+                if (skillsStr) {
+                    skills = skillsStr.split(',').map(s => s.trim()).filter(Boolean);
+                }
+                if (skills.length === 0) {
+                    skills = ['Leadership', 'Team Coordination', 'Operations Planning'];
+                }
+                skills.forEach(skill => {
+                    const li = document.createElement('li');
+                    li.textContent = skill;
+                    skillsListEl.appendChild(li);
+                });
+
+                // Experience
+                const expContainer = document.getElementById('resume-experience');
+                expContainer.innerHTML = '';
+
+                const exps = [1,2,3].map(i => ({
+                    title:  document.getElementById(`exp${i}-title`).value.trim(),
+                    company:document.getElementById(`exp${i}-company`).value.trim(),
+                    dates:  document.getElementById(`exp${i}-dates`).value.trim(),
+                    bullets:(document.getElementById(`exp${i}-bullets`).value || '')
+                                .split(';').map(b => b.trim()).filter(Boolean)
+                })).filter(e => e.title || e.company || e.dates || e.bullets.length);
+
+                if (exps.length === 0) {
+                    expContainer.innerHTML = `
+                        <div style="margin-bottom:0.6rem;">
+                            <div style="font-weight:600;">Squad Leader</div>
+                            <div style="font-size:0.8rem; color:#4b5563;">U.S. Army — 2018 – 2022</div>
+                            <ul style="margin-top:0.25rem; padding-left:1rem; list-style:disc;">
+                                <li>Led and mentored a team in high-stress environments to achieve mission objectives.</li>
+                                <li>Coordinated training, logistics, and equipment readiness for multiple operations.</li>
+                            </ul>
+                        </div>
+                    `;
+                } else {
+                    exps.forEach(exp => {
+                        const wrapper = document.createElement('div');
+                        wrapper.style.marginBottom = '0.6rem';
+
+                        const titleLine = document.createElement('div');
+                        titleLine.style.fontWeight = '600';
+                        titleLine.textContent = exp.title || 'Role';
+
+                        const metaLine = document.createElement('div');
+                        metaLine.style.fontSize = '0.8rem';
+                        metaLine.style.color = '#4b5563';
+                        metaLine.textContent = [exp.company, exp.dates].filter(Boolean).join(' — ');
+
+                        wrapper.appendChild(titleLine);
+                        if (metaLine.textContent) wrapper.appendChild(metaLine);
+
+                        if (exp.bullets.length) {
+                            const ul = document.createElement('ul');
+                            ul.style.marginTop = '0.25rem';
+                            ul.style.paddingLeft = '1rem';
+                            ul.style.listStyle = 'disc';
+                            exp.bullets.forEach(b => {
+                                const li = document.createElement('li');
+                                li.textContent = b;
+                                ul.appendChild(li);
+                            });
+                            wrapper.appendChild(ul);
+                        }
+                        expContainer.appendChild(wrapper);
+                    });
+                }
+
+                // Education
+                const eduContainer = document.getElementById('resume-education');
+                eduContainer.innerHTML = '';
+                const edus = [1,2].map(i => ({
+                    school: document.getElementById(`edu${i}-school`).value.trim(),
+                    degree: document.getElementById(`edu${i}-degree`).value.trim(),
+                    year:   document.getElementById(`edu${i}-year`).value.trim()
+                })).filter(e => e.school || e.degree || e.year);
+
+                if (edus.length === 0) {
+                    eduContainer.innerHTML = `
+                        <div>
+                            <div style="font-weight:600;">Institution Name</div>
+                            <div style="font-size:0.8rem; color:#4b5563;">Degree or Program • Year</div>
+                        </div>
+                    `;
+                } else {
+                    edus.forEach(e => {
+                        const wrapper = document.createElement('div');
+                        wrapper.style.marginBottom = '0.4rem';
+
+                        const school = document.createElement('div');
+                        school.style.fontWeight = '600';
+                        school.textContent = e.school || 'Institution';
+
+                        const detail = document.createElement('div');
+                        detail.style.fontSize = '0.8rem';
+                        detail.style.color = '#4b5563';
+                        detail.textContent = [e.degree, e.year].filter(Boolean).join(' • ');
+
+                        wrapper.appendChild(school);
+                        if (detail.textContent) wrapper.appendChild(detail);
+                        eduContainer.appendChild(wrapper);
+                    });
+                }
+            }
+
+            inputs.forEach(input => {
+                input.addEventListener('input', updatePreview);
+            });
+
+            if (clearBtn) {
+                clearBtn.addEventListener('click', () => {
+                    inputs.forEach(input => { input.value = ''; });
+                    updatePreview();
+                });
+            }
+
+            updatePreview();
+        }
     </script>
 
 </body>
