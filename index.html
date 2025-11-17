@@ -363,73 +363,73 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- Crisis Header -->
-    <header class="p-4 crisis-card text-white text-center rounded-b-xl shadow-lg">
-        <h1 class="text-2xl font-bold font-mono tracking-widest">Soldiers of Valor</h1>
-        <p class="text-sm opacity-90 mb-3 font-sans">OPERATIONAL STATUS: HIGH</p>
+   <!-- CRISIS HEADER -->
+<header class="p-4 bg-red-700/30 text-white text-center shadow-md border-b border-red-500">
+    <h1 class="text-3xl font-extrabold tracking-widest hud-glow">
+        SOLDIERS OF VALOR
+    </h1>
+    <p class="text-sm opacity-80">OPERATIONAL STATUS: HIGH</p>
 
-        <a href="tel:988"
-           class="bg-[#f97316] text-white font-extrabold py-3 px-6 rounded-md shadow-2xl transition-all duration-300 hover:bg-orange-700 flex items-center justify-center space-x-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                 class="lucide lucide-siren">
-                <path d="M7 16l-3-7h14l-3 7"/>
-                <path d="M12 21v-5"/>
-                <path d="M12 11V3"/>
-                <path d="M12 3L8 9h8z"/>
-            </svg>
-            <span class="text-lg font-mono">IF YOU ARE EXPERIENCING A CRISIS PLEASE CALL (988)</span>
-        </a>
-    </header>
+    <a href="tel:988"
+       class="mt-3 inline-flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md font-bold transition shadow-xl">
+       <span>🚨 CRISIS LINE: CALL 988</span>
+    </a>
+</header>
 
-    <!-- Auth Status -->
-    <div id="auth-status"
-         class="bg-green-900/40 text-green-400 p-2 text-xs font-mono text-center border-y border-green-600/50">
-        :: INITIALIZING SECURE LINK ::
+<!-- AUTH STATUS -->
+<div id="auth-status" class="bg-green-900/40 text-green-400 p-2 text-xs text-center border-b border-green-700">
+    :: INITIALIZING SECURE LINK ::
+</div>
+
+<!-- NEW STICKY NAVBAR -->
+<nav class="sticky top-0 z-50 bg-[#0f1a14] nav-shadow border-b border-green-900">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
+
+        <!-- LOGO -->
+        <span class="text-lg font-bold text-[var(--hud-green)] hud-glow tracking-widest">
+            COMMAND CONSOLE
+        </span>
+
+        <!-- SEARCH BAR -->
+        <input id="sov-search"
+               type="text"
+               placeholder="Search benefits, jobs, resources..."
+               onkeydown="if(event.key==='Enter'){performSearch()}"
+               class="hidden md:block px-3 py-2 bg-[#0c140f] text-gray-300 hud-border rounded focus:outline-none w-72" />
+
+        <!-- FLOATING NAV BUTTONS -->
+        <div class="hidden md:flex space-x-6 text-sm uppercase tracking-widest">
+            <button class="hover:text-[var(--hud-green)]" onclick="switchTab('goals')">Mission Planner</button>
+            <button class="hover:text-[var(--hud-green)]" onclick="switchTab('map')">Local Resources</button>
+            <button class="hover:text-[var(--hud-green)]" onclick="switchTab('employment')">Employment</button>
+            <button class="hover:text-[var(--hud-green)]" onclick="switchTab('benefits')">Benefits</button>
+            <button class="hover:text-[var(--hud-green)]" onclick="switchTab('muster')">The Muster</button>
+        </div>
+
     </div>
-
-    <!-- Global HUD Navbar -->
-    <header class="sticky top-0 z-40 bg-[#142117] nav-shadow border-b border-green-900">
-        <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
-            <a href="/" class="text-[var(--hud-accent)] text-xl font-bold hud-glow tracking-widest">
-                SOLDIERS OF VALOR
-            </a>
-
-            <div class="hidden md:flex items-center space-x-2">
-                <input
-                    type="text"
-                    placeholder="Search resources, benefits, jobs..."
-                    class="px-3 py-2 bg-[#0f1712] text-gray-300 hud-border rounded focus:outline-none"
-                />
-            </div>
-
-           <nav class="hidden md:flex items-center space-x-6 uppercase text-sm">
-
-    <button onclick="window.switchTab('goals')" 
-            class="hover:text-[var(--hud-accent)]">
-        Mission Planner
-    </button>
-
-    <button onclick="window.switchTab('map')" 
-            class="hover:text-[var(--hud-accent)]">
-        Local Resources
-    </button>
-
-    <button onclick="window.switchTab('employment')" 
-            class="hover:text-[var(--hud-accent)]">
-        Employment
-    </button>
-
-    <button onclick="window.switchTab('benefits')" 
-            class="hover:text-[var(--hud-accent)]">
-        Benefits
-    </button>
-
 </nav>
 
-        </div>
-    </header>
+<!-- HERO SECTION -->
+<section class="hero-bg py-16 text-center">
+    <h1 class="text-4xl md:text-5xl font-extrabold text-[var(--hud-green)] hud-glow tracking-wide">
+        YOUR TACTICAL ADVANTAGE IN CIVILIAN LIFE
+    </h1>
+
+    <p class="mt-6 text-gray-300 text-lg max-w-2xl mx-auto">
+        Real-time resources, mission-ready planning, employment translation, and community support —
+        all inside a unified HUD-style veteran platform.
+    </p>
+
+    <div class="mt-8 flex justify-center space-x-4">
+        <button onclick="switchTab('goals')" class="btn-primary">
+            Launch Mission Planner
+        </button>
+        <button onclick="switchTab('map')" class="btn-secondary">
+            Scan Local Resources
+        </button>
+    </div>
+</section>
+
 
     <!-- Tab Navigation -->
     <nav class="flex w-full bg-[#1a202c] shadow-md z-30 sticky top-[56px]">
