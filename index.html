@@ -404,12 +404,30 @@
                 />
             </div>
 
-            <nav class="hidden md:flex items-center space-x-6 uppercase text-sm">
-                <a href="#content-goals" class="hover:text-[var(--hud-accent)]">Mission Planner</a>
-                <a href="#content-map" class="hover:text-[var(--hud-accent)]">Local Resources</a>
-                <a href="#content-employment" class="hover:text-[var(--hud-accent)]">Employment</a>
-                <a href="#content-benefits" class="hover:text-[var(--hud-accent)]">Benefits</a>
-            </nav>
+           <nav class="hidden md:flex items-center space-x-6 uppercase text-sm">
+
+    <button onclick="window.switchTab('goals')" 
+            class="hover:text-[var(--hud-accent)]">
+        Mission Planner
+    </button>
+
+    <button onclick="window.switchTab('map')" 
+            class="hover:text-[var(--hud-accent)]">
+        Local Resources
+    </button>
+
+    <button onclick="window.switchTab('employment')" 
+            class="hover:text-[var(--hud-accent)]">
+        Employment
+    </button>
+
+    <button onclick="window.switchTab('benefits')" 
+            class="hover:text-[var(--hud-accent)]">
+        Benefits
+    </button>
+
+</nav>
+
         </div>
     </header>
 
