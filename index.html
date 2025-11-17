@@ -1267,10 +1267,12 @@
             }
         };
 
-        document.addEventListener('DOMContentLoaded', () => {
-            window.switchTab('employment');
-            initResumeBuilder();
-        });
+       document.addEventListener('DOMContentLoaded', () => {
+    const lastTab = localStorage.getItem("sov-last-tab") || "employment";
+    window.switchTab(lastTab);
+    initResumeBuilder();
+});
+
 
         document.getElementById('find-location-btn').addEventListener('click', () => {
             if (!isAuthReady) return showMessage("Authentication required to log location scan.", true);
